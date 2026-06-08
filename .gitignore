@@ -1,0 +1,22 @@
+# OAuth credentials - DO NOT commit
+scripts/credentials/
+scripts/cache/
+scripts/logs/
+scripts/progress/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+data/
