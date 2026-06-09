@@ -8,30 +8,32 @@
 
 ## 快速開始
 
-### 1. 安裝依賴
+將以下 Prompt 貼入 Antigravity 聊天視窗，Agent 會自動完成環境建置與依賴安裝：
 
-```bash
-pip install -r requirements.txt
+```
+請幫我使用 https://github.com/DreamOver9183/YouTube-Playlist-Custom-Agent-skill 這個 skill
 ```
 
-### 2. 設定 Google Cloud OAuth 憑證
+### 前置需求：Google Cloud OAuth 憑證
 
-1. 前往 [Google Cloud Console](https://console.cloud.google.com)，建立專案並啟用 **YouTube Data API v3**。
+使用前需先在 [Google Cloud Console](https://console.cloud.google.com) 完成以下設定：
+
+1. 建立專案並啟用 **YouTube Data API v3**。
 2. 在「API 和服務 → 憑證」中建立 **OAuth 2.0 Client ID**（類型選「桌面應用程式」）。
-3. 下載 JSON 憑證檔案。
+3. 下載 JSON 憑證檔案（放在任意位置即可）。
 
-> **首次使用時，工具會自動彈出系統原生的檔案選擇視窗**（僅顯示 `.json`），引導你選取憑證。選取後，工具會自動驗證內容並將其複製到安全路徑 `~/.gemini/skills/yt-playlist-manager/credentials/client_secret.json`，無需手動移動檔案。
+> 首次使用時，工具會自動彈出系統原生的檔案選擇視窗（僅顯示 `.json`），引導你選取憑證。選取後，工具會自動驗證內容並將其複製到安全路徑，無需手動移動檔案。
 
-### 3. 透過 Agent 使用（標準方式）
+### 使用範例
 
-在 Antigravity 聊天視窗中直接對 Agent 下達指令，例如：
+環境就緒後，直接在聊天視窗對 Agent 下達指令：
 
 ```
 「幫我把播放清單 PLxxxxxxxxx 按觀看次數從高到低排列」
 「整理 https://www.youtube.com/playlist?list=PLxxxxxxxxx，把超過 10 分鐘的影片移到最後面」
 ```
 
-Agent 會自動執行以下流程：
+Agent 的執行流程：
 
 ```
 Phase 0  確認 Playlist ID，檢查憑證（自動彈窗引導）
