@@ -138,6 +138,13 @@ class YouTubeClient:
             flow = InstalledAppFlow.from_client_secrets_file(
                 str(self.credentials_path), _SCOPES
             )
+            import json
+            import sys
+            print(json.dumps({
+                "status": "waiting_for_user",
+                "message": "正在開啟瀏覽器進行 Google 帳號授權，請在瀏覽器中完成登入..."
+            }))
+            sys.stdout.flush()
             creds = flow.run_local_server(port=0)
             logger.info("Completed OAuth consent flow.")
 

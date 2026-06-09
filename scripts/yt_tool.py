@@ -108,6 +108,12 @@ def ensure_credentials() -> None:
         }))
         sys.exit(1)
 
+    print(json.dumps({
+        "status": "waiting_for_user",
+        "message": "正在開啟檔案選擇視窗，請選取您的 Google OAuth 憑證 (JSON 檔案)..."
+    }))
+    sys.stdout.flush()
+
     root = tk.Tk()
     root.withdraw()
     root.lift()
@@ -164,6 +170,10 @@ def ensure_credentials() -> None:
 # --- Commands ---
 
 def cmd_fetch(args: argparse.Namespace) -> None:
+    print(json.dumps({"status": "started", "command": "fetch", "message": "開始獲取清單資料..."}))
+    sys.stdout.flush()
+    ensure_credentials()
+    
     playlist_id = extract_id(args.playlist)
     logger.info("Fetching playlist ID: %s", playlist_id)
     
@@ -203,6 +213,8 @@ def cmd_fetch(args: argparse.Namespace) -> None:
 
 
 def cmd_diff(args: argparse.Namespace) -> None:
+    print(json.dumps({"status": "started", "command": "diff", "message": "開始計算差異與配額..."}))
+    sys.stdout.flush()
     try:
         old_data = json.loads(Path(args.old).read_text(encoding="utf-8"))
         new_data = json.loads(Path(args.new).read_text(encoding="utf-8"))
@@ -231,6 +243,10 @@ def cmd_diff(args: argparse.Namespace) -> None:
 
 
 def cmd_update(args: argparse.Namespace) -> None:
+    print(json.dumps({"status": "started", "command": "update", "message": "開始寫回播放清單..."}))
+    sys.stdout.flush()
+    ensure_credentials()
+    
     playlist_id = extract_id(args.playlist)
     
     try:
@@ -332,7 +348,6 @@ def main():
     p_update.set_defaults(func=cmd_update)
 
     args = parser.parse_args()
-    ensure_credentials()
     args.func(args)
 
 
