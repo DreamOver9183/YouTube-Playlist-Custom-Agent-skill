@@ -20,6 +20,7 @@ import argparse
 import json
 import logging
 import re
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -76,6 +77,88 @@ def extract_id(raw: str) -> str:
     if match:
         return match.group(1)
     return raw.strip()
+
+
+def ensure_credentials() -> None:
+    """Guard function: detect missing credentials before any command runs.
+
+    If credentials are not found at the default path, this function
+    launches a system-native OpenFileDialog (via tkinter) that only
+    shows .json files. After the user selects a file, it is validated
+    as a Google OAuth 2.0 credential and copied to the secure default
+    location. If the credential already exists, this function returns
+    immediately with no side effects.
+    """
+    if DEFAULT_CREDENTIALS_PATH.is_file():
+        logger.debug("Credentials found at %s", DEFAULT_CREDENTIALS_PATH)
+        return
+
+    logger.warning("Credentials not found at %s. Launching file picker...", DEFAULT_CREDENTIALS_PATH)
+
+    # Lazy import tkinter only when needed (avoid import errors on headless systems)
+    try:
+        import tkinter as tk
+        from tkinter import filedialog
+    except ImportError:
+        print(json.dumps({
+            "status": "error",
+            "code": "TKINTER_UNAVAILABLE",
+            "message": "tkinter is not available. Please manually place your client_secret.json at: "
+                       + str(DEFAULT_CREDENTIALS_PATH)
+        }))
+        sys.exit(1)
+
+    root = tk.Tk()
+    root.withdraw()
+    root.lift()
+    root.attributes('-topmost', True)
+
+    path_str = filedialog.askopenfilename(
+        title="請選擇您從 Google Cloud Console 下載的 OAuth 憑證 JSON 檔案",
+        filetypes=[("JSON 憑證檔案", "*.json")]
+    )
+    root.destroy()
+
+    if not path_str:
+        print(json.dumps({
+            "status": "error",
+            "code": "USER_CANCELLED",
+            "message": "使用者已取消憑證選取。"
+        }))
+        sys.exit(1)
+
+    source = Path(path_str)
+
+    # Validate: must be a Google OAuth JSON (contains 'installed' or 'web' top-level key)
+    try:
+        with source.open(encoding="utf-8") as f:
+            data = json.load(f)
+        if "installed" not in data and "web" not in data:
+            raise ValueError("Missing 'installed' or 'web' key")
+    except Exception as exc:
+        logger.error("Invalid OAuth JSON at %s: %s", source, exc)
+        print(json.dumps({
+            "status": "error",
+            "code": "INVALID_JSON",
+            "message": "所選檔案不是合法的 Google OAuth 2.0 憑證。"
+                       "請確認您下載的是『桌面應用程式』類型的 OAuth Client ID。"
+        }))
+        sys.exit(1)
+
+    # Copy to secure default location
+    try:
+        DEFAULT_CREDENTIALS_DIR.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, DEFAULT_CREDENTIALS_PATH)
+        logger.info("Credentials installed from %s to %s", source, DEFAULT_CREDENTIALS_PATH)
+    except Exception as exc:
+        logger.exception("Failed to copy credentials")
+        print(json.dumps({
+            "status": "error",
+            "code": "COPY_FAILED",
+            "message": f"複製憑證失敗：{exc}。"
+                       f"請手動將檔案放置到 {DEFAULT_CREDENTIALS_PATH}"
+        }))
+        sys.exit(1)
 
 
 # --- Commands ---
@@ -249,6 +332,7 @@ def main():
     p_update.set_defaults(func=cmd_update)
 
     args = parser.parse_args()
+    ensure_credentials()
     args.func(args)
 
 

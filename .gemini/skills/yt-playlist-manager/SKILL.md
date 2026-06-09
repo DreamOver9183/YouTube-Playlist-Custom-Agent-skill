@@ -22,14 +22,12 @@ description: |
 ### Phase 0: 需求診斷與前置檢查
 
 1. **確認 Playlist ID**：若使用者沒提供，請追問。你不需要自己用 Regex 解析，直接將整串 URL 或 ID 傳給 `yt_tool.py` 即可，它有內建解析器。
-2. **檢查憑證是否存在**：
-   - 預設憑證路徑為：`~/.gemini/skills/yt-playlist-manager/credentials/client_secret.json`
-   - 使用 PowerShell 檢查檔案是否存在（`Test-Path "~/.gemini/skills/yt-playlist-manager/credentials/client_secret.json"`）。
-   - 若**不存在**，請主動在聊天室中引導使用者：
-     1. 前往 Google Cloud Console 建立 OAuth 2.0 桌面應用程式憑證。
-     2. 下載 JSON 並將其重新命名為 `client_secret.json`。
-     3. 放置到上述路徑（若資料夾不存在請幫他建立）。
-   - 確認檔案存在後，再繼續下一步。
+2. **憑證自動處理**：你**不需要**主動檢查憑證是否存在。`yt_tool.py` 內建了 `ensure_credentials()` 守衛函式，在任何指令執行前會自動偵測憑證。若憑證不存在，工具會**自動彈出系統原生的檔案選擇視窗**（只顯示 `.json` 檔案），讓使用者直接選取 OAuth 憑證。
+   - 若工具回傳錯誤碼，你需要在聊天室引導使用者：
+     - `USER_CANCELLED`：使用者關閉了選擇視窗。詢問是否要重試，若同意則提醒「請在即將彈出的視窗中選取您的 OAuth JSON 憑證」，然後再次呼叫相同指令。
+     - `INVALID_JSON`：使用者選到的 JSON 不是 OAuth 憑證。提示他需要在 Google Cloud Console 建立「桌面應用程式」類型的 OAuth 2.0 Client ID 並下載 JSON，然後再次呼叫相同指令重新選取。
+     - `COPY_FAILED`：複製失敗，可能是權限問題。建議以系統管理員身份執行。
+   - 若工具回傳正常結果（`status: "success"`），代表憑證已自動設定完成，直接進入後續流程。
 
 ### Phase 1: 獲取資料 (Data Acquisition)
 
