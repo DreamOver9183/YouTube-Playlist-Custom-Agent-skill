@@ -1,0 +1,4 @@
+## 2024-06-13 - [Path Traversal via Unsanitized Fallback]
+**Vulnerability:** Path traversal vulnerability in `extract_id` function inside `scripts/yt_tool.py`. When a URL parameter pattern didn't match, it returned the raw string which was then interpolated into a file path `progress_{playlist_id}.json`.
+**Learning:** Fallback mechanisms that return raw user input must be sanitized, especially when that input is later used to construct file system paths. This is a subtle path traversal risk that can bypass typical validation logic.
+**Prevention:** Always sanitize input that will be used in a file path, allowing only safe characters (e.g., alphanumeric, hyphens, underscores). Apply defense in depth.
