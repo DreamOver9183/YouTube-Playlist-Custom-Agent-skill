@@ -263,7 +263,10 @@ def cmd_update(args: argparse.Namespace) -> None:
     yt_client = get_authenticated_client(args.credentials)
     
     # Progress loading
-    progress_file = LOG_DIR / f"progress_{playlist_id}.json"
+    safe_id = "".join(c for c in playlist_id if c.isalnum() or c in "-_")
+    if not safe_id:
+        safe_id = "unknown"
+    progress_file = LOG_DIR / f"progress_{safe_id}.json"
     completed_ids = set()
     if progress_file.is_file():
         try:
