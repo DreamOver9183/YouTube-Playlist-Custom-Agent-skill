@@ -22,12 +22,19 @@ description: |
 ### Phase 0: 需求診斷與前置檢查
 
 1. **確認 Playlist ID**：若使用者沒提供，請追問。你不需要自己用 Regex 解析，直接將整串 URL 或 ID 傳給 `yt_tool.py` 即可，它有內建解析器。
-2. **憑證自動處理**：你**不需要**主動檢查憑證是否存在。`yt_tool.py` 內建了 `ensure_credentials()` 守衛函式，在任何指令執行前會自動偵測憑證。若憑證不存在，工具會**自動彈出系統原生的檔案選擇視窗**（只顯示 `.json` 檔案），讓使用者直接選取 OAuth 憑證。
-   - 若工具回傳錯誤碼，你需要在聊天室引導使用者：
-     - `USER_CANCELLED`：使用者關閉了選擇視窗。詢問是否要重試，若同意則提醒「請在即將彈出的視窗中選取您的 OAuth JSON 憑證」，然後再次呼叫相同指令。
-     - `INVALID_JSON`：使用者選到的 JSON 不是 OAuth 憑證。提示他需要在 Google Cloud Console 建立「桌面應用程式」類型的 OAuth 2.0 Client ID 並下載 JSON，然後再次呼叫相同指令重新選取。
-     - `COPY_FAILED`：複製失敗，可能是權限問題。建議以系統管理員身份執行。
-   - 若工具回傳正常結果（`status: "success"`），代表憑證已自動設定完成，直接進入後續流程。
+2. **憑證檢查與設定**：
+   - 直接執行 Phase 1 的 fetch 指令，`yt_tool.py` 會自動守衛並檢查憑證。
+   - 若憑證不存在，工具會回傳包含 `CREDENTIALS_MISSING` 錯誤碼的 JSON：
+     `{"status": "error", "code": "CREDENTIALS_MISSING", ...}`
+   - 此時，你**必須**在聊天室主動向使用者詢問憑證路徑：
+     > "您尚未設定 Google OAuth 憑證。請提供您下載的 `client_secret.json` 憑證檔案的絕對路徑（例如：`C:\Users\Name\Downloads\client_secret.json`）。"
+   - 收到使用者輸入的路徑（如 `<user_path>`）後，執行設定指令：
+     `python -m scripts.yt_tool setup_credentials "<user_path>"`
+   - 根據回傳結果進行應對：
+     - 若回傳 `{"status": "success", ...}`：表示設定成功，重新執行 Phase 1。
+     - 若回傳 `{"code": "FILE_NOT_FOUND"}`：告知使用者該路徑找不到檔案，請其檢查後重新提供。
+     - 若回傳 `{"code": "INVALID_JSON"}`：說明該 JSON 不是合法的 Google OAuth 桌面應用程式憑證，引導重新提供。
+     - 若回傳 `{"code": "COPY_FAILED"}`：說明複製檔案失敗，建議以系統管理員身份重新執行。
 
 ### Phase 1: 獲取資料 (Data Acquisition)
 
@@ -35,7 +42,7 @@ description: |
    `python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json`
    *(若 `data` 資料夾不存在，請先 `mkdir data`)*
 2. 該指令會回傳一段 JSON (例如 `{"status": "success", "item_count": 50, ...}`)。
-3. 首次執行如果需要 OAuth 登入，`yt_tool.py` 可能會觸發瀏覽器視窗。請告知使用者注意彈出視窗並完成授權。
+3. 首次執行如果需要 OAuth 登入，`yt_tool.py` 會觸發系統瀏覽器視窗。請提示使用者注意瀏覽器彈窗並完成授權。
 
 ### Phase 2: 本地計算 (Local Computation)
 

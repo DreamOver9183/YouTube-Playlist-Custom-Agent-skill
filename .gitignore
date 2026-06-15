@@ -1,5 +1,7 @@
 # OAuth credentials - DO NOT commit
 scripts/credentials/
+credentials/
+.gemini/
 scripts/cache/
 scripts/logs/
 scripts/progress/

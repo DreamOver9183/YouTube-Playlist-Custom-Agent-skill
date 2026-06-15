@@ -1,8 +1,8 @@
 # YouTube Playlist Manager — Antigravity Agent-Skill
 
-一個基於 [Antigravity](https://github.com/google-deepmind/antigravity) Agent-Skill 架構的 YouTube 播放清單管理工具。透過 YouTube Data API v3 讀取播放清單資料，由 Agent 依據使用者的自然語言指令計算排序，經確認後寫回 YouTube。
+一個基於 [Antigravity](https://github.com/google-deepmind/antigravity) Agent-Skill 架構的 YouTube 播放清單管理工具，同時支援 **Claude Code**、**Codex**、**GitHub Copilot Workspace** 等多種開發者 AI Agent 框架。透過 YouTube Data API v3 讀取播放清單資料，由 Agent 依據使用者的自然語言指令計算排序，經確認後寫回 YouTube。
 
-本專案**不是**一個獨立的 CLI 應用程式。它是一組提供給 Antigravity Agent 呼叫的後台工具與 SOP 指令集。Agent 負責理解需求與互動，Python 腳本僅負責 API 通訊與資料運算。
+本專案**不是**一個獨立的 CLI 應用程式。它是一組提供給 AI Agent 呼叫的後台工具與標準作業程序（SOP）。Agent 負責理解需求與互動，Python 腳本僅負責 API 通訊與資料運算。任何支援終端執行與程式碼產生的 Agent 皆可閱讀根目錄的 [AGENT_SOP.md](file:///d:/Antigravity%20Code/YouTube%20Playlist%20skill/AGENT_SOP.md) 以遵循相同的運作流程。
 
 ---
 
@@ -22,7 +22,7 @@
 2. 在「API 和服務 → 憑證」中建立 **OAuth 2.0 Client ID**（類型選「桌面應用程式」）。
 3. 下載 JSON 憑證檔案（放在任意位置即可）。
 
-> 首次使用時，工具會自動彈出系統原生的檔案選擇視窗（僅顯示 `.json`），引導你選取憑證。選取後，工具會自動驗證內容並將其複製到安全路徑，無需手動移動檔案。
+> 首次使用時，Agent 在偵測到沒有憑證時，會主動在對話視窗要求您輸入憑證的絕對路徑。之後 Agent 會執行 `setup_credentials` 指令自動驗證並複製到安全路徑。
 
 ### 使用範例
 
@@ -36,7 +36,7 @@
 Agent 的執行流程：
 
 ```
-Phase 0  確認 Playlist ID，檢查憑證（自動彈窗引導）
+Phase 0  確認 Playlist ID，檢查憑證（若缺失則引導使用者貼上路徑）
    ↓
 Phase 1  呼叫 fetch 取得清單資料
    ↓
@@ -50,6 +50,9 @@ Phase 4  確認後呼叫 update 寫回 YouTube
 ### 4. 底層工具 CLI 語法（供 Agent 或進階使用者參考）
 
 ```bash
+# 設定憑證檔案
+python -m scripts.yt_tool setup_credentials <path_to_client_secret.json>
+
 # 獲取播放清單資料
 python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json
 
@@ -141,7 +144,7 @@ YouTube Playlist skill/
 
 | 項目 | 需求 |
 |------|------|
-| 作業系統 | Windows（OpenFileDialog 依賴 tkinter GUI）|
+| 作業系統 | 跨平台（支援 Windows, macOS, Linux 等無 GUI/Headless 環境）|
 | Python 版本 | 3.10 以上 |
 | 網路 | 需要存取 YouTube Data API v3 |
 | Google 帳號 | 需具備目標播放清單的編輯權限 |

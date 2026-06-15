@@ -77,94 +77,23 @@ def extract_id(raw: str) -> str:
     if match:
         return match.group(1)
     return raw.strip()
-
-
 def ensure_credentials() -> None:
     """Guard function: detect missing credentials before any command runs.
 
-    If credentials are not found at the default path, this function
-    launches a system-native OpenFileDialog (via tkinter) that only
-    shows .json files. After the user selects a file, it is validated
-    as a Google OAuth 2.0 credential and copied to the secure default
-    location. If the credential already exists, this function returns
-    immediately with no side effects.
+    If credentials are not found at the default path, this function prints
+    an error JSON with code CREDENTIALS_MISSING and exits.
     """
     if DEFAULT_CREDENTIALS_PATH.is_file():
         logger.debug("Credentials found at %s", DEFAULT_CREDENTIALS_PATH)
         return
 
-    logger.warning("Credentials not found at %s. Launching file picker...", DEFAULT_CREDENTIALS_PATH)
-
-    # Lazy import tkinter only when needed (avoid import errors on headless systems)
-    try:
-        import tkinter as tk
-        from tkinter import filedialog
-    except ImportError:
-        print(json.dumps({
-            "status": "error",
-            "code": "TKINTER_UNAVAILABLE",
-            "message": "tkinter is not available. Please manually place your client_secret.json at: "
-                       + str(DEFAULT_CREDENTIALS_PATH)
-        }))
-        sys.exit(1)
-
+    logger.warning("Credentials not found at %s.", DEFAULT_CREDENTIALS_PATH)
     print(json.dumps({
-        "status": "waiting_for_user",
-        "message": "正在開啟檔案選擇視窗，請選取您的 Google OAuth 憑證 (JSON 檔案)..."
+        "status": "error",
+        "code": "CREDENTIALS_MISSING",
+        "message": "Google OAuth 憑證未設定。請提供憑證檔案的絕對路徑，並透過 setup_credentials 子指令設定。"
     }))
-    sys.stdout.flush()
-
-    root = tk.Tk()
-    root.withdraw()
-    root.lift()
-    root.attributes('-topmost', True)
-
-    path_str = filedialog.askopenfilename(
-        title="請選擇您從 Google Cloud Console 下載的 OAuth 憑證 JSON 檔案",
-        filetypes=[("JSON 憑證檔案", "*.json")]
-    )
-    root.destroy()
-
-    if not path_str:
-        print(json.dumps({
-            "status": "error",
-            "code": "USER_CANCELLED",
-            "message": "使用者已取消憑證選取。"
-        }))
-        sys.exit(1)
-
-    source = Path(path_str)
-
-    # Validate: must be a Google OAuth JSON (contains 'installed' or 'web' top-level key)
-    try:
-        with source.open(encoding="utf-8") as f:
-            data = json.load(f)
-        if "installed" not in data and "web" not in data:
-            raise ValueError("Missing 'installed' or 'web' key")
-    except Exception as exc:
-        logger.error("Invalid OAuth JSON at %s: %s", source, exc)
-        print(json.dumps({
-            "status": "error",
-            "code": "INVALID_JSON",
-            "message": "所選檔案不是合法的 Google OAuth 2.0 憑證。"
-                       "請確認您下載的是『桌面應用程式』類型的 OAuth Client ID。"
-        }))
-        sys.exit(1)
-
-    # Copy to secure default location
-    try:
-        DEFAULT_CREDENTIALS_DIR.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, DEFAULT_CREDENTIALS_PATH)
-        logger.info("Credentials installed from %s to %s", source, DEFAULT_CREDENTIALS_PATH)
-    except Exception as exc:
-        logger.exception("Failed to copy credentials")
-        print(json.dumps({
-            "status": "error",
-            "code": "COPY_FAILED",
-            "message": f"複製憑證失敗：{exc}。"
-                       f"請手動將檔案放置到 {DEFAULT_CREDENTIALS_PATH}"
-        }))
-        sys.exit(1)
+    sys.exit(1)
 
 
 # --- Commands ---
@@ -324,12 +253,61 @@ def cmd_update(args: argparse.Namespace) -> None:
     print(json.dumps(out_result))
 
 
+def cmd_setup_credentials(args: argparse.Namespace) -> None:
+    """Install and validate Google OAuth credentials from a specified path."""
+    source = Path(args.path)
+    if not source.is_file():
+        print(json.dumps({
+            "status": "error",
+            "code": "FILE_NOT_FOUND",
+            "message": f"找不到指定的憑證檔案：{source}"
+        }))
+        sys.exit(1)
+
+    # Validate: must be a Google OAuth JSON (contains 'installed' or 'web' top-level key)
+    try:
+        with source.open(encoding="utf-8") as f:
+            data = json.load(f)
+        if "installed" not in data and "web" not in data:
+            raise ValueError("Missing 'installed' or 'web' key")
+    except Exception as exc:
+        logger.error("Invalid OAuth JSON at %s: %s", source, exc)
+        print(json.dumps({
+            "status": "error",
+            "code": "INVALID_JSON",
+            "message": "所選檔案不是合法的 Google OAuth 2.0 憑證。請確認您下載的是『桌面應用程式』類型的 OAuth Client ID。"
+        }))
+        sys.exit(1)
+
+    # Copy to secure default location
+    try:
+        DEFAULT_CREDENTIALS_DIR.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, DEFAULT_CREDENTIALS_PATH)
+        logger.info("Credentials installed from %s to %s", source, DEFAULT_CREDENTIALS_PATH)
+        print(json.dumps({
+            "status": "success",
+            "message": "憑證設定成功。"
+        }))
+    except Exception as exc:
+        logger.exception("Failed to copy credentials")
+        print(json.dumps({
+            "status": "error",
+            "code": "COPY_FAILED",
+            "message": f"複製憑證失敗：{exc}。請手動將檔案放置到 {DEFAULT_CREDENTIALS_PATH}"
+        }))
+        sys.exit(1)
+
+
 # --- Main ---
 
 def main():
     parser = argparse.ArgumentParser(description="YouTube Playlist Agent-Skill Background Tool")
     parser.add_argument("--credentials", type=Path, help="Path to client_secret.json (optional)")
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    p_setup = subparsers.add_parser("setup_credentials")
+    p_setup.add_argument("path", help="Path to client_secret.json to install")
+    p_setup.set_defaults(func=cmd_setup_credentials)
 
     p_fetch = subparsers.add_parser("fetch")
     p_fetch.add_argument("playlist", help="Playlist ID or URL")
