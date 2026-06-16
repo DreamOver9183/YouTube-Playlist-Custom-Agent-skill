@@ -177,6 +177,8 @@ def cmd_update(args: argparse.Namespace) -> None:
     ensure_credentials()
     
     playlist_id = extract_id(args.playlist)
+    # SECURITY: Sanitize playlist_id to prevent path traversal
+    playlist_id = "".join(c for c in playlist_id if c.isalnum() or c in "-_")
     
     try:
         changes_data = json.loads(Path(args.changes).read_text(encoding="utf-8"))
