@@ -206,6 +206,26 @@ class ExecutionResult(BaseModel):
         return self.failed == 0 and not self.interrupted
 
 
+class ArtistResolution(BaseModel):
+    """單一影片的藝人辨識結果。"""
+    artist_key: str = Field(description="標準化後的藝人名稱（作為分組 key）")
+    confidence: float = Field(ge=0.0, le=1.0, description="辨識信心分數")
+    method: str = Field(description="辨識方法：bracket_prefix | dash_separator | channel | fuzzy | unknown")
+    raw_candidate: str = Field(default="", description="原始候選字串（debug 用）")
+
+
+class OptimizationReport(BaseModel):
+    """optimize 指令的最佳化結果報告。"""
+    total_items: int = Field(description="播放清單總影片數")
+    anchors: int = Field(description="錨點數量（不需移動的影片）")
+    need_to_move: int = Field(description="需要移動的影片數量")
+    estimated_quota: int = Field(description="預估配額消耗（units）")
+    quota_saved_vs_naive: int = Field(description="相較 Naive 方法節省的配額")
+    groups_found: list[str] = Field(default_factory=list, description="識別出的藝人群組列表")
+    unresolved_count: int = Field(default=0, description="無法自動辨識的影片數量")
+    group_details: dict[str, int] = Field(default_factory=dict, description="每個群組的影片數量")
+
+
 # ─────────────────────────────────────────────
 # 3. 工具函式
 # ─────────────────────────────────────────────

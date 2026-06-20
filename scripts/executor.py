@@ -129,15 +129,19 @@ def apply_sort(
 def compute_diff(
     old_items: list[EnrichedPlaylistItem],
     new_items: list[EnrichedPlaylistItem],
+    anchor_ids: frozenset[str] | None = None,
 ) -> list[PositionChange]:
     """Compute position changes between two orderings of the same items.
 
     Only items whose position **actually changed** are included in the
-    returned list.
+    returned list.  If *anchor_ids* is provided, items in that set are
+    excluded from the diff (they are treated as fixed anchors).
 
     Args:
         old_items: The current ordering (positions taken from list index).
         new_items: The desired ordering (positions taken from list index).
+        anchor_ids: Optional frozenset of playlist_item_ids to exclude
+            from the diff (LIS anchors that should not be moved).
 
     Returns:
         A list of ``PositionChange`` records for items that moved.
@@ -149,6 +153,10 @@ def compute_diff(
 
     changes: list[PositionChange] = []
     for new_pos, item in enumerate(new_items):
+        # Skip anchored items
+        if anchor_ids and item.playlist_item_id in anchor_ids:
+            continue
+
         old_pos = old_positions.get(item.playlist_item_id)
         if old_pos is None:
             # Item exists in new list but not in old — treat as an add at
@@ -177,9 +185,10 @@ def compute_diff(
             )
 
     logger.info(
-        "Computed diff: %d of %d items changed position.",
+        "Computed diff: %d of %d items changed position%s.",
         len(changes),
         len(new_items),
+        f" ({len(anchor_ids)} anchors excluded)" if anchor_ids else "",
     )
     return changes
 

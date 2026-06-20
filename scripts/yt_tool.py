@@ -28,6 +28,7 @@ from typing import Any
 
 from scripts.cache_manager import PlaylistCache
 from scripts.executor import compute_diff, estimate_quota
+from scripts.optimizer import run_full_optimization
 from scripts.schemas import EnrichedPlaylistItem, ExecutionResult, PositionChange
 from scripts.youtube_api import YouTubeClient
 
@@ -298,6 +299,70 @@ def cmd_setup_credentials(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
+def cmd_optimize(args: argparse.Namespace) -> None:
+    """Run the full optimization pipeline for playlist reordering.
+
+    Reads current.json, computes artist grouping + LIS anchors,
+    generates the minimal set of drift-safe changes, and writes
+    them to a local staging file. No API calls are made.
+    """
+    print(json.dumps({"status": "started", "command": "optimize", "message": "Starting local optimization..."})) 
+    sys.stdout.flush()
+
+    try:
+        current_data = json.loads(Path(args.current).read_text(encoding="utf-8"))
+        current_items = [EnrichedPlaylistItem.model_validate(x) for x in current_data]
+    except Exception as exc:
+        print(json.dumps({"status": "error", "code": "PARSE_ERROR", "message": f"Failed to load current playlist: {exc}"}))
+        sys.exit(1)
+
+    if not current_items:
+        print(json.dumps({"status": "error", "code": "EMPTY_PLAYLIST", "message": "Playlist is empty."}))
+        sys.exit(1)
+
+    aliases_path = Path(args.aliases) if args.aliases else None
+    group_order = args.group_order or "first_appearance"
+
+    logger.info(
+        "Running optimization: %d items, group_order=%s, aliases=%s",
+        len(current_items), group_order, aliases_path,
+    )
+
+    target, changes, report, resolutions = run_full_optimization(
+        current_items,
+        aliases_path=aliases_path,
+        group_order=group_order,
+    )
+
+    # Write target ordering (new.json)
+    target_path = Path(args.target_out)
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    target_data = [item.model_dump(mode="json") for item in target]
+    target_path.write_text(json.dumps(target_data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # Write optimized changes (staged, drift-safe order)
+    out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    changes_data = [c.model_dump(mode="json") for c in changes]
+    out_path.write_text(json.dumps(changes_data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # stdout for Agent
+    result = {
+        "status": "success",
+        "total_items": report.total_items,
+        "anchors": report.anchors,
+        "need_to_move": report.need_to_move,
+        "estimated_quota": report.estimated_quota,
+        "quota_saved_vs_naive": report.quota_saved_vs_naive,
+        "groups_found": report.groups_found,
+        "group_details": report.group_details,
+        "unresolved_count": report.unresolved_count,
+        "target_file": str(target_path),
+        "changes_file": str(out_path),
+    }
+    print(json.dumps(result))
+
+
 # --- Main ---
 
 def main():
@@ -324,6 +389,16 @@ def main():
     p_update.add_argument("playlist", help="Playlist ID or URL")
     p_update.add_argument("changes", help="Changes JSON file to apply")
     p_update.set_defaults(func=cmd_update)
+
+    p_optimize = subparsers.add_parser("optimize", help="Compute optimized reorder changes (local, 0 API units)")
+    p_optimize.add_argument("current", help="Current playlist JSON file (from fetch)")
+    p_optimize.add_argument("--target-out", required=True, help="Output path for target ordering JSON")
+    p_optimize.add_argument("--out", required=True, help="Output path for optimized changes JSON")
+    p_optimize.add_argument("--aliases", default=None, help="Path to artist_aliases.json (optional)")
+    p_optimize.add_argument("--group-order", default="first_appearance",
+                            choices=["first_appearance", "alphabetical", "count_desc"],
+                            help="Group ordering strategy")
+    p_optimize.set_defaults(func=cmd_optimize)
 
     args = parser.parse_args()
     args.func(args)
