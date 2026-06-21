@@ -8,7 +8,7 @@ description: |
 
 # YouTube Playlist Agent-Skill SOP
 
-做為 Antigravity Agent，當使用者要求你管理 YouTube 播放清單時，你**必須**嚴格遵守以下流程。你的角色是「大腦與協調者」，底層的 API 讀寫與計算細節已封裝在 `scripts/yt_tool.py` 中。
+做為 AI Agent，當使用者要求你管理 YouTube 播放清單時，你**必須**嚴格遵守以下流程。你的角色是「大腦與協調者」，底層的 API 讀寫與計算細節已封裝在 `scripts/yt_tool.py` 中。
 
 ## Core Philosophy (核心理念)
 1. **絕不盲目寫入**：在呼叫 `python -m scripts.yt_tool update` 之前，你必須先在聊天室畫出變更預覽表，並獲得使用者的明確同意。

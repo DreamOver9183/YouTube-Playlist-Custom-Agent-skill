@@ -1,7 +1,7 @@
 """
 yt_tool.py — Background tool for YouTube Playlist Agent-Skill.
 
-This script is designed to be executed by the Antigravity Agent, NOT the human user.
+This script is designed to be executed by AI Agents, NOT the human user.
 It provides simple, stateless CLI commands to interact with the YouTube API.
 
 Features:

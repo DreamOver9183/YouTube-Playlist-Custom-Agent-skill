@@ -1,6 +1,6 @@
-# YouTube Playlist Manager — Antigravity Agent-Skill
+# YouTube Playlist Manager — AI Agent Skill
 
-一個基於 [Antigravity](https://github.com/google-deepmind/antigravity) Agent-Skill 架構的 YouTube 播放清單管理工具，同時支援 **Claude Code**、**Codex**、**GitHub Copilot Workspace** 等多種開發者 AI Agent 框架。透過 YouTube Data API v3 讀取播放清單資料，由 Agent 依據使用者的自然語言指令計算排序，經確認後寫回 YouTube。
+一個通用的 AI Agent-Skill 架構 YouTube 播放清單管理工具，廣泛支援 **Claude Code**、**Codex**、**GitHub Copilot Workspace** 等多種開發者 AI Agent 框架。透過 YouTube Data API v3 讀取播放清單資料，由 Agent 依據使用者的自然語言指令計算排序，經確認後寫回 YouTube。
 
 本專案**不是**一個獨立的 CLI 應用程式。它是一組提供給 AI Agent 呼叫的後台工具與標準作業程序（SOP）。Agent 負責理解需求與互動，Python 腳本僅負責 API 通訊與資料運算。任何支援終端執行與程式碼產生的 Agent 皆可閱讀 `docs/agent/` 目錄下的 [AGENT_SOP.md](file:///d:/Antigravity%20Code/YouTube%20Playlist%20skill/docs/agent/AGENT_SOP.md) 以遵循相同的運作流程。
 
@@ -8,7 +8,7 @@
 
 ## 快速開始
 
-將以下 Prompt 貼入 Antigravity 聊天視窗，Agent 會自動完成環境建置與依賴安裝：
+將以下 Prompt 貼入您的 AI Agent 聊天視窗，Agent 會自動完成環境建置與依賴安裝：
 
 ```
 請幫我使用 https://github.com/DreamOver9183/YouTube-Playlist-Custom-Agent-skill 這個 skill
@@ -93,7 +93,7 @@ YouTube Playlist skill/
 │   └── reports/
 │       └── v1.5更新20260620.md   # 版本更新與架構報告（供人類閱讀）
 ├── .gemini/skills/yt-playlist-manager/
-│   ├── SKILL.md                # Antigravity Agent 專屬註冊檔
+│   ├── SKILL.md                # Agent Skill 註冊設定檔
 │   └── config.json             # Skill 註冊設定
 ├── scripts/
 │   ├── yt_tool.py              # Agent 呼叫的後台工具入口（fetch / optimize / diff / update）
@@ -112,7 +112,7 @@ YouTube Playlist skill/
 
 ```
 ┌───────────────────────────────────────────────────────────┐
-│ Antigravity Agent                                         │
+│ AI Agent (Claude/Codex/Copilot/etc.)                      │
 │                                                           │
 │  SKILL.md (SOP)                                           │
 │  ┌─────────────────────────────────────────────────────┐  │
@@ -149,7 +149,7 @@ YouTube Playlist skill/
 | 日誌 | Python logging 模組 → `scripts/logs/yt_skill.log` |
 | 快取 | 本地 JSON 檔案（`scripts/cache/`，預設 30 分鐘 TTL） |
 | 最佳化演算法 | Patience Sorting (O(N log N) LIS) 最小化 API 消耗 |
-| 架構模式 | Antigravity Agent-Skill（Agent 為大腦，腳本為工具） |
+| 架構模式 | Agent-Skill 通用架構（Agent 為大腦，腳本為工具） |
 
 ### 使用環境
 
