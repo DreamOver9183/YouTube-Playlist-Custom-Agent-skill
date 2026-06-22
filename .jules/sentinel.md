@@ -1,0 +1,4 @@
+## 2024-03-22 - Insecure Credential File Handling
+**Vulnerability:** OAuth credential files and directories were created with default umask permissions, and `shutil.copy2` was used which preserves potentially insecure source file permissions, allowing unauthorized local users to access sensitive credentials.
+**Learning:** Default permissions are insufficient for sensitive files like OAuth credentials. `shutil.copy2` will copy the source file's permissions, which might be overly permissive (e.g. 0o644).
+**Prevention:** Always explicitly set secure permissions for sensitive directories (e.g. 0o700) and files (e.g. 0o600). To prevent TOCTOU vulnerabilities during file creation, use `Path.touch(mode=0o600, exist_ok=True)` and follow up with `Path.chmod(0o600)`. Then use `shutil.copyfile` to overwrite the content without preserving insecure source permissions.
