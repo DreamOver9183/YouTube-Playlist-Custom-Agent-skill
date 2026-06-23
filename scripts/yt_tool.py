@@ -282,8 +282,10 @@ def cmd_setup_credentials(args: argparse.Namespace) -> None:
 
     # Copy to secure default location
     try:
-        DEFAULT_CREDENTIALS_DIR.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, DEFAULT_CREDENTIALS_PATH)
+        DEFAULT_CREDENTIALS_DIR.mkdir(mode=0o700, parents=True, exist_ok=True)
+        DEFAULT_CREDENTIALS_PATH.touch(mode=0o600, exist_ok=True)
+        DEFAULT_CREDENTIALS_PATH.chmod(0o600)
+        shutil.copyfile(source, DEFAULT_CREDENTIALS_PATH)
         logger.info("Credentials installed from %s to %s", source, DEFAULT_CREDENTIALS_PATH)
         print(json.dumps({
             "status": "success",
