@@ -1,0 +1,4 @@
+## 2026-06-21 - [Prevent Insecure OAuth Credential File Permissions]
+**Vulnerability:** Google OAuth credentials (`client_secret.json`) were being copied using `shutil.copy2()`, which preserves the original file permissions. If the original file had overly permissive access (e.g., world-readable), these insecure permissions would be maintained in the application's credentials directory, potentially exposing sensitive API access to unauthorized local users.
+**Learning:** `shutil.copy2()` preserves metadata, including permissions. When dealing with sensitive files like credentials or secrets, you cannot trust the source file's permissions to be secure. We must explicitly enforce least privilege on the destination.
+**Prevention:** Use `Path.touch(mode=0o600, exist_ok=True)` followed explicitly by `.chmod(0o600)` to create the target file securely, and then use `shutil.copyfile()` to copy only the file contents. Apply `0o700` mode to directories containing secrets.
