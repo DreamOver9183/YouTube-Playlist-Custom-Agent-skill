@@ -149,7 +149,10 @@ class YouTubeClient:
             logger.info("Completed OAuth consent flow.")
 
         # Persist the token for next run.
-        self.token_path.parent.mkdir(parents=True, exist_ok=True)
+        self.token_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        self.token_path.parent.chmod(0o700)
+        self.token_path.touch(mode=0o600, exist_ok=True)
+        self.token_path.chmod(0o600)
         self.token_path.write_text(creds.to_json(), encoding="utf-8")
         logger.info("Saved token to %s", self.token_path)
 
