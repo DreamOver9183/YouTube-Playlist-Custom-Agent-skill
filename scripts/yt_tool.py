@@ -77,7 +77,9 @@ def extract_id(raw: str) -> str:
     match = re.search(r"[?&]list=([a-zA-Z0-9_-]+)", raw)
     if match:
         return match.group(1)
-    return raw.strip()
+    # Sanitize fallback input to prevent path traversal
+    safe_id = "".join(c for c in raw.strip() if c.isalnum() or c in "-_")
+    return safe_id if safe_id else "unknown"
 def ensure_credentials() -> None:
     """Guard function: detect missing credentials before any command runs.
 
