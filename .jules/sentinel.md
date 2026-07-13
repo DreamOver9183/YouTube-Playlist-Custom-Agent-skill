@@ -1,4 +1,4 @@
-## 2025-02-14 - Insecure Default File Permissions for OAuth Credentials
-**Vulnerability:** OAuth credentials file (`client_secret.json`) could be created with insecure permissions (e.g., world-readable) because `shutil.copy2` preserves the source file's permissions, and `mkdir` alone doesn't restrict permissions sufficiently.
-**Learning:** Even when moving files to a "secure default location", the act of copying must explicitly enforce tight permissions (`0o600` for files, `0o700` for directories). `touch` alone doesn't change permissions of existing files, and `copy2` propagates potentially insecure source modes.
-**Prevention:** Always use `mkdir(mode=0o700)` for credential directories, `Path.touch(mode=0o600, exist_ok=True)` followed immediately by `Path.chmod(0o600)` for the file, and `shutil.copyfile` (which doesn't copy stat metadata) instead of `shutil.copy` or `shutil.copy2`.
+## 2024-05-18 - Path Traversal Vulnerability in Progress File Loading
+**Vulnerability:** The `playlist_id` extracted from user input was directly used in the `progress_file` path without sanitization, leading to a path traversal vulnerability.
+**Learning:** Even internal filenames created for logging or state tracking should not blindly trust parsed user input without explicit sanitization.
+**Prevention:** Sanitize the input to allow only safe alphanumeric characters, hyphens, and underscores before using it in any file operations.
