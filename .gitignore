@@ -1,7 +1,7 @@
 # OAuth credentials - DO NOT commit
 scripts/credentials/
 credentials/
-.gemini/
+.gemini/**/credentials/
 scripts/cache/
 scripts/logs/
 scripts/progress/
@@ -11,14 +11,22 @@ __pycache__/
 *.pyc
 *.pyo
 *.egg-info/
-dist/
 build/
 .venv/
 venv/
 
-# IDE
+# Node & TypeScript
+node_modules/
+dist/
+*.tsbuildinfo
+.npm/
+
+# IDE & OS
 .vscode/
 .idea/
 *.swp
 *.swo
+.DS_Store
+
+# Temporary data
 data/

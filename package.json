@@ -1,0 +1,26 @@
+{
+  "name": "cognitive-sorting-engine",
+  "version": "1.0.0",
+  "description": "通用型認知分群與多維度排序思考引擎 (Cognitive Sorting & Grouping Engine)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --loader ts-node/esm tests/test_cognitive_engine.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "sorting",
+    "cognitive",
+    "grouping",
+    "agent-skill",
+    "typescript"
+  ],
+  "author": "Antigravity AI Team",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
