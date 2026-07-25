@@ -1,6 +1,6 @@
 # YouTube Playlist Manager — AI Agent Skill & 通用認知排序引擎
 
-一個通用的 AI Agent-Skill 架構 YouTube 播放清單管理工具與 **通用型認知分群與多維度排序思考引擎 (Cognitive Sorting & Grouping Engine)**。廣泛支援 **Claude Code**、**Codex**、**GitHub Copilot Workspace**、**Gemini CLI** 等多種開發者 AI Agent 框架。
+一個通用的 AI Agent-Skill 架構 YouTube 播放清單管理工具與 **通用型認知分群與多維度排序思考引擎 (Cognitive Sorting & Grouping Engine)**。廣泛支援 **Claude Code**、**Codex**、**GitHub Copilot Workspace**、**Antigravity CLI** 等多種開發者 AI Agent 框架。
 
 本專案採用 **「Agent 為大腦、雙引擎為手臂」** 的架構設計：
 1. **Python API 後台子系統 (`scripts/`)**：負責 YouTube Data API v3 通訊、OAuth 2.0 授權、Patience Sorting LIS 錨點演算法、尾端優先 (Tail-First) 漂移防護與增量斷點寫回。
