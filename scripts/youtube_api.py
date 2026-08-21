@@ -56,7 +56,8 @@ def extract_playlist_id(url_or_id: str) -> str:
 
     # Quick heuristic: bare IDs typically start with PL, UU, LL, FL, OL, etc.
     if not url_or_id.startswith(("http://", "https://", "www.")):
-        return url_or_id
+        safe_id = "".join(c for c in url_or_id if c.isalnum() or c in "-_")
+        return safe_id if safe_id else "unknown"
 
     parsed = urlparse(url_or_id)
     query_params = parse_qs(parsed.query)
@@ -148,8 +149,17 @@ class YouTubeClient:
             creds = flow.run_local_server(port=0)
             logger.info("Completed OAuth consent flow.")
 
-        # Persist the token for next run.
-        self.token_path.parent.mkdir(parents=True, exist_ok=True)
+        # Persist the token for next run with secure file permissions (0o700 dir, 0o600 file).
+        self.token_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        try:
+            self.token_path.parent.chmod(0o700)
+        except OSError:
+            pass
+        self.token_path.touch(mode=0o600, exist_ok=True)
+        try:
+            self.token_path.chmod(0o600)
+        except OSError:
+            pass
         self.token_path.write_text(creds.to_json(), encoding="utf-8")
         logger.info("Saved token to %s", self.token_path)
 

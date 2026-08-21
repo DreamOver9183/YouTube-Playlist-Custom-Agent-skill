@@ -131,11 +131,15 @@ def get_authenticated_client(credentials_path: Path) -> "YouTubeClient":
 
 
 def extract_id(raw: str) -> str:
-    """Extract Playlist ID from URL using regex, or return raw if it looks like an ID."""
+    """Extract Playlist ID from URL using regex, or return sanitized raw ID.
+
+    Security: Always sanitize raw input to prevent path traversal vulnerabilities.
+    """
     match = re.search(r"[?&]list=([a-zA-Z0-9_-]+)", raw)
     if match:
         return match.group(1)
-    return raw.strip()
+    safe_id = "".join(c for c in raw.strip() if c.isalnum() or c in "-_")
+    return safe_id if safe_id else "unknown"
 
 
 def ensure_credentials(credentials_path: Path) -> None:
