@@ -40,3 +40,23 @@ jobs:
         run: npm run typecheck
       - name: Cognitive engine tests
         run: npm test
+
+  e2e:
+    name: End-to-end (SOP flow, offline)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          npm ci
+      - name: Full SOP end-to-end suite
+        # Drives the real CLIs in real subprocesses against a fake YouTube API:
+        # no credentials, no network, no quota.  See tests/e2e/README.md.
+        run: python tests/e2e/run_e2e.py

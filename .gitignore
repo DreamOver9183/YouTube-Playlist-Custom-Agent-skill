@@ -2,6 +2,10 @@
 scripts/credentials/
 credentials/
 .gemini/**/credentials/
+# ...including a client secret dropped anywhere in the tree (e.g. the repo root
+# after downloading it from the Google Cloud Console).
+client_secret*.json
+token*.json
 scripts/cache/
 scripts/logs/
 scripts/progress/
