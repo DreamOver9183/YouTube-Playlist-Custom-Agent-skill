@@ -84,7 +84,9 @@ export class SortingEngine {
     records: readonly EntityRecord<T>[],
     plan: CognitivePlan
   ): readonly EntityRecord<T>[] {
-    const comparator = this.comparatorBuilder.buildComparator<T>(plan);
+    // 群組序位（first_appearance / count_desc）必須以「原始順序」計算，
+    // 因此一律傳入未排序的 records。
+    const comparator = this.comparatorBuilder.buildComparator<T>(plan, records);
     const sorted = [...records].sort(comparator);
     return sorted;
   }

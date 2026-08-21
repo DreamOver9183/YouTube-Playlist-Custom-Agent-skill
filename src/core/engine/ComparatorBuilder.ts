@@ -13,15 +13,27 @@ import type { CognitivePlan, GroupDimension, NullHandlingStrategy, SortCriterion
 /** 比較器函式型態 */
 export type RecordComparator<T> = (a: EntityRecord<T>, b: EntityRecord<T>) => number;
 
+/** 群組序位對照表：正規化後的群組鍵 → 排列序位 */
+type GroupRankTable = ReadonlyMap<string, number>;
+
 /**
  * 動態比較器建構管道
  */
 export class ComparatorBuilder {
   /**
    * 根據 CognitivePlan 動態合成組合比較函式
+   *
+   * @param plan 認知排序計畫
+   * @param records 待排序資料（用於計算 `first_appearance` / `count_desc` 群組序位）。
+   *   省略時所有分群維度一律退回字典序。
    */
-  public buildComparator<T>(plan: CognitivePlan): RecordComparator<T> {
-    const groupComparators = plan.groupDimensions.map((dim) => this.buildGroupComparator<T>(dim));
+  public buildComparator<T>(
+    plan: CognitivePlan,
+    records?: readonly EntityRecord<T>[]
+  ): RecordComparator<T> {
+    const groupComparators = plan.groupDimensions.map((dim) =>
+      this.buildGroupComparator<T>(dim, this.buildGroupRankTable(dim, records))
+    );
     const sortComparators = plan.sortCriteria.map((crit) => this.buildSortComparator<T>(crit));
 
     return (a: EntityRecord<T>, b: EntityRecord<T>): number => {
@@ -47,9 +59,61 @@ export class ComparatorBuilder {
   }
 
   /**
+   * 建立群組序位對照表
+   *
+   * `first_appearance`（預設）依各群組首次出現的位置排列，`count_desc` 依群組
+   * 大小排列（同大小則回到首次出現順序）。`lexical` 不需要對照表。
+   */
+  private buildGroupRankTable<T>(
+    dimension: GroupDimension,
+    records?: readonly EntityRecord<T>[]
+  ): GroupRankTable | undefined {
+    const strategy = dimension.groupOrder ?? 'first_appearance';
+    if (strategy === 'lexical' || !records || records.length === 0) {
+      return undefined;
+    }
+
+    const firstIndex = new Map<string, number>();
+    const counts = new Map<string, number>();
+
+    for (let idx = 0; idx < records.length; idx++) {
+      const record = records[idx];
+      if (!record) {
+        continue;
+      }
+      const value = this.normalizeGroupValue(record.getValue(dimension.field), dimension);
+      if (value === null || value === undefined) {
+        continue;
+      }
+      const key = String(value);
+      if (!firstIndex.has(key)) {
+        firstIndex.set(key, idx);
+      }
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+
+    const keys = [...firstIndex.keys()];
+    if (strategy === 'count_desc') {
+      keys.sort((a, b) => {
+        const diff = (counts.get(b) ?? 0) - (counts.get(a) ?? 0);
+        return diff !== 0 ? diff : (firstIndex.get(a) ?? 0) - (firstIndex.get(b) ?? 0);
+      });
+    } else {
+      keys.sort((a, b) => (firstIndex.get(a) ?? 0) - (firstIndex.get(b) ?? 0));
+    }
+
+    const table = new Map<string, number>();
+    keys.forEach((key, rank) => table.set(key, rank));
+    return table;
+  }
+
+  /**
    * 建構單一分群維度比較函式
    */
-  private buildGroupComparator<T>(dimension: GroupDimension): RecordComparator<T> {
+  private buildGroupComparator<T>(
+    dimension: GroupDimension,
+    rankTable?: GroupRankTable
+  ): RecordComparator<T> {
     return (a: EntityRecord<T>, b: EntityRecord<T>): number => {
       const valA = this.normalizeGroupValue(a.getValue(dimension.field), dimension);
       const valB = this.normalizeGroupValue(b.getValue(dimension.field), dimension);
@@ -59,10 +123,20 @@ export class ComparatorBuilder {
         return nullComparison;
       }
 
-      // 非 Null 純量值比對
       if (valA === valB) {
         return 0;
       }
+
+      // 依群組序位排列（預設 first_appearance）
+      if (rankTable) {
+        const rankA = rankTable.get(String(valA));
+        const rankB = rankTable.get(String(valB));
+        if (rankA !== undefined && rankB !== undefined) {
+          return rankA - rankB;
+        }
+      }
+
+      // 字典序降級
       if (valA! < valB!) {
         return -1;
       }
@@ -105,8 +179,11 @@ export class ComparatorBuilder {
 
   /**
    * 正規化分群屬性值（處理別名對照與小寫轉換）
+   *
+   * 公開給 Evaluator 使用：偵測器必須與比較器對「同一群」的定義完全一致，
+   * 否則檢查出來的斷層只是兩套正規化規則的差異。
    */
-  private normalizeGroupValue(
+  public normalizeGroupValue(
     value: AttributeValue,
     dimension: GroupDimension
   ): AttributeValue {

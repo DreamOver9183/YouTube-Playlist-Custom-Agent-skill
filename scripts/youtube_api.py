@@ -10,6 +10,7 @@ Wraps the YouTube Data API v3 for playlist management operations:
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 from pathlib import Path
@@ -138,7 +139,6 @@ class YouTubeClient:
             flow = InstalledAppFlow.from_client_secrets_file(
                 str(self.credentials_path), _SCOPES
             )
-            import json
             import sys
             print(json.dumps({
                 "status": "waiting_for_user",
@@ -204,10 +204,40 @@ class YouTubeClient:
             if not page_token:
                 break
 
+        hidden = sum(1 for item in items if not item.is_available)
         logger.info(
-            "Fetched %d items from playlist %s", len(items), playlist_id
+            "Fetched %d items from playlist %s (%d unavailable, kept as pinned "
+            "placeholders)",
+            len(items),
+            playlist_id,
+            hidden,
         )
         return items
+
+    def get_playlist_head(
+        self, playlist_id: str, max_results: int = 50
+    ) -> list[str]:
+        """Read the first page of a playlist and return its item ids in order.
+
+        Costs a single quota unit.  Used before a write-back to confirm the
+        snapshot the change set was planned against is still current.
+
+        Args:
+            playlist_id: The YouTube playlist ID.
+            max_results: Page size (max 50, the API limit).
+
+        Returns:
+            The ordered ``playlistItemId`` values of the first page.
+        """
+        self._ensure_authenticated()
+
+        response: dict = self._youtube.playlistItems().list(
+            part="id",
+            playlistId=playlist_id,
+            maxResults=min(max_results, 50),
+        ).execute()
+
+        return [raw.get("id", "") for raw in response.get("items", [])]
 
     # ── Video Metadata ───────────────────────────────────────────────
 
@@ -271,7 +301,7 @@ class YouTubeClient:
         playlist_id: str,
         video_id: str,
         new_position: int,
-    ) -> bool:
+    ) -> None:
         """Move a playlist item to a new position.
 
         Args:
@@ -280,8 +310,11 @@ class YouTubeClient:
             video_id: The video's ID (required by the API body).
             new_position: Zero-based target position.
 
-        Returns:
-            ``True`` on success, ``False`` on failure.
+        Raises:
+            HttpError: On any API failure.  The caller must classify it with
+                :func:`classify_http_error` — the moves are order-dependent, so
+                a silent ``False`` would let the caller march on and scramble
+                every position after this one.
         """
         self._ensure_authenticated()
 
@@ -301,13 +334,6 @@ class YouTubeClient:
             self._youtube.playlistItems().update(
                 part="snippet", body=body
             ).execute()
-            logger.debug(
-                "Moved item %s to position %d in playlist %s",
-                playlist_item_id,
-                new_position,
-                playlist_id,
-            )
-            return True
         except HttpError as exc:
             logger.error(
                 "Failed to move item %s to position %d: %s",
@@ -315,7 +341,14 @@ class YouTubeClient:
                 new_position,
                 exc,
             )
-            return False
+            raise
+
+        logger.debug(
+            "Moved item %s to position %d in playlist %s",
+            playlist_item_id,
+            new_position,
+            playlist_id,
+        )
 
     def delete_item(self, playlist_item_id: str) -> bool:
         """Delete a single item from a playlist.
@@ -356,7 +389,13 @@ class YouTubeClient:
     def _parse_playlist_item(raw: dict) -> PlaylistItemData | None:
         """Map a raw API playlist-item resource to ``PlaylistItemData``.
 
-        Returns ``None`` for unavailable videos (deleted, private, etc.).
+        Unavailable videos (deleted, private) are **kept** with
+        ``is_available=False``.  Dropping them would compact the index space and
+        shift every later position by one, which silently scrambles the
+        playlist on write-back.  They are pinned in place by the optimizer.
+
+        Returns ``None`` only for items with no videoId at all (nothing that
+        can be addressed or moved).
         """
         snippet: dict = raw.get("snippet", {})
         status: dict = raw.get("status", {})
@@ -369,15 +408,15 @@ class YouTubeClient:
             )
             return None
 
-        # Skip unavailable / private / deleted videos.
+        # Unavailable / private / deleted videos still occupy a position.
         privacy_status: str = status.get("privacyStatus", "public")
-        if privacy_status in ("private", "privacyStatusUnspecified"):
+        is_available = privacy_status not in ("private", "privacyStatusUnspecified")
+        if not is_available:
             logger.debug(
-                "Skipping unavailable video %s (status=%s)",
+                "Keeping unavailable video %s as a pinned placeholder (status=%s)",
                 video_id,
                 privacy_status,
             )
-            return None
 
         published_at_str: str = snippet.get("publishedAt", "")
         try:
@@ -398,6 +437,7 @@ class YouTubeClient:
             added_at=added_at,
             channel_title=snippet.get("videoOwnerChannelTitle", ""),
             playlist_id=snippet.get("playlistId", ""),
+            is_available=is_available,
         )
 
     @staticmethod
@@ -434,6 +474,48 @@ class YouTubeClient:
 
 
 # ── Module-level Utilities ───────────────────────────────────────────
+
+
+def classify_http_error(exc: HttpError) -> tuple[str, bool, bool]:
+    """Classify an API error into (code, retryable, fatal).
+
+    Position updates are order-dependent, so "keep going and count failures"
+    is the wrong default: once a call fails for a reason that will also fail
+    for the next one (quota exhausted, revoked auth), continuing only burns
+    quota and leaves the playlist half-reordered.
+
+    Args:
+        exc: The ``HttpError`` raised by the client library.
+
+    Returns:
+        ``(code, retryable, fatal)`` where *retryable* means "wait and try the
+        same call again" and *fatal* means "stop the whole run now".
+    """
+    status = getattr(getattr(exc, "resp", None), "status", None)
+    reason = ""
+    try:
+        payload = json.loads(exc.content.decode("utf-8"))
+        errors = payload.get("error", {}).get("errors", [])
+        if errors:
+            reason = errors[0].get("reason", "")
+    except Exception:  # pragma: no cover — malformed error payload
+        reason = ""
+
+    if reason in ("quotaExceeded", "dailyLimitExceeded"):
+        return "QUOTA_EXCEEDED", False, True
+    if status == 401 or reason in ("authError", "unauthorized"):
+        return "AUTH_FAILED", False, True
+    if status == 403 and reason in ("rateLimitExceeded", "userRateLimitExceeded"):
+        return "RATE_LIMITED", True, False
+    if status == 403:
+        return "FORBIDDEN", False, True
+    if status == 404 or reason in ("playlistItemNotFound", "videoNotFound"):
+        return "ITEM_NOT_FOUND", False, False
+    if status == 429:
+        return "RATE_LIMITED", True, False
+    if status is not None and status >= 500:
+        return "SERVER_ERROR", True, False
+    return f"HTTP_{status or 'UNKNOWN'}", False, False
 
 
 def _parse_datetime(value: str) -> "datetime":

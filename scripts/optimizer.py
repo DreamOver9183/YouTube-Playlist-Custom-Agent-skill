@@ -7,8 +7,10 @@ updates required.
 
 Core components:
 1. Three-layer artist identification engine (regex → channel → fuzzy)
-2. LIS (Longest Increasing Subsequence) anchor algorithm
-3. Drift-safe change ordering (tail-first)
+2. LIS (Longest Increasing Subsequence) anchor algorithm, constrained by
+   pinned (unavailable) items that must keep their original position
+3. Move planning against a simulated live list — the position sent to the
+   API is computed at execution time, not taken from the target index
 
 All computation is local (0 API units).
 """
@@ -24,11 +26,13 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Optional
 
+from scripts.executor import apply_sort
 from scripts.schemas import (
     ArtistResolution,
     EnrichedPlaylistItem,
     OptimizationReport,
     PositionChange,
+    SortConfig,
 )
 
 logger = logging.getLogger(__name__)
@@ -343,12 +347,67 @@ def resolve_artist(
 # ─────────────────────────────────────────────
 
 
+def pinned_item_ids(items: list[EnrichedPlaylistItem]) -> frozenset[str]:
+    """Return the ids of items that must never be moved.
+
+    Private / deleted videos still occupy a slot in the playlist's position
+    space, but the API cannot move them (and the user cannot see them).  They
+    are pinned to their original index so that every other position stays exact.
+    """
+    return frozenset(
+        item.playlist_item_id for item in items if not item.is_available
+    )
+
+
+def weave_pinned(
+    movable_order: list[EnrichedPlaylistItem],
+    original: list[EnrichedPlaylistItem],
+) -> list[EnrichedPlaylistItem]:
+    """Rebuild a full ordering, putting pinned items back at their original index.
+
+    Args:
+        movable_order: The desired order of the movable (available) items.
+        original: The original full playlist, used to locate pinned items.
+
+    Returns:
+        A list of ``len(original)`` items where every pinned item sits at the
+        index it had in *original*, and the movable items fill the remaining
+        slots in the given order.
+    """
+    pinned = [(idx, item) for idx, item in enumerate(original) if not item.is_available]
+    if not pinned:
+        return list(movable_order)
+
+    total = len(movable_order) + len(pinned)
+    result: list[EnrichedPlaylistItem | None] = [None] * total
+    for idx, item in pinned:
+        if idx >= total:
+            # Should not happen for a well-formed playlist; fail loudly rather
+            # than silently shifting everything by one.
+            raise ValueError(
+                f"Pinned item {item.playlist_item_id} has index {idx} outside "
+                f"the playlist length {total}."
+            )
+        result[idx] = item
+
+    stream = iter(movable_order)
+    for slot in range(total):
+        if result[slot] is None:
+            result[slot] = next(stream)
+
+    return [item for item in result if item is not None]
+
+
 def group_by_artist(
     items: list[EnrichedPlaylistItem],
     aliases_path: Path | None = None,
     group_order: str = "first_appearance",
+    within_group_sort: SortConfig | None = None,
 ) -> tuple[list[EnrichedPlaylistItem], dict[str, list[int]], list[ArtistResolution]]:
     """Group playlist items by resolved artist and build target ordering.
+
+    Unavailable (private / deleted) items never take part in the grouping —
+    they are pinned back to their original index by :func:`weave_pinned`.
 
     Args:
         items: Current playlist items in their original order.
@@ -357,6 +416,9 @@ def group_by_artist(
             - "first_appearance": Groups ordered by their earliest item position.
             - "alphabetical": Groups ordered alphabetically by artist key.
             - "count_desc": Groups ordered by item count (largest first).
+        within_group_sort: Optional sort applied *inside* each group (e.g.
+            view count descending).  Reuses ``executor.apply_sort`` so the
+            sort semantics are identical to the ``diff`` path.
 
     Returns:
         A tuple of:
@@ -371,6 +433,17 @@ def group_by_artist(
     groups: dict[str, list[int]] = defaultdict(list)
 
     for idx, item in enumerate(items):
+        if not item.is_available:
+            resolutions.append(
+                ArtistResolution(
+                    artist_key="__pinned__",
+                    confidence=0.0,
+                    method="unavailable",
+                    raw_candidate=item.video_id,
+                )
+            )
+            continue
+
         resolution = resolve_artist(item, alias_lookup)
         resolutions.append(resolution)
         groups[resolution.artist_key].append(idx)
@@ -383,17 +456,23 @@ def group_by_artist(
     else:  # first_appearance (default)
         ordered_keys = sorted(groups.keys(), key=lambda k: min(groups[k]))
 
-    # Build target ordering
-    target: list[EnrichedPlaylistItem] = []
+    # Build target ordering for the movable items
+    movable_order: list[EnrichedPlaylistItem] = []
     for key in ordered_keys:
-        for idx in groups[key]:
-            target.append(items[idx])
+        group_items = [items[idx] for idx in groups[key]]
+        if within_group_sort is not None:
+            group_items = apply_sort(group_items, within_group_sort)
+        movable_order.extend(group_items)
+
+    target = weave_pinned(movable_order, items)
 
     logger.info(
-        "Grouped %d items into %d artist groups (order=%s).",
+        "Grouped %d items into %d artist groups (order=%s, within_group_sort=%s, pinned=%d).",
         len(items),
         len(groups),
         group_order,
+        within_group_sort.field.value if within_group_sort else "none",
+        len(items) - len(movable_order),
     )
     return target, dict(groups), resolutions
 
@@ -403,22 +482,87 @@ def group_by_artist(
 # ─────────────────────────────────────────────
 
 
+def _lis_segment(
+    seq: list[int],
+    lo: int,
+    hi: int,
+    lower_bound: int,
+    upper_bound: int | None,
+) -> set[int]:
+    """Longest increasing subsequence of ``seq[lo:hi]``, restricted to values
+    strictly between *lower_bound* and *upper_bound*.
+
+    Patience sorting with parent links, O(N log N).  The bounds keep the result
+    compatible with the pinned items that delimit this segment: an anchor may
+    only sit between two pinned items if its original position also lies
+    between theirs, otherwise the anchor set would not be a valid increasing
+    subsequence and the move plan would be unsatisfiable.
+
+    Returns:
+        The set of indices into *seq* that belong to the LIS.
+    """
+    candidates = [
+        i
+        for i in range(lo, hi)
+        if seq[i] > lower_bound and (upper_bound is None or seq[i] < upper_bound)
+    ]
+    if not candidates:
+        return set()
+
+    tails: list[int] = []           # Smallest tail values
+    tail_positions: list[int] = []  # Indices into seq for each tail
+    parent: dict[int, int] = {}     # For backtracking
+
+    for i in candidates:
+        pos = bisect_left(tails, seq[i])
+        if pos == len(tails):
+            tails.append(seq[i])
+            tail_positions.append(i)
+        else:
+            tails[pos] = seq[i]
+            tail_positions[pos] = i
+
+        parent[i] = tail_positions[pos - 1] if pos > 0 else -1
+
+    lis_indices: set[int] = set()
+    cur = tail_positions[-1]
+    while cur != -1:
+        lis_indices.add(cur)
+        cur = parent[cur]
+
+    return lis_indices
+
+
 def compute_lis_anchors(
     current: list[EnrichedPlaylistItem],
     target: list[EnrichedPlaylistItem],
+    pinned_ids: frozenset[str] | None = None,
 ) -> frozenset[str]:
-    """Find the longest increasing subsequence of original positions in the
-    target ordering. Items in the LIS do not need to be moved.
+    """Find the items that do not need an API call to reach the target order.
+
+    The anchor set must be an *increasing subsequence of original positions*
+    when read in target order — that is the invariant the move planner relies
+    on.  The longest such subsequence gives the provably minimal number of
+    moves (``N - LIS``).
+
+    Pinned items (private / deleted videos) are always anchors, and they split
+    the sequence into segments: each segment's LIS is bounded by the pinned
+    positions on either side so the combined set stays increasing.
 
     Args:
         current: Items in their current (original) order.
         target: Items in their desired (target) order.
+        pinned_ids: Ids that must be anchors.  Defaults to the unavailable
+            items found in *current*.
 
     Returns:
         A frozenset of playlist_item_ids that should NOT be moved (anchors).
     """
     if not current or not target:
         return frozenset()
+
+    if pinned_ids is None:
+        pinned_ids = pinned_item_ids(current)
 
     # Map playlist_item_id → original position
     original_pos: dict[str, int] = {
@@ -437,96 +581,179 @@ def compute_lis_anchors(
     if not seq:
         return frozenset()
 
-    # Compute LIS using patience sorting (O(N log N))
-    # We need to recover the actual LIS elements, not just the length
-    n = len(seq)
-    tails: list[int] = []           # Smallest tail values
-    tail_positions: list[int] = []  # Indices into seq for each tail
-    parent: list[int] = [-1] * n    # For backtracking
+    anchor_indices: set[int] = set()
+    segment_start = 0
+    lower_bound = -1
 
-    for i in range(n):
-        pos = bisect_left(tails, seq[i])
-        if pos == len(tails):
-            tails.append(seq[i])
-            tail_positions.append(i)
-        else:
-            tails[pos] = seq[i]
-            tail_positions[pos] = i
+    for idx, item_id in enumerate(target_ids):
+        if item_id not in pinned_ids:
+            continue
+        anchor_indices.add(idx)
+        anchor_indices |= _lis_segment(
+            seq, segment_start, idx, lower_bound, seq[idx]
+        )
+        segment_start = idx + 1
+        lower_bound = seq[idx]
 
-        if pos > 0:
-            parent[i] = tail_positions[pos - 1]
+    anchor_indices |= _lis_segment(
+        seq, segment_start, len(seq), lower_bound, None
+    )
 
-    # Backtrack to find actual LIS indices
-    lis_indices: set[int] = set()
-    if tails:
-        cur = tail_positions[-1]
-        while cur != -1:
-            lis_indices.add(cur)
-            cur = parent[cur]
-
-    anchor_ids = frozenset(target_ids[i] for i in lis_indices)
+    anchor_ids = frozenset(target_ids[i] for i in anchor_indices)
 
     logger.info(
-        "LIS computation: %d items total, %d anchors (LIS length), %d need to move.",
+        "LIS computation: %d items total, %d anchors (%d pinned), %d need to move.",
         len(seq),
         len(anchor_ids),
+        len(pinned_ids),
         len(seq) - len(anchor_ids),
     )
     return anchor_ids
 
 
 # ─────────────────────────────────────────────
-# Optimized Change Generation
+# Move Planning (drift-exact)
 # ─────────────────────────────────────────────
 
 
-def build_optimized_changes(
+def build_move_plan(
     current: list[EnrichedPlaylistItem],
     target: list[EnrichedPlaylistItem],
     anchors: frozenset[str],
 ) -> list[PositionChange]:
-    """Generate the minimal set of PositionChange records, excluding anchors,
-    sorted by target position descending (tail-first) for drift-safe execution.
+    """Generate the minimal, ordered list of moves that turns *current* into
+    *target*, with every position computed against a simulated live list.
+
+    ``playlistItems.update`` removes the item and re-inserts it at ``position``,
+    so every call re-indexes everything after it.  A position taken from the
+    target array is therefore only valid for the very first call.  This planner
+    replays the moves locally: it walks the target **head-first** (ascending),
+    skips anchors, and sends each item to the slot immediately after its already
+    settled predecessor.
+
+    Because anchors form an increasing subsequence of original positions, the
+    predecessor of every moved item is either an anchor or an item that has
+    already been placed, which makes the plan exact.
 
     Args:
         current: Items in original order.
-        target: Items in desired order.
-        anchors: Set of playlist_item_ids that should NOT be moved.
+        target: Items in desired order (same id set as *current*).
+        anchors: Set of playlist_item_ids that must NOT be moved.
 
     Returns:
-        List of PositionChange records, sorted by new_position descending.
+        Ordered list of PositionChange records.  **Execute them in this exact
+        order** — they are not independent, and must not be re-sorted.
     """
-    old_positions: dict[str, int] = {
+    original_pos: dict[str, int] = {
         item.playlist_item_id: idx for idx, item in enumerate(current)
     }
 
+    # Sanity check: the anchors must be increasing in original position when
+    # read in target order, otherwise no valid plan exists.
+    last_anchor_pos = -1
+    for item in target:
+        item_id = item.playlist_item_id
+        if item_id not in anchors:
+            continue
+        pos = original_pos.get(item_id)
+        if pos is None:
+            continue
+        if pos <= last_anchor_pos:
+            raise ValueError(
+                "Anchor set is not an increasing subsequence "
+                f"(item {item_id} at original position {pos} follows {last_anchor_pos})."
+            )
+        last_anchor_pos = pos
+
+    live: list[str] = [item.playlist_item_id for item in current]
+    target_ids: list[str] = [
+        item.playlist_item_id
+        for item in target
+        if item.playlist_item_id in original_pos
+    ]
+    placeable = [item for item in target if item.playlist_item_id in original_pos]
+
     changes: list[PositionChange] = []
-    for new_pos, item in enumerate(target):
-        if item.playlist_item_id in anchors:
+    for slot, item in enumerate(placeable):
+        item_id = item.playlist_item_id
+        if item_id in anchors:
             continue
 
-        old_pos = old_positions.get(item.playlist_item_id, new_pos)
-        if old_pos != new_pos:
-            changes.append(
-                PositionChange(
-                    playlist_item_id=item.playlist_item_id,
-                    video_id=item.video_id,
-                    title=item.title,
-                    old_position=old_pos,
-                    new_position=new_pos,
-                    playlist_id=item.playlist_id,
-                    resource_id=item.video_id,
-                )
-            )
+        live.remove(item_id)
+        api_position = 0 if slot == 0 else live.index(target_ids[slot - 1]) + 1
+        live.insert(api_position, item_id)
 
-    # Sort by new_position DESCENDING for drift-safe execution (tail-first)
-    changes.sort(key=lambda c: c.new_position, reverse=True)
+        changes.append(
+            PositionChange(
+                playlist_item_id=item_id,
+                video_id=item.video_id,
+                title=item.title,
+                old_position=original_pos[item_id],
+                new_position=api_position,
+                final_position=slot,
+                execution_order=len(changes),
+                playlist_id=item.playlist_id,
+                resource_id=item.video_id,
+            )
+        )
 
     logger.info(
-        "Generated %d optimized changes (sorted tail-first for drift-safe execution).",
+        "Generated %d ordered moves (head-first, positions simulated).",
         len(changes),
     )
     return changes
+
+
+def normalize_target(
+    current: list[EnrichedPlaylistItem],
+    target: list[EnrichedPlaylistItem],
+) -> list[EnrichedPlaylistItem]:
+    """Validate a caller-supplied target order and pin unavailable items back.
+
+    ``diff`` accepts a hand-written ``new.json``; this is the guard that stops a
+    malformed one from being written back at 50 units per wrong move.
+
+    Args:
+        current: The playlist as fetched.
+        target: The desired order.
+
+    Returns:
+        A target of the same length as *current* with every pinned item at its
+        original index.
+
+    Raises:
+        ValueError: If *target* is not a permutation of *current* (reordering
+            cannot add or drop items — that is a separate operation).
+    """
+    current_ids = [item.playlist_item_id for item in current]
+    target_ids = [item.playlist_item_id for item in target]
+
+    if sorted(current_ids) != sorted(target_ids):
+        missing = set(current_ids) - set(target_ids)
+        extra = set(target_ids) - set(current_ids)
+        raise ValueError(
+            "Target ordering must be a permutation of the current playlist "
+            f"({len(current_ids)} items). Missing: {len(missing)}, unknown: {len(extra)}. "
+            "Reordering cannot add or remove items — re-run fetch if the "
+            "playlist changed."
+        )
+
+    pinned = pinned_item_ids(current)
+    if not pinned:
+        return list(target)
+
+    movable_order = [
+        item for item in target if item.playlist_item_id not in pinned
+    ]
+    normalized = weave_pinned(movable_order, current)
+
+    if [i.playlist_item_id for i in normalized] != target_ids:
+        logger.warning(
+            "Target moved %d unavailable item(s); they were pinned back to "
+            "their original positions.",
+            len(pinned),
+        )
+    return normalized
 
 
 # ─────────────────────────────────────────────
@@ -534,27 +761,35 @@ def build_optimized_changes(
 # ─────────────────────────────────────────────
 
 
-def optimize_reorder(
+def plan_reorder(
     current: list[EnrichedPlaylistItem],
     target: list[EnrichedPlaylistItem],
 ) -> tuple[list[PositionChange], OptimizationReport]:
-    """Run the full optimization pipeline: LIS anchors + minimal changes.
+    """Single entry point for turning a desired order into API calls.
+
+    Used by both the ``optimize`` path (artist grouping) and the ``diff`` path
+    (custom ordering), so both get the same LIS savings and the same exactness
+    guarantee.
 
     Args:
         current: Items in original order.
-        target: Items in desired order (e.g. output of group_by_artist).
+        target: Items in desired order.
 
     Returns:
-        A tuple of (optimized_changes, report).
+        A tuple of (ordered_changes, report).
     """
-    anchors = compute_lis_anchors(current, target)
-    changes = build_optimized_changes(current, target, anchors)
+    normalized = normalize_target(current, target)
+    pinned = pinned_item_ids(current)
+    anchors = compute_lis_anchors(current, normalized, pinned)
+    changes = build_move_plan(current, normalized, anchors)
 
-    # Naive baseline: count all items whose position changed
+    # Naive baseline: one update call for every item that is not already
+    # sitting at its final index.
     old_positions = {item.playlist_item_id: idx for idx, item in enumerate(current)}
     naive_count = sum(
-        1 for new_pos, item in enumerate(target)
-        if old_positions.get(item.playlist_item_id, new_pos) != new_pos
+        1
+        for final_pos, item in enumerate(normalized)
+        if old_positions.get(item.playlist_item_id, final_pos) != final_pos
     )
 
     report = OptimizationReport(
@@ -563,28 +798,37 @@ def optimize_reorder(
         need_to_move=len(changes),
         estimated_quota=len(changes) * 50,
         quota_saved_vs_naive=(naive_count - len(changes)) * 50,
+        pinned_count=len(pinned),
     )
 
     return changes, report
+
+
+#: Backwards-compatible alias (the pipeline is no longer just "optimization").
+optimize_reorder = plan_reorder
 
 
 def run_full_optimization(
     items: list[EnrichedPlaylistItem],
     aliases_path: Path | None = None,
     group_order: str = "first_appearance",
+    within_group_sort: SortConfig | None = None,
 ) -> tuple[list[EnrichedPlaylistItem], list[PositionChange], OptimizationReport, list[ArtistResolution]]:
-    """Complete pipeline: group → target → LIS → changes.
+    """Complete pipeline: group → target → LIS → ordered moves.
 
     Args:
         items: Current playlist items.
         aliases_path: Optional path to artist_aliases.json.
         group_order: Group ordering strategy.
+        within_group_sort: Optional sort applied inside each artist group.
 
     Returns:
-        A tuple of (target_order, optimized_changes, report, resolutions).
+        A tuple of (target_order, ordered_changes, report, resolutions).
     """
-    target, groups, resolutions = group_by_artist(items, aliases_path, group_order)
-    changes, report = optimize_reorder(items, target)
+    target, groups, resolutions = group_by_artist(
+        items, aliases_path, group_order, within_group_sort
+    )
+    changes, report = plan_reorder(items, target)
 
     # Enrich report with group info
     report.groups_found = list(groups.keys())
