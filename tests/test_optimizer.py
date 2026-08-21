@@ -6,8 +6,10 @@ Tests cover:
 2. Title regex parsing (real YouTube title formats)
 3. Channel title normalization
 4. Fuzzy matching with aliases
-5. Full optimization pipeline (group + LIS + drift-safe ordering)
-6. Position drift simulation
+5. Full optimization pipeline (group + LIS + ordered move plan)
+6. Position drift simulation (replayed against the API's real semantics)
+
+See also ``tests/test_reorder_property.py`` for the exhaustive replay tests.
 """
 
 import json
@@ -29,8 +31,9 @@ from scripts.optimizer import (
     _build_alias_lookup,
     _fuzzy_match_artist,
     compute_lis_anchors,
-    build_optimized_changes,
+    build_move_plan,
     group_by_artist,
+    plan_reorder,
     resolve_artist,
     run_full_optimization,
 )
@@ -266,22 +269,31 @@ def test_lis_grouped_scenario():
     assert len(anchors) >= 4  # At least 4 items can stay (the A-series is already in order)
 
 
-# ─── Test 6: Drift-Safe Ordering ─────────────────
+# ─── Test 6: Ordered Move Plan ───────────────────
 
 
-def test_changes_sorted_tail_first():
-    """Changes should be sorted by new_position descending."""
+def _replay(items, changes):
+    """Simulate playlistItems.update: remove the item, re-insert at position."""
+    live = [item.playlist_item_id for item in items]
+    for change in sorted(changes, key=lambda c: c.execution_order):
+        live.remove(change.playlist_item_id)
+        live.insert(change.new_position, change.playlist_item_id)
+    return live
+
+
+def test_reversed_plan_replays_exactly():
+    """A fully reversed playlist must replay to the exact reversed order."""
     items = [make_item(f"p{i}", f"v{i}", position=i) for i in range(5)]
     target = [items[4], items[3], items[2], items[1], items[0]]
 
-    anchors = compute_lis_anchors(items, target)
-    changes = build_optimized_changes(items, target, anchors)
+    changes, report = plan_reorder(items, target)
 
-    positions = [c.new_position for c in changes]
-    for i in range(len(positions) - 1):
-        assert positions[i] >= positions[i + 1], \
-            f"Not tail-first! pos[{i}]={positions[i]} < pos[{i+1}]={positions[i+1]}"
-    print(f"  ✓ drift-safe ordering: {positions}")
+    assert [c.execution_order for c in changes] == list(range(len(changes)))
+    result = _replay(items, changes)
+    expected = [item.playlist_item_id for item in target]
+    assert result == expected, f"replay produced {result}, expected {expected}"
+    assert report.need_to_move == 4  # 5 items - LIS length 1
+    print(f"  ✓ ordered move plan: {len(changes)} moves replay to the exact target")
 
 
 # ─── Test 7: Full Pipeline ──────────────────────
@@ -330,13 +342,12 @@ def test_full_optimization_pipeline():
 
 
 def test_position_drift_simulation():
-    """Verify the optimizer outputs changes and that they are tail-first ordered.
-    
-    NOTE: A local pop/insert simulation does NOT perfectly replicate YouTube's
-    server-side behavior because YouTube reindexes atomically after each update.
-    The tail-first ordering is the best-effort strategy, but the true correctness
-    can only be validated against the live API. This test verifies the structural
-    properties of the output.
+    """Replay the plan against the API's real reorder semantics.
+
+    ``playlistItems.update`` removes the item and re-inserts it at ``position``,
+    which is exactly a local ``list.remove`` + ``list.insert``.  A local
+    simulation therefore *does* reproduce the server behaviour, and this test is
+    the guard that catches drift before it reaches a user's playlist.
     """
     # 10 items, simple reverse (worst case for drift)
     n = 10
@@ -344,24 +355,24 @@ def test_position_drift_simulation():
     target = list(reversed(items))
 
     anchors = compute_lis_anchors(items, target)
-    changes = build_optimized_changes(items, target, anchors)
+    changes = build_move_plan(items, target, anchors)
 
-    # Verify structural properties
+    # Structural properties
     assert len(changes) > 0, "Should have changes for reversed list"
     assert len(changes) == n - len(anchors), "Changes = total - anchors"
 
-    # Verify tail-first ordering
-    positions = [c.new_position for c in changes]
-    for i in range(len(positions) - 1):
-        assert positions[i] >= positions[i + 1], "Must be tail-first"
-
-    # Verify all changes reference valid items
+    # Every change references a real, non-anchored item
     item_ids = {item.playlist_item_id for item in items}
     for change in changes:
         assert change.playlist_item_id in item_ids
         assert change.playlist_item_id not in anchors
 
-    print(f"  [PASS] drift simulation: {len(changes)} changes, tail-first order verified")
+    # The actual guarantee: replaying the plan yields the target order
+    result = _replay(items, changes)
+    expected = [item.playlist_item_id for item in target]
+    assert result == expected, f"drift! replay produced {result}, expected {expected}"
+
+    print(f"  [PASS] drift simulation: {len(changes)} changes replay to the exact target")
 
 
 # ─── Main ────────────────────────────────────────
@@ -401,8 +412,8 @@ def run_all_tests():
             test_lis_reversed,
             test_lis_grouped_scenario,
         ]),
-        ("Drift-Safe Ordering", [
-            test_changes_sorted_tail_first,
+        ("Ordered Move Plan", [
+            test_reversed_plan_replays_exactly,
         ]),
         ("Full Pipeline", [
             test_full_optimization_pipeline,

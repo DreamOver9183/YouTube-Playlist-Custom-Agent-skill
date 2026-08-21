@@ -8,6 +8,7 @@ schemas.py — Pydantic Schema 定義
 
 from __future__ import annotations
 
+import hashlib
 import re
 from datetime import datetime
 from enum import Enum
@@ -88,6 +89,13 @@ class PlaylistItemData(BaseModel):
     added_at: datetime = Field(description="加入 playlist 的時間")
     channel_title: str = Field(default="", description="影片頻道名稱")
     playlist_id: str = Field(default="", description="所屬 playlist ID")
+    is_available: bool = Field(
+        default=True,
+        description=(
+            "影片是否可存取。私人／已刪除影片為 False；這類項目仍佔用播放清單的"
+            "位置空間，必須保留才能算出正確的寫回位置（見 optimizer 的釘選機制）。"
+        ),
+    )
 
 
 class VideoMetadata(BaseModel):
@@ -124,6 +132,7 @@ class EnrichedPlaylistItem(BaseModel):
     comment_count: int = 0
     tags: list[str] = Field(default_factory=list)
     privacy_status: str = "public"
+    is_available: bool = True
 
     @classmethod
     def from_item_and_metadata(
@@ -138,6 +147,7 @@ class EnrichedPlaylistItem(BaseModel):
             "position": item.position,
             "added_at": item.added_at,
             "playlist_id": item.playlist_id,
+            "is_available": item.is_available,
         }
         if metadata:
             base.update({
@@ -157,18 +167,36 @@ class EnrichedPlaylistItem(BaseModel):
 
 
 class PositionChange(BaseModel):
-    """描述一個 item 的位置變更。"""
+    """描述一個 item 的位置變更（單一次 playlistItems.update 呼叫）。
+
+    重要：``new_position`` 是「送給 API 的位置」，不是該影片在最終清單中的索引。
+    ``playlistItems.update`` 的語意是「先移除、再插入到 position」，每一次呼叫都會
+    讓其餘項目重新編號，因此位置必須依執行順序在模擬盤面上即時算出。
+    最終索引請改看 ``final_position``（僅供預覽表顯示）。
+
+    這些變更**順序相依**：必須依 ``execution_order`` 由小到大逐筆執行，
+    不可重新排序、不可跳過、不可平行執行。
+    """
     playlist_item_id: str
     video_id: str
     title: str = ""
-    old_position: int
-    new_position: int
+    old_position: int = Field(description="變更前在原清單中的索引（供預覽表顯示）")
+    new_position: int = Field(description="送給 playlistItems.update 的 position 參數")
+    final_position: int = Field(
+        default=-1,
+        description="套用完整變更集後，該影片在最終清單中的索引（供預覽表顯示）",
+    )
+    execution_order: int = Field(
+        default=-1,
+        description="執行序（0-based）。必須依此順序逐筆送出，否則位置會漂移。",
+    )
     playlist_id: str = ""
     resource_id: str = ""  # videoId，update API 需要
 
     @property
-    def is_changed(self) -> bool:
-        return self.old_position != self.new_position
+    def api_position(self) -> int:
+        """送給 API 的位置（``new_position`` 的語意別名）。"""
+        return self.new_position
 
 
 class CachedPlaylist(BaseModel):
@@ -179,6 +207,11 @@ class CachedPlaylist(BaseModel):
     item_count: int = 0
     etag: str = ""
     ttl_minutes: int = 30
+
+    @property
+    def head_fingerprint(self) -> str:
+        """快照頭部指紋，用於寫回前偵測清單是否已在遠端被改動。"""
+        return compute_head_fingerprint(self.items)
 
     @property
     def is_expired(self) -> bool:
@@ -224,11 +257,58 @@ class OptimizationReport(BaseModel):
     groups_found: list[str] = Field(default_factory=list, description="識別出的藝人群組列表")
     unresolved_count: int = Field(default=0, description="無法自動辨識的影片數量")
     group_details: dict[str, int] = Field(default_factory=dict, description="每個群組的影片數量")
+    pinned_count: int = Field(
+        default=0,
+        description="被釘在原位置、不參與重排的影片數量（私人／已刪除影片）",
+    )
 
 
 # ─────────────────────────────────────────────
 # 3. 工具函式
 # ─────────────────────────────────────────────
+
+
+#: 寫回前用來比對遠端清單是否被改動的取樣長度（一次 playlistItems.list = 1 unit）。
+HEAD_FINGERPRINT_SIZE: int = 50
+
+
+def compute_head_fingerprint(items: list) -> str:
+    """計算清單頭部指紋（前 ``HEAD_FINGERPRINT_SIZE`` 筆的 playlist_item_id 順序）。
+
+    用途：``update`` 在寫回前只需 1 unit 讀取第一頁，即可判斷這份變更集所依據的
+    快照是否仍然成立。順序不同 → 遠端已被改動 → 中止並要求重新 fetch。
+
+    Args:
+        items: 具有 ``playlist_item_id`` 屬性的項目列表（依目前順序）。
+
+    Returns:
+        16 進位字串（sha256 前 16 碼）。空清單回傳空字串。
+    """
+    if not items:
+        return ""
+    head = [getattr(it, "playlist_item_id", "") for it in items[:HEAD_FINGERPRINT_SIZE]]
+    digest = hashlib.sha256("\n".join(head).encode("utf-8")).hexdigest()
+    return digest[:16]
+
+
+def compute_change_set_fingerprint(playlist_id: str, changes: list) -> str:
+    """計算變更集指紋，用於斷點續傳時確認「續的是同一份任務」。
+
+    變更集是順序相依的，因此指紋必須涵蓋順序與每一筆的目標位置；只要任一項不同，
+    就代表這是一份新的任務，不可沿用舊進度。
+
+    Args:
+        playlist_id: 播放清單 ID。
+        changes: ``PositionChange`` 列表（依執行順序）。
+
+    Returns:
+        16 進位字串（sha256 前 16 碼）。
+    """
+    parts = [playlist_id]
+    for c in changes:
+        parts.append(f"{c.playlist_item_id}:{c.new_position}")
+    digest = hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()
+    return digest[:16]
 
 
 def parse_iso8601_duration(duration_str: str) -> int:
