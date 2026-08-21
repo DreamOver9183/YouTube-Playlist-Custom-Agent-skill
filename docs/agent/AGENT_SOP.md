@@ -99,7 +99,11 @@
    ```
    - `anchors`：不需移動的影片數量（LIS 錨點）
    - `pinned_count`：無法移動的私人／已刪除影片數量
-   - `unresolved_count`：若 > 0，建議擴充 `artist_aliases.json` 後重新執行
+   - `unresolved_count`：完全辨識不出藝人的影片數。**這個數字是 0 不代表分群一定正確**，
+     它只計算「兩層都失敗」的情況。請一併檢查 `groups_found`：若同一位藝人出現多個相近的
+     key，或群組數接近影片數（幾乎全是單曲群），代表這份清單的命名形態不適合自動分群，
+     應改用路徑 B/C 明確指定欄位。`artist_aliases.json` 只在辨識失敗時才會生效，
+     無法用來合併「已辨識但分錯」的群組。
    - `estimated_quota`：確認是否在單日限額（10,000 units）內
 
 4. 直接跳至 **Phase 3** 使用 `data/changes_optimized.json`。
@@ -129,6 +133,11 @@ npm run plan -- --input data/current.json --output data/new.json \
 npm run plan -- -i data/current.json -o data/new.json \
     --group-by channel_title --sort-by view_count:desc
 ```
+
+回傳值中的 `warnings` **必須**轉達給使用者。引擎只會採用它真正辨識得出來的欄位，
+若使用者說了「由新到舊」卻沒指名欄位，`sort_criteria` 會是空的並附上警告——
+此時請追問使用者要依哪個欄位排序，或改用 `--sort-by` 明確指定後重跑，
+不要把「沒有排序」的結果當成完成。
 
 接著同路徑 B 的第 3 步執行 `diff`。
 

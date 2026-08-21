@@ -214,6 +214,116 @@ def test_resolve_artist_unknown():
     print(f"  ✓ unknown resolution: method={r.method}, confidence={r.confidence:.2f}")
 
 
+# ─── Test 4b: Real-world channel/title shapes ─────
+#
+# Every case here comes from a real 202-track playlist where the resolver used
+# to scatter one artist across up to nine groups.
+
+
+def test_topic_channel_keeps_no_dangling_dash():
+    """'Alan Walker - Topic' must normalise to the artist, not 'alan walker -'."""
+    assert _normalize_name("Alan Walker - Topic") == "alan walker"
+    assert _normalize_name("Linkin Park - Topic") == "linkin park"
+    print("  ✓ '<Artist> - Topic' → '<artist>' (no dangling separator)")
+
+
+def test_reversed_title_prefers_channel():
+    """'Song [...] - Artist' must not turn the song name into the artist."""
+    item = make_item("p1", "v1",
+                     title="One More Light [Official Music Video] - Linkin Park",
+                     channel="Linkin Park")
+    r = resolve_artist(item, {})
+    assert r.artist_key == "linkin park", r.artist_key
+    print(f"  ✓ reversed title → {r.artist_key!r} (method={r.method})")
+
+
+def test_version_annotation_prefers_channel():
+    """'Song - Duet Version' is a version marker, not 'Song' by 'Song'."""
+    item = make_item("p1", "v1", title="Valhalla Calling - Duet Version",
+                     channel="Miracle Of Sound - Topic")
+    r = resolve_artist(item, {})
+    assert r.artist_key == "miracle of sound", r.artist_key
+    print(f"  ✓ version tail → {r.artist_key!r} (method={r.method})")
+
+
+def test_collaboration_prefers_owning_channel():
+    """A collab title must stay in the uploading artist's group."""
+    for title in ("Alan Walker & Torine - Hello World (Official Music Video)",
+                  "Alan Walker vs Coldplay - Hymn For The Weekend",
+                  "Hans Zimmer & Alan Walker – Time (Official Remix)"):
+        r = resolve_artist(make_item("p1", "v1", title=title, channel="Alan Walker"), {})
+        assert r.artist_key == "alan walker", f"{title} → {r.artist_key}"
+    print("  ✓ 3 collaboration titles all resolve to 'alan walker'")
+
+
+def test_collaboration_with_spaceless_vevo_channel():
+    """VEVO channels drop the spaces; the collab check must still match."""
+    item = make_item("p1", "v1", title="Lady Gaga, Bruno Mars - Die With A Smile",
+                     channel="LadyGagaVEVO")
+    r = resolve_artist(item, {})
+    assert r.artist_key == "lady gaga", r.artist_key
+    print(f"  ✓ 'LadyGagaVEVO' + collab title → {r.artist_key!r}")
+
+
+def test_label_channel_still_yields_to_title():
+    """A label channel must not swallow the artist named in the title."""
+    item = make_item("p1", "v1",
+                     title="Starship - Nothing's Gonna Stop Us Now (Official Video)",
+                     channel="RHINO")
+    r = resolve_artist(item, {})
+    assert r.artist_key == "starship", r.artist_key
+    print(f"  ✓ label channel 'RHINO' → title artist {r.artist_key!r}")
+
+
+def test_empty_bracket_residue_never_becomes_a_group():
+    """Noise removal used to leave 'Numb ()' as the group name."""
+    item = make_item("p1", "v1", title="Numb (Official Music Video) [4K UPGRADE] – Linkin Park",
+                     channel="Linkin Park")
+    r = resolve_artist(item, {})
+    assert "(" not in r.artist_key and ")" not in r.artist_key, r.artist_key
+    assert r.artist_key == "linkin park", r.artist_key
+    print("  ✓ no empty-bracket residue in the group key")
+
+
+def test_group_merges_channel_spelling_variants():
+    """Topic / VEVO / plain channels for one artist must form a single group."""
+    items = [
+        make_item("p1", "v1", title="Believer", channel="Imagine Dragons - Topic", position=0),
+        make_item("p2", "v2", title="Imagine Dragons - Radioactive (Official Music Video)",
+                  channel="ImagineDragonsVEVO", position=1),
+        make_item("p3", "v3", title="Thunder", channel="Imagine Dragons", position=2),
+    ]
+    _target, groups, _res = group_by_artist(items)
+    assert len(groups) == 1, groups
+    assert sum(len(v) for v in groups.values()) == 3
+    print(f"  ✓ Topic + VEVO + plain → one group {list(groups)[0]!r}")
+
+
+def test_group_merges_localised_name_prefix():
+    """'紅髮艾德 Ed Sheeran' belongs with 'Ed Sheeran'."""
+    items = [
+        make_item("p1", "v1", title="Shape of You", channel="Ed Sheeran - Topic", position=0),
+        make_item("p2", "v2", title="紅髮艾德 Ed Sheeran - Perfect 完美無瑕",
+                  channel="華納音樂西洋日韓頻道", position=1),
+    ]
+    _target, groups, _res = group_by_artist(items)
+    assert len(groups) == 1, groups
+    print(f"  ✓ localised prefix folded into {list(groups)[0]!r}")
+
+
+def test_unrelated_artists_stay_apart():
+    """The merge heuristics must not fuse genuinely different artists."""
+    items = [
+        make_item("p1", "v1", title="Siamese Dream", channel="Sia", position=0),
+        make_item("p2", "v2", title="Chandelier", channel="Sia", position=1),
+        make_item("p3", "v3", title="Skillet - Monster", channel="Atlantic Records", position=2),
+        make_item("p4", "v4", title="Alphaville - Forever Young", channel="RHINO", position=3),
+    ]
+    _target, groups, _res = group_by_artist(items)
+    assert len(groups) == 3, groups
+    print(f"  ✓ 3 distinct groups kept apart: {sorted(groups)}")
+
+
 # ─── Test 5: LIS Anchor Computation ─────────────
 
 
@@ -405,6 +515,18 @@ def run_all_tests():
             test_resolve_artist_cross_validation,
             test_resolve_artist_channel_fallback,
             test_resolve_artist_unknown,
+        ]),
+        ("Real-world Channel / Title Shapes", [
+            test_topic_channel_keeps_no_dangling_dash,
+            test_reversed_title_prefers_channel,
+            test_version_annotation_prefers_channel,
+            test_collaboration_prefers_owning_channel,
+            test_collaboration_with_spaceless_vevo_channel,
+            test_label_channel_still_yields_to_title,
+            test_empty_bracket_residue_never_becomes_a_group,
+            test_group_merges_channel_spelling_variants,
+            test_group_merges_localised_name_prefix,
+            test_unrelated_artists_stay_apart,
         ]),
         ("LIS Anchor Computation", [
             test_lis_simple,

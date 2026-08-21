@@ -128,6 +128,10 @@ function buildPlan(records: readonly PlaylistRecord[], options: CliOptions): Cog
   const intent: NaturalLanguageIntent = { text: options.intentText };
   const features = new Extractor().extractFromFields([...fieldUnion], intent);
 
+  // `position` 是影片「目前」在清單中的索引，不是使用者想要的排序依據——
+  // 拿它當群內排序鍵，等於把原順序原封不動（或整個倒轉）搬過來。
+  const sortCriteria = features.sortCriteria.filter((c) => c.field !== 'position');
+
   // 重排既有清單時，群組一律依首次出現順序排列：字典序會把所有群組洗牌，
   // 需要移動的項目數（也就是配額）會高出好幾倍。
   return planner.createPlan({
@@ -135,7 +139,7 @@ function buildPlan(records: readonly PlaylistRecord[], options: CliOptions): Cog
       ...dim,
       groupOrder: 'first_appearance' as const,
     })),
-    sortCriteria: features.sortCriteria,
+    sortCriteria,
   });
 }
 
@@ -195,12 +199,25 @@ function main(): void {
   mkdirSync(dirname(options.output), { recursive: true });
   writeFileSync(options.output, `${JSON.stringify(merged, null, 2)}\n`, 'utf-8');
 
+  // 使用者描述了需求，但引擎沒認出任何群內排序欄位——必須讓 Agent 看見，
+  // 否則「由新到舊」這種要求會被無聲忽略，使用者只會看到一份沒排序的清單。
+  const warnings: string[] = [];
+  if (options.intentText.length > 0 && result.plan.sortCriteria.length === 0) {
+    warnings.push(
+      '無法從需求描述辨識出群內排序欄位，群內維持原順序。請改用 --sort-by 明確指定（例如 --sort-by published_at:desc）。'
+    );
+  }
+  if (options.intentText.length > 0 && result.plan.groupDimensions.length === 0) {
+    warnings.push('無法從需求描述辨識出分群欄位，未做任何分群。請改用 --group-by 明確指定。');
+  }
+
   emit({
     status: 'success',
     item_count: merged.length,
     pinned_count: pinned.length,
     group_dimensions: result.plan.groupDimensions.map((d) => d.field),
     sort_criteria: result.plan.sortCriteria.map((c) => `${c.field}:${c.direction}`),
+    warnings,
     is_continuous: result.evaluation.isContinuous,
     gap_count: result.evaluation.gapCount,
     repair_iterations: result.evaluation.iterationsUsed,

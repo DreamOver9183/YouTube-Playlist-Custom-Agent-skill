@@ -245,6 +245,13 @@ class ArtistResolution(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0, description="辨識信心分數")
     method: str = Field(description="辨識方法：bracket_prefix | dash_separator | channel | fuzzy | unknown")
     raw_candidate: str = Field(default="", description="原始候選字串（debug 用）")
+    counterpart: str = Field(
+        default="",
+        description=(
+            "標題分隔符另一側的字串（例如「曲名 - 藝人」的藝人側）。"
+            "用來偵測反向標題與版本標記，避免把曲名當成藝人。"
+        ),
+    )
 
 
 class OptimizationReport(BaseModel):

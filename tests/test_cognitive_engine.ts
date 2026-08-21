@@ -349,6 +349,64 @@ function testNullSafetyAndFallback(): void {
   assert(albums[2] === null || albums[2] === undefined, '缺失值項目降級移至尾端');
 }
 
+
+// ─────────────────────────────────────────────
+// 測試 2g：長度／大小的口語方向詞
+// ─────────────────────────────────────────────
+function testLengthDirectionMarkers(): void {
+  console.log('');
+  console.log('============================================================');
+  console.log(' 測試 2g：「最長／最短」等口語方向詞');
+  console.log('============================================================');
+
+  const fields = ['title', 'view_count', 'duration_seconds'];
+
+  const longest = new Extractor().extractFromFields(fields, { text: '把時間最長的排在最前面' });
+  const longestCriterion = longest.sortCriteria.find((c) => c.field === 'duration_seconds');
+  assert(longestCriterion?.direction === 'desc', '「時間最長」應解析為降冪');
+
+  const shortest = new Extractor().extractFromFields(fields, { text: '時長最短的放前面' });
+  const shortestCriterion = shortest.sortCriteria.find((c) => c.field === 'duration_seconds');
+  assert(shortestCriterion?.direction === 'asc', '「時長最短」應解析為升冪');
+}
+
+// ─────────────────────────────────────────────
+// 測試 2h：講了方向卻沒講欄位時，不得亂選欄位
+// ─────────────────────────────────────────────
+function testUnmatchedSortIntentSelectsNothing(): void {
+  console.log('');
+  console.log('============================================================');
+  console.log(' 測試 2h：無法辨識的排序需求不得退化成「全選」');
+  console.log('============================================================');
+
+  const fields = ['position', 'title', 'channel_title', 'published_at', 'view_count'];
+
+  // 「由新到舊」只講了方向，沒有任何欄位詞彙。舊版會把 position 等全部候選
+  // 欄位選進來，讓 position 變成主鍵——群內順序等於原索引倒轉。
+  const vague = new Extractor().extractFromFields(fields, {
+    text: '同一個歌手的歌集中在一起，每組裡面由新到舊排列',
+  });
+  assert(
+    vague.sortCriteria.length === 0,
+    `辨識不出排序欄位時應回傳空集合，實際 ${JSON.stringify(vague.sortCriteria.map((c) => c.field))}`
+  );
+
+  // 明確講出「發布日期」就必須解析得出來。
+  const explicit = new Extractor().extractFromFields(fields, {
+    text: '同一個歌手的歌放一起，並依照發布日期由新到舊',
+  });
+  const dateCriterion = explicit.sortCriteria.find((c) => c.field === 'published_at');
+  assert(dateCriterion?.direction === 'desc', '明確指名「發布日期由新到舊」應解析為 published_at:desc');
+  assert(
+    !explicit.sortCriteria.some((c) => c.field === 'position'),
+    'position 不得混入排序條件'
+  );
+
+  // 完全沒有需求描述時（純欄位推導）仍要有降級行為，函式庫用法不受影響。
+  const noIntent = new Extractor().extractFromFields(fields);
+  assert(noIntent.sortCriteria.length > 0, '無意圖文字時仍應有降級排序條件');
+}
+
 // ─────────────────────────────────────────────
 // 測試總進入點
 // ─────────────────────────────────────────────
@@ -360,6 +418,8 @@ function main(): void {
   testGroupOrderStrategy();
   testIntentDoesNotPolluteFields();
   testPerFieldSortDirection();
+  testLengthDirectionMarkers();
+  testUnmatchedSortIntentSelectsNothing();
   testUniversalDomainBugReports();
   testNullSafetyAndFallback();
 

@@ -60,12 +60,17 @@ const SORT_VOCABULARY: Readonly<Record<string, readonly string[]>> = {
 const DESC_MARKERS: readonly string[] = [
   'desc', 'descending', '降冪', '遞減', '倒序', '由高到低', '從高到低', '高到低',
   '由多到少', '從多到少', '多到少', '由新到舊', '從新到舊', '新到舊', '最多', '最高',
+  // 長度／大小／新舊的口語說法：少了這些，「時間最長的排最前面」會被判成升冪。
+  '由長到短', '從長到短', '長到短', '由大到小', '從大到小', '大到小',
+  '最長', '最久', '最大', '最新',
 ];
 
 /** 升冪語意標記 */
 const ASC_MARKERS: readonly string[] = [
   'asc', 'ascending', '升冪', '遞增', '正序', '由低到高', '從低到高', '低到高',
   '由少到多', '從少到多', '少到多', '由舊到新', '從舊到新', '舊到新', '最少', '最低',
+  '由短到長', '從短到長', '短到長', '由小到大', '從小到大', '小到大',
+  '最短', '最小', '最舊', '最早',
 ];
 
 /** 在關鍵字之後往前看多少字元來判斷該欄位的排序方向 */
@@ -160,7 +165,15 @@ export class Extractor {
       }));
     }
 
-    const matches = this.matchFields(fields, SORT_VOCABULARY, intentText);
+    // 有需求描述時就必須真的講到某個欄位才算數。舊版在「講了方向但沒講欄位」
+    // （例如「每組裡面由新到舊排列」）時會把所有候選欄位全部選進來，於是
+    // position 變成主鍵——群內順序等於原索引倒轉，而不是使用者要的日期。
+    const matches = this.matchFields(
+      fields,
+      SORT_VOCABULARY,
+      intentText,
+      intentText.length > 0
+    );
 
     if (matches.length > 0) {
       return matches.map((match) => ({
@@ -175,8 +188,8 @@ export class Extractor {
       }));
     }
 
-    // 預設降級：使用第一個可用欄位作為次要排序
-    const defaultField = fields[0];
+    // 沒有需求描述時（純欄位推導）才降級成第一個可用欄位。
+    const defaultField = intentText.length === 0 ? fields[0] : undefined;
     if (!defaultField) {
       return [];
     }
@@ -200,7 +213,8 @@ export class Extractor {
   private matchFields(
     fields: readonly string[],
     vocabulary: Readonly<Record<string, readonly string[]>>,
-    intentText: string
+    intentText: string,
+    requireMention: boolean = false
   ): ReadonlyArray<{ field: string; terms: readonly string[] }> {
     const candidates: Array<{ field: string; terms: readonly string[] }> = [];
 
@@ -231,7 +245,11 @@ export class Extractor {
       candidate.terms.some((term) => intentText.includes(term.toLowerCase()))
     );
 
-    return mentioned.length > 0 ? mentioned : candidates;
+    if (mentioned.length > 0) {
+      return mentioned;
+    }
+    // requireMention: 寧可什麼都不選，也不要在使用者沒指名欄位時全選。
+    return requireMention ? [] : candidates;
   }
 
   /**

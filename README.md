@@ -128,11 +128,16 @@ YouTube Playlist skill/
 │   ├── schemas.py                      # Pydantic v2 資料模型與指紋工具
 │   └── __init__.py
 ├── tests/
-│   ├── test_cognitive_engine.ts        # TypeScript 認知引擎測試 (28 項)
-│   ├── test_optimizer.py               # Python 最佳化與辨識測試 (24 項)
+│   ├── test_cognitive_engine.ts        # TypeScript 認知引擎測試 (34 項)
+│   ├── test_optimizer.py               # Python 最佳化與辨識測試 (34 項)
 │   ├── test_reorder_property.py        # 重排正確性窮舉驗證 (12 項)
-│   └── test_update_flow.py             # 寫回安全性測試 (7 項)
-├── .github/workflows/ci.yml            # CI：型別檢查與四組測試
+│   ├── test_update_flow.py             # 寫回安全性測試 (7 項)
+│   └── e2e/                            # 端對端測試（離線，16 個情境）
+│       ├── run_e2e.py                  # 驅動真實 CLI 子行程的黑箱測試
+│       ├── fake_youtube.py             # YouTube Data API v3 離線替身
+│       ├── sitecustomize.py            # 在子行程啟動時注入替身
+│       └── README.md                   # 測試方法與通過條件
+├── .github/workflows/ci.yml            # CI：型別檢查、四組單元測試與 E2E
 ├── package.json
 ├── tsconfig.json
 ├── tsconfig.test.json
@@ -168,6 +173,21 @@ python -m scripts.yt_tool update <playlist_id_or_url> data/changes.json
 
 > 變更檔中的移動是**順序相依**的：每一次 `playlistItems.update` 都會讓其餘影片重新編號，
 > 因此位置是在本地模擬盤面上即時算出的，必須依 `execution_order` 逐筆執行，不可重新排序或跳過。
+
+#### 藝人辨識規則（選項 A 的分群依據）
+
+標題與頻道兩個訊號會交叉驗證，並以真實播放清單常見的命名形態為準：
+
+| 情境 | 例子 | 判定 |
+|:---|:---|:---|
+| 兩邊一致（忽略空格） | `Imagine Dragons - Believer` @ `ImagineDragonsVEVO` | 交叉確認，取較易讀的拼法 |
+| 反向標題「曲名 - 藝人」 | `One More Light [MV] - Linkin Park` @ `Linkin Park` | 以**頻道**為準 |
+| 破折號後是版本標記 | `Valhalla Calling - Duet Version` @ `Miracle Of Sound` | 以**頻道**為準 |
+| 合作曲 | `Alan Walker & Torine - Hello World` @ `Alan Walker` | 歸給**上傳藝人** |
+| 唱片公司／廠牌頻道 | `Starship - …` @ `RHINO` | 以**標題**為準（廠牌不能吞掉藝人） |
+| 本地化譯名前綴 | `紅髮艾德 Ed Sheeran - Perfect` | 併入 `Ed Sheeran` 群 |
+
+`<藝人> - Topic`（YouTube Music 自動產生的頻道）與 `<藝人>VEVO` 都會正規化到同一個群組。
 
 ### 2. TypeScript 認知排序引擎
 
@@ -224,9 +244,31 @@ python tests/test_reorder_property.py
 
 # 寫回安全性：過期快照、中斷續傳、進度污染、配額耗盡、退避重試
 python tests/test_update_flow.py
+
+# 端對端：以真實 CLI 子行程跑完整 SOP 流程（離線，不需憑證／不耗配額）
+python tests/e2e/run_e2e.py
 ```
 
 `tests/test_reorder_property.py` 是整個專案的核心把關：任何改動重排邏輯的變更都必須讓它通過。
+
+### 端對端測試
+
+`tests/e2e/` 以**真實子行程**執行 `python -m scripts.yt_tool …` 與 `node dist/cli.js …`，
+只把網路邊界換成離線替身（`fake_youtube.py` 重現分頁、批次、`remove + insert` 重排語意、
+配額計價與 `HttpError` 錯誤內容）。測試檔完全不 import `scripts/`，預期順序與配額都獨立算出。
+
+16 個情境涵蓋：憑證握手 → fetch 分頁／快取／token 重用 → optimize/diff 零配額計算 →
+預覽資料正確性 → 寫回、遠端漂移偵測、中斷續傳、變更集防護 → 參數錯誤處理。
+通過條件與情境清單見 [`tests/e2e/README.md`](tests/e2e/README.md)。
+
+### 真實資料驗證
+
+本專案的辨識規則以一份 202 首、141 個頻道的真實播放清單校準過。該清單的特徵
+（大量 `- Topic` / `VEVO` 頻道變體、`曲名 - 藝人` 反向標題、合作曲、中文譯名前綴）
+現在都有對應的回歸測試（`test_optimizer.py` 的 *Real-world Channel / Title Shapes*）。
+以「頻道歸屬」為基準量測，分群錯置由 44/202（22%）降至 3/202（1.5%），群組數由 156 降至 119；
+殘餘 3 例經人工檢視是唱片公司頻道（RHINO、Atlantic Records、華納）上的**不同**藝人，
+工具把它們分開才是正確的——也就是說多首藝人已無實質錯置。
 
 ---
 

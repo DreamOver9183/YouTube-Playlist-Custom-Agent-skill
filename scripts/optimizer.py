@@ -85,6 +85,25 @@ _CHANNEL_SUFFIX_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+#: Separator debris left behind after a suffix is removed.  Without this,
+#: "Alan Walker - Topic" normalises to "alan walker -", which never matches the
+#: artist's own channel "alan walker" and silently splits the group in two.
+_TRAILING_SEPARATORS = re.compile(r"[\s\-–—:_·/|,]+$")
+
+#: Empty brackets left behind by noise removal, e.g. "Numb (Official Video)"
+#: → "Numb ()".
+_EMPTY_BRACKETS = re.compile(r"[\(\[【]\s*[\)\]】]")
+
+#: Words that make up a version/edition annotation rather than a song title.
+#: If everything on the other side of the dash is one of these, the dash is not
+#: an "artist - song" separator ("Valhalla Calling - Duet Version").
+_VERSION_MARKER_WORDS: frozenset[str] = frozenset({
+    "official", "ver", "version", "remix", "edit", "live", "acoustic",
+    "instrumental", "karaoke", "cover", "remaster", "remastered", "extended",
+    "radio", "duet", "mix", "audio", "video", "mv", "lyric", "lyrics",
+    "performance", "visualizer", "hd", "4k", "8k", "1080p", "720p", "full",
+})
+
 
 # ─────────────────────────────────────────────
 # Layer 1: Title Regex Parsing
@@ -96,6 +115,9 @@ def _clean_title(title: str) -> str:
     cleaned = title
     for pattern in _NOISE_PATTERNS:
         cleaned = pattern.sub("", cleaned)
+    # Stripping the noise words out of "(Official Music Video)" leaves "()",
+    # which used to survive all the way into the group name ("numb ()").
+    cleaned = _EMPTY_BRACKETS.sub(" ", cleaned)
     # Collapse whitespace and strip
     cleaned = re.sub(r"\s{2,}", " ", cleaned).strip()
     # Remove trailing punctuation noise
@@ -116,12 +138,15 @@ def _parse_title_for_artist(title: str) -> ArtistResolution | None:
             if method == "bracket_prefix":
                 # Group 1 is artist, Group 2 is song
                 artist_raw = match.group(1).strip()
+                counterpart = match.group(2).strip()
             elif method == "dash_separator":
                 # Group 1 is artist, Group 2 is song
                 artist_raw = match.group(1).strip()
+                counterpart = match.group(2).strip()
             elif method == "bracket_suffix_meta":
                 # Group 1 is song, Group 2 is artist (reversed)
                 artist_raw = match.group(2).strip()
+                counterpart = match.group(1).strip()
             else:
                 continue
 
@@ -139,9 +164,68 @@ def _parse_title_for_artist(title: str) -> ArtistResolution | None:
                 confidence=confidence,
                 method=method,
                 raw_candidate=artist_raw,
+                counterpart=counterpart,
             )
 
     return None
+
+
+#: Latin/digits plus kana, CJK ideographs and Hangul — artist names in this
+#: domain are routinely Korean or Japanese, and dropping those characters would
+#: silently disable every token comparison below for them.
+_TOKEN_PATTERN = re.compile(r"[0-9a-z぀-ヿ㐀-鿿가-힣]+")
+
+
+def _tokens(name: str) -> list[str]:
+    """Split a name into comparable word tokens (CJK / Hangul kept whole)."""
+    return _TOKEN_PATTERN.findall(name.lower())
+
+
+def _loose(name: str) -> str:
+    """Collapse a name to letters/digits only, so 'ImagineDragons' == 'Imagine Dragons'."""
+    return "".join(_tokens(name))
+
+
+def _matched_token_run(haystack: str, needle: str) -> str:
+    """Return *haystack*'s word run that spells *needle*, or "" if there is none.
+
+    Token-level (not substring) on purpose: "Sia" must not match "Siamese Dream".
+    A run of *haystack* words may also be glued together to match, because VEVO
+    channels drop the spaces ("LadyGagaVEVO" vs "Lady Gaga, Bruno Mars") — and
+    the run is returned in the readable, spaced spelling.
+    """
+    outer, inner = _tokens(haystack), _tokens(needle)
+    if not inner or not outer:
+        return ""
+    if len(inner) <= len(outer):
+        for start in range(len(outer) - len(inner) + 1):
+            if outer[start : start + len(inner)] == inner:
+                return " ".join(inner)
+
+    glued = "".join(inner)
+    if len(glued) < 5:  # too short to be distinctive; avoids "sia" ⊂ "siamese"
+        return ""
+    for start in range(len(outer)):
+        run: list[str] = []
+        for word in outer[start:]:
+            run.append(word)
+            joined = "".join(run)
+            if joined == glued:
+                return " ".join(run)
+            if len(joined) >= len(glued):
+                break
+    return ""
+
+
+def _contains_token_run(haystack: str, needle: str) -> bool:
+    """True if *needle*'s words appear consecutively inside *haystack*'s words."""
+    return bool(_matched_token_run(haystack, needle))
+
+
+def _is_version_annotation(text: str) -> bool:
+    """True if *text* is purely a version/edition marker, not a song name."""
+    words = re.findall(r"[a-z0-9]+", text.lower())
+    return bool(words) and all(word in _VERSION_MARKER_WORDS for word in words)
 
 
 # ─────────────────────────────────────────────
@@ -158,7 +242,14 @@ def _normalize_name(name: str) -> str:
     3. Lowercase + strip
     """
     name = unicodedata.normalize("NFKC", name)
-    name = _CHANNEL_SUFFIX_PATTERN.sub("", name)
+    # Loop so "Artist Official Channel" collapses fully, and drop the separator
+    # each suffix leaves behind ("Alan Walker - Topic" → "alan walker", not
+    # "alan walker -", which would never match the artist's own channel).
+    for _ in range(3):
+        shortened = _TRAILING_SEPARATORS.sub("", _CHANNEL_SUFFIX_PATTERN.sub("", name))
+        if shortened == name:
+            break
+        name = shortened
     return name.strip().lower()
 
 
@@ -296,15 +387,48 @@ def resolve_artist(
 
     # Layer 1 + Layer 2 cross-validation
     if title_result and channel_result:
-        if title_result.artist_key == channel_result.artist_key:
-            # Cross-confirmed: boost confidence
+        title_key = title_result.artist_key
+        channel_key = channel_result.artist_key
+
+        if _loose(title_key) == _loose(channel_key):
+            # Cross-confirmed.  Keep whichever spelling is more readable so
+            # "ImagineDragonsVEVO" and "Imagine Dragons - Topic" land on one key.
+            best = max((title_key, channel_key), key=lambda k: (k.count(" "), len(k)))
             return ArtistResolution(
-                artist_key=title_result.artist_key,
+                artist_key=best,
                 confidence=min(1.0, title_result.confidence + 0.15),
                 method=f"{title_result.method}+channel",
                 raw_candidate=title_result.raw_candidate,
+                counterpart=title_result.counterpart,
             )
-        # Prefer higher confidence
+
+        # The channel is the artist's own upload identity, so it outranks a
+        # title guess whenever the title tells us the guess is not an artist:
+        #
+        #   "One More Light [...] - Linkin Park"  → reversed "song - artist"
+        #   "Valhalla Calling - Duet Version"     → the other side is a version
+        #   "Alan Walker & Torine - Hello World"  → collaboration, main act owns it
+        reversed_title = _loose(title_result.counterpart) == _loose(channel_key)
+        version_tail = _is_version_annotation(title_result.counterpart)
+        collaboration = _matched_token_run(title_key, channel_key)
+        if reversed_title or version_tail or collaboration:
+            reason = (
+                "reversed_title" if reversed_title
+                else "version_tail" if version_tail
+                else "collaboration"
+            )
+            # The title spells the artist with spaces even when the channel does
+            # not ("LadyGagaVEVO" → "lady gaga"), so prefer that spelling.
+            return ArtistResolution(
+                artist_key=collaboration if collaboration and not reversed_title else channel_key,
+                confidence=min(1.0, channel_result.confidence + 0.15),
+                method=f"channel+{reason}",
+                raw_candidate=channel_result.raw_candidate,
+                counterpart=title_result.raw_candidate,
+            )
+
+        # Otherwise the title still wins when it is confident — a label channel
+        # ("RHINO") must not swallow the real artist named in the title.
         if title_result.confidence >= 0.80:
             return title_result
         return channel_result
@@ -430,7 +554,6 @@ def group_by_artist(
     alias_lookup = _build_alias_lookup(aliases)
 
     resolutions: list[ArtistResolution] = []
-    groups: dict[str, list[int]] = defaultdict(list)
 
     for idx, item in enumerate(items):
         if not item.is_available:
@@ -444,9 +567,50 @@ def group_by_artist(
             )
             continue
 
-        resolution = resolve_artist(item, alias_lookup)
-        resolutions.append(resolution)
-        groups[resolution.artist_key].append(idx)
+        resolutions.append(resolve_artist(item, alias_lookup))
+
+    # Keys that differ only in spacing or punctuation are the same artist
+    # ("imaginedragons" from a VEVO channel vs "imagine dragons" from a title).
+    # Pick the most readable spelling as the display key for the whole bucket.
+    display_of: dict[str, str] = {}
+    for resolution in resolutions:
+        if resolution.method == "unavailable":
+            continue
+        key = resolution.artist_key
+        bucket = _loose(key) or key
+        current = display_of.get(bucket)
+        if current is None or (key.count(" "), len(key)) > (current.count(" "), len(current)):
+            display_of[bucket] = key
+
+    # A localised name often prefixes the original one ("紅髮艾德 Ed Sheeran",
+    # "酷玩樂團 Coldplay").  Fold it into the plain-name bucket when that bucket
+    # already exists.  Deliberately limited to a non-ASCII prefix: applying it to
+    # any suffix match would merge "Steve Aoki & Alan Walker" into whichever
+    # collaborator happened to have a bucket, which is not a decision to make on
+    # a coin flip.
+    alias_of: dict[str, str] = {}
+    buckets = sorted(display_of, key=len)
+    for longer in reversed(buckets):
+        if longer.isascii():
+            continue
+        for shorter in buckets:
+            if len(shorter) < 6 or not shorter.isascii() or len(shorter) >= len(longer):
+                continue
+            if longer.endswith(shorter) and _contains_token_run(
+                display_of[longer], display_of[shorter]
+            ):
+                alias_of[longer] = shorter
+                break
+
+    groups: dict[str, list[int]] = defaultdict(list)
+    for idx, resolution in enumerate(resolutions):
+        if resolution.method == "unavailable":
+            continue
+        bucket = _loose(resolution.artist_key) or resolution.artist_key
+        display = display_of[alias_of.get(bucket, bucket)]
+        if display != resolution.artist_key:
+            resolutions[idx] = resolution.model_copy(update={"artist_key": display})
+        groups[display].append(idx)
 
     # Determine group ordering
     if group_order == "alphabetical":
