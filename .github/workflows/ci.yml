@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  python:
+    name: Python (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Optimizer unit tests
+        run: python tests/test_optimizer.py
+      - name: Reorder property tests (exhaustive replay + minimality)
+        run: python tests/test_reorder_property.py
+      - name: Write-back safety tests
+        run: python tests/test_update_flow.py
+
+  typescript:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm ci
+      - name: Type check (src + tests)
+        run: npm run typecheck
+      - name: Cognitive engine tests
+        run: npm test

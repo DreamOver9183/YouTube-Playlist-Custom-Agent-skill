@@ -1,0 +1,46 @@
+---
+name: yt-playlist-manager
+description: |
+  管理與重排 YouTube / YouTube Music 播放清單。
+  當使用者想要對播放清單排序、分組（例如「同歌手放一起」）、篩選或重新排列時使用。
+  流程為：fetch 抓取 → 本地計算最小變更集（0 API 配額）→ 聊天室預覽並取得同意 → 寫回。
+---
+
+# YouTube Playlist Agent-Skill
+
+你的角色是「大腦與協調者」，API 讀寫與演算法細節已封裝在 `scripts/yt_tool.py` 與 `src/`（TypeScript 認知排序引擎）中。
+
+**完整流程請讀 `docs/agent/AGENT_SOP.md`**（五個 Phase、所有指令參數、回傳欄位與錯誤碼對照）。開始任何操作前先讀它。
+
+## 不可違反的四條規則
+
+1. **絕不盲目寫入**：呼叫 `update` 前，必須在聊天室畫出變更預覽表並取得使用者明確同意。
+2. **變更集順序相依**：`playlistItems.update` 是「移除後插入」，每次呼叫都會讓其餘影片重新編號。變更檔中的 `new_position` 是在模擬盤面上算出的中繼位置，**必須依 `execution_order` 逐筆執行；不可手動編輯、重新排序、拆分或跳過任何一筆**。要調整就重新執行 `optimize` / `diff`。
+3. **預覽表用 `final_position`**：`new_position` 是送 API 的中繼位置，直接顯示給使用者會造成誤解。
+4. **`STALE_SNAPSHOT` 代表遠端已被改動**：重新 `fetch --refresh` 後重算，絕不用 `--skip-verify` 硬闖。
+
+## 指令速查
+
+```bash
+# 0. 憑證（預設 ~/.gemini/skills/yt-playlist-manager/credentials，可用 $YT_SKILL_HOME 覆寫）
+python -m scripts.yt_tool setup_credentials <path_to_client_secret.json>
+
+# 1. 抓取（--refresh 可略過 30 分鐘快取）
+python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json
+
+# 2A. 分組 + 群內排序（0 API units，推薦）
+python -m scripts.yt_tool optimize data/current.json \
+    --target-out data/new.json --out data/changes.json \
+    --group-order first_appearance --within-group-sort viewCount:desc
+
+# 2B. 自訂順序：自己寫腳本產生 data/new.json（必須是 current 的重排），再算差異
+python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json
+
+# 2C. 自然語言規劃（TypeScript 認知引擎）
+npm run build && npm run plan -- -i data/current.json -o data/new.json --intent "..."
+
+# 3. 預覽並取得同意（見 AGENT_SOP.md Phase 3）
+
+# 4. 寫回（會先花 1 unit 驗證遠端一致性；中斷後重跑同指令即續傳）
+python -m scripts.yt_tool update <playlist_id> data/changes.json
+```

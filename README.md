@@ -3,8 +3,8 @@
 一個通用的 AI Agent-Skill 架構 YouTube 播放清單管理工具與 **通用型認知分群與多維度排序思考引擎 (Cognitive Sorting & Grouping Engine)**。廣泛支援 **Claude Code**、**Codex**、**GitHub Copilot Workspace**、**Antigravity CLI** 等多種開發者 AI Agent 框架。
 
 本專案採用 **「Agent 為大腦、雙引擎為手臂」** 的架構設計：
-1. **Python API 後台子系統 (`scripts/`)**：負責 YouTube Data API v3 通訊、OAuth 2.0 授權、Patience Sorting LIS 錨點演算法、尾端優先 (Tail-First) 漂移防護與增量斷點寫回。
-2. **TypeScript 認知排序引擎 (`src/`)**：提供零硬編碼、強型別安全與 Sub-Agent 斷層掃描修復的通用型排序思考管道。
+1. **Python API 後台子系統 (`scripts/`)**：負責 YouTube Data API v3 通訊、OAuth 2.0 授權、Patience Sorting LIS 錨點演算法、模擬盤面的精確移動規劃與斷點續傳寫回。
+2. **TypeScript 認知排序引擎 (`src/`)**：提供零硬編碼、強型別安全與 Sub-Agent 斷層掃描修復的通用型排序思考管道，可透過 `npm run plan` 直接接入上述流程。
 
 ---
 
@@ -17,6 +17,14 @@
 ```
 請幫我使用 https://github.com/DreamOver9183/YouTube-Playlist-Custom-Agent-skill 這個 skill
 ```
+
+各框架的自動載入進入點（內容皆指向同一份 `docs/agent/AGENT_SOP.md`）：
+
+| 框架 | 進入點 |
+|:---|:---|
+| Claude Code | `.claude/skills/yt-playlist-manager/SKILL.md` |
+| Gemini CLI / Antigravity | `.gemini/skills/yt-playlist-manager/SKILL.md` |
+| Codex / GitHub Copilot Workspace 等 | 根目錄 `AGENTS.md` |
 
 ### 2. 前置需求：Google Cloud OAuth 憑證
 
@@ -53,23 +61,23 @@
 │  │ Phase 1: fetch → 讀取與整合清單資料                          │  │
 │  │ Phase 2: Cognitive Engine / optimize 零配額本地計算排序     │  │
 │  │ Phase 3: diff/optimize → 異動預覽表 + 配額警告 ← 等待確認   │  │
-│  │ Phase 4: update → 循序寫回 YouTube (含斷點續傳)               │  │
+│  │ Phase 4: update → 一致性驗證 + 循序寫回 (含斷點續傳)         │  │
 │  └─────────────────────────────────────────────────────────────┘  │
 │        ↓ 呼叫                                            ↑ JSON   │
 ├────────┼──────────────────────────────────────────────────┼────────┤
 │        ↓                                                 ↑        │
-│  [TypeScript 通用認知排序引擎] (src/)                            │
-│  ├── Extractor   → 解析屬性特徵與自然語言意圖                     │
+│  [TypeScript 通用認知排序引擎] (src/) ── npm run plan 接入流程    │
+│  ├── Extractor   → 解析屬性特徵與自然語言意圖 (中英雙語)          │
 │  ├── Planner     → 建構多階思考樹 (高階實體歸類 優先於 純量排序) │
 │  ├── Comparator  → 動態合成組合比較器 (Composite Pattern)          │
-│  └── Evaluator   → Sub-Agent 斷層掃描與修復迴圈 (上限 3 次疊代)  │
+│  └── Evaluator   → 分群斷層 + 群內單調性掃描與修復迴圈 (上限 3 次)│
 │                                                                   │
 │  [Python API 後台工具與配額引擎] (scripts/yt_tool.py)             │
 │  ├── setup_credentials → 驗證並安全複製憑證 (0o600 權限)          │
-│  ├── fetch    → youtube_api.py + cache_manager.py                 │
-│  ├── optimize → optimizer.py (Patience Sorting LIS 錨點演算法)   │
-│  ├── diff     → executor.py (compute_diff / estimate_quota)       │
-│  └── update   → youtube_api.py (尾端優先寫回 + 斷點續傳)          │
+│  ├── fetch    → youtube_api.py + cache_manager.py (--refresh)     │
+│  ├── optimize → optimizer.py (LIS 錨點 + 群內排序)               │
+│  ├── diff     → optimizer.plan_reorder (同樣套用 LIS 錨點)        │
+│  └── update   → youtube_api.py (一致性驗證 + 順序寫回 + 續傳)     │
 │                      ↓                                            │
 │              YouTube Data API v3                                  │
 └───────────────────────────────────────────────────────────────────┘
@@ -79,15 +87,19 @@
 
 ```
 YouTube Playlist skill/
+├── AGENTS.md                           # Codex / Copilot 等 Agent 的入口說明
+├── .claude/skills/yt-playlist-manager/
+│   └── SKILL.md                        # Claude Code Skill 進入點
 ├── .gemini/
 │   └── skills/
 │       └── yt-playlist-manager/
-│           ├── SKILL.md                # Agent Skill 註冊與 5-Phase SOP
+│           ├── SKILL.md                # Gemini CLI Skill 註冊與 5-Phase SOP
 │           └── config.json             # Skill 註冊設定
 ├── docs/
 │   ├── agent/
-│   │   └── AGENT_SOP.md            # 通用 Agent 標準作業程序
+│   │   └── AGENT_SOP.md            # 通用 Agent 標準作業程序（單一真實來源）
 │   └── reports/
+│       ├── architecture_audit_2026-08.md  # 架構與演算法稽核報告
 │       ├── v2.1更新20260620.md       # 配額引擎與 LIS 演算法報告
 │       └── archive_implementation_plan_v2.md
 ├── src/                                # 【TypeScript 認知排序引擎】
@@ -105,20 +117,25 @@ YouTube Playlist skill/
 │   ├── adapters/
 │   │   ├── TrackListAdapter.ts     # 音樂曲目資料適配器範例
 │   │   └── ECommerceAdapter.ts     # 電商商品資料適配器範例
+│   ├── cli.ts                          # 橋接 CLI：current.json → new.json
 │   └── index.ts                        # 專案統一進入點 (cognitiveSort)
 ├── scripts/                            # 【Python API 子系統】
 │   ├── yt_tool.py                      # 後台 CLI 工具進入點
-│   ├── optimizer.py                    # LIS 錨點演算法與三層藝人辨識
-│   ├── youtube_api.py                  # YouTube Data API v3 封裝
+│   ├── optimizer.py                    # LIS 錨點、移動規劃與三層藝人辨識
+│   ├── youtube_api.py                  # YouTube Data API v3 封裝與錯誤分類
 │   ├── executor.py                     # 排序/篩選與 Diff 計算
 │   ├── cache_manager.py                # 本地 JSON 快取層 (30-min TTL)
-│   ├── schemas.py                      # Pydantic v2 資料模型
+│   ├── schemas.py                      # Pydantic v2 資料模型與指紋工具
 │   └── __init__.py
 ├── tests/
-│   ├── test_cognitive_engine.ts        # TypeScript 認知引擎單元測試 (13 項)
-│   └── test_optimizer.py               # Python 最佳化與 API 測試 (24 項)
+│   ├── test_cognitive_engine.ts        # TypeScript 認知引擎測試 (28 項)
+│   ├── test_optimizer.py               # Python 最佳化與辨識測試 (24 項)
+│   ├── test_reorder_property.py        # 重排正確性窮舉驗證 (12 項)
+│   └── test_update_flow.py             # 寫回安全性測試 (7 項)
+├── .github/workflows/ci.yml            # CI：型別檢查與四組測試
 ├── package.json
 ├── tsconfig.json
+├── tsconfig.test.json
 ├── requirements.txt
 ├── .gitignore
 └── README.md
@@ -134,20 +151,38 @@ YouTube Playlist skill/
 # 1. 設定憑證檔案（安全寫入 0o600 權限）
 python -m scripts.yt_tool setup_credentials <path_to_client_secret.json>
 
-# 2. 獲取播放清單資料（帶快取機制）
-python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json
+# 2. 獲取播放清單資料（帶 30 分鐘快取；--refresh 可強制重抓）
+python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json [--refresh]
 
-# 3. (選項 A) 執行歌手分組與 LIS 錨點最佳化（0 API 配額，自動產生最小變更）
-python -m scripts.yt_tool optimize data/current.json --target-out data/new.json --out data/changes.json
+# 3. (選項 A) 歌手分組 + 群內排序 + LIS 錨點最佳化（0 API 配額）
+python -m scripts.yt_tool optimize data/current.json \
+    --target-out data/new.json --out data/changes.json \
+    --group-order first_appearance --within-group-sort viewCount:desc
 
-# 4. (選項 B) 計算自訂順序 (data/new.json) 與原清單差異及配額預估
+# 4. (選項 B) 計算自訂順序 (data/new.json) 與原清單差異；同樣套用 LIS 錨點
 python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json
 
-# 5. 將差異寫回 YouTube（尾端優先排序 + 斷點紀錄）
+# 5. 將差異寫回 YouTube（寫回前 1 unit 一致性驗證 + 順序執行 + 斷點續傳）
 python -m scripts.yt_tool update <playlist_id_or_url> data/changes.json
 ```
 
-### 2. TypeScript 認知排序引擎使用範例
+> 變更檔中的移動是**順序相依**的：每一次 `playlistItems.update` 都會讓其餘影片重新編號，
+> 因此位置是在本地模擬盤面上即時算出的，必須依 `execution_order` 逐筆執行，不可重新排序或跳過。
+
+### 2. TypeScript 認知排序引擎
+
+作為 CLI 接入播放清單流程（讀 `current.json` → 排序 → 寫 `new.json`）：
+
+```bash
+npm run build
+npm run plan -- --input data/current.json --output data/new.json \
+    --intent "把同一個頻道的影片放在一起，觀看次數由高到低"
+# 或明確指定欄位
+npm run plan -- -i data/current.json -o data/new.json \
+    --group-by channel_title --sort-by view_count:desc
+```
+
+作為函式庫使用：
 
 ```typescript
 import { cognitiveSort, TrackListAdapter } from './dist/index.js';
@@ -157,30 +192,41 @@ const result = cognitiveSort(myItems, {
   text: "請將同專輯曲目歸類，並按軌號升冪排序"
 });
 
-console.log(result.items); // 排序完成之陣列
-console.log(result.evaluation.isContinuous); // Sub-Agent 自我校驗連續性結果
+console.log(result.items);                    // 排序完成之陣列
+console.log(result.evaluation.isContinuous);  // 分群連續性與群內排序單調性檢查結果
+console.log(result.evaluation.gaps);          // 若有斷層，指出是哪個欄位被打散
 
 // 方式 B：使用專用適配器
 const trackAdapter = new TrackListAdapter();
 const sortedTracks = trackAdapter.sortTracks(rawTracks);
 ```
 
+> 分群維度預設以 `groupOrder: 'first_appearance'` 排列群組。重排既有清單時請保持此設定：
+> 字典序會把所有群組重新洗牌，需要移動的項目數（也就是 API 配額）會高出好幾倍。
+
 ---
 
 ## 技術測試與驗證
 
-本專案具備完整且自動化的雙雙驗證機制：
-
 ```bash
-# 1. 執行 TypeScript 嚴格型別檢查 (Strict Mode, 零 any)
+# TypeScript 嚴格型別檢查（含 tests，Strict Mode、零 any）
 npm run typecheck
 
-# 2. 執行 TypeScript 認知引擎測試 (13/13 Passed)
-npm run test
+# TypeScript 認知引擎測試（會自動先 build）
+npm test
 
-# 3. 執行 Python API 與最佳化引擎測試 (24/24 Passed)
+# Python 演算法與辨識單元測試
 python tests/test_optimizer.py
+
+# 重排正確性窮舉驗證：n=2..7 全排列（5912 組）重播後必須等於目標順序，
+# 且移動次數等於理論下界 N − LIS
+python tests/test_reorder_property.py
+
+# 寫回安全性：過期快照、中斷續傳、進度污染、配額耗盡、退避重試
+python tests/test_update_flow.py
 ```
+
+`tests/test_reorder_property.py` 是整個專案的核心把關：任何改動重排邏輯的變更都必須讓它通過。
 
 ---
 
@@ -190,9 +236,10 @@ python tests/test_optimizer.py
 |:---|:---|
 | 讀取清單 (`playlistItems.list`) | 1 unit / 次 |
 | 讀取影片 Metadata (`videos.list`) | 1 unit / 50 支影片 |
+| 寫回前一致性驗證 | 1 unit / 次 |
 | 更新影片位置 (`playlistItems.update`) | **50 units / 次** |
 
-YouTube Data API v3 每日預設上限為 10,000 units。專案透過 **Patience Sorting LIS 錨點演算法** 可為大量影片排列 **節省 25% 至 70% 的 API 配額**。工具在 `diff` / `optimize` 階段會精確預估配額消耗，Agent 會在超過 2,500 units 時主動向使用者警示。
+YouTube Data API v3 每日預設上限為 10,000 units。專案透過 **Patience Sorting LIS 錨點演算法**，把需要的 `update` 次數壓到理論下界 `N − LIS`；對一般的分組重排可 **節省 25% 至 70% 的 API 配額**（實際比例取決於原順序與目標順序的相似度）。工具在 `diff` / `optimize` 階段會精確預估配額消耗，Agent 會在超過 2,500 units 時主動向使用者警示。
 
 ---
 
