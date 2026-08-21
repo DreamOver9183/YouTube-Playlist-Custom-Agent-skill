@@ -134,6 +134,7 @@ YouTube Playlist skill/
 │   ├── test_update_flow.py             # 寫回安全性測試 (7 項)
 │   └── e2e/                            # 端對端測試（離線，16 個情境）
 │       ├── run_e2e.py                  # 驅動真實 CLI 子行程的黑箱測試
+│       ├── dryrun.py                   # 用真實快照演練寫回（0 配額、零異動）
 │       ├── fake_youtube.py             # YouTube Data API v3 離線替身
 │       ├── sitecustomize.py            # 在子行程啟動時注入替身
 │       └── README.md                   # 測試方法與通過條件
@@ -247,6 +248,9 @@ python tests/test_update_flow.py
 
 # 端對端：以真實 CLI 子行程跑完整 SOP 流程（離線，不需憑證／不耗配額）
 python tests/e2e/run_e2e.py
+
+# 送出前演練：用真實快照跑真正的 update，驗證無誤才花配額
+python tests/e2e/dryrun.py data/current.json data/changes.json --target data/new.json
 ```
 
 `tests/test_reorder_property.py` 是整個專案的核心把關：任何改動重排邏輯的變更都必須讓它通過。
@@ -260,6 +264,10 @@ python tests/e2e/run_e2e.py
 16 個情境涵蓋：憑證握手 → fetch 分頁／快取／token 重用 → optimize/diff 零配額計算 →
 預覽資料正確性 → 寫回、遠端漂移偵測、中斷續傳、變更集防護 → 參數錯誤處理。
 通過條件與情境清單見 [`tests/e2e/README.md`](tests/e2e/README.md)。
+
+同一套替身也支援**送出前的離線演練**：`tests/e2e/dryrun.py` 把你真實抓下來的快照灌進替身，
+執行真正的 `update` 指令驗證整份變更集會不會如預期落地（可加 `--fail-at N` 連中斷續傳一起演練），
+全程 0 配額、真實清單零異動。大批次重排在花掉數千 units 之前，建議都先跑一次。
 
 ### 真實資料驗證
 

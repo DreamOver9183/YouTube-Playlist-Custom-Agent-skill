@@ -17,6 +17,27 @@ python tests/e2e/run_e2e.py --keep               # 保留暫存工作區以便�
 
 ---
 
+## 送出前的離線演練：`dryrun.py`
+
+`update` 一旦送出就是每筆 50 units 的不可逆操作。`dryrun.py` 把你**真實抓下來的快照**
+灌進同一套離線替身，再執行真正的 `yt_tool update`，於是快照驗證、順序相依的位置漂移、
+續傳檔與錯誤處理都會照跑，但一支影片都不會被移動、一個 unit 都不會被消耗。
+
+```bash
+# 送出前先演練這份變更集
+python tests/e2e/dryrun.py data/current.json data/changes.json --target data/new.json
+
+# 順便演練「第 20 筆遇到配額耗盡」的中斷與續傳
+python tests/e2e/dryrun.py data/current.json data/changes.json \
+    --target data/new.json --fail-at 20
+```
+
+離開碼 0 代表可以安全送出。它會檢查：實際套用結果是否等於本地重放、最終順序是否等於
+目標順序、有無失敗筆數，並在結束時清除演練留下的續傳檔（那個檔案若留著，真的寫回時
+會讓工具誤判為「已完成」而整批跳過）。
+
+---
+
 ## 測試方法
 
 | 設計決策 | 原因 |

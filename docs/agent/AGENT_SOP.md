@@ -166,6 +166,15 @@ npm run plan -- -i data/current.json -o data/new.json \
 
 5. **暫停並等待使用者明確回覆**「OK」或「同意」，不可自動執行 Phase 4。
 
+6. **（建議）送出前先做離線演練**：變更筆數多、或這份清單是第一次重排時，先執行
+
+   ```
+   python tests/e2e/dryrun.py data/current.json data/changes_optimized.json --target data/new.json
+   ```
+
+   它會用同一份快照跑**真正的** `update` 指令對上離線替身，驗證整份變更集會不會如預期
+   落地（離開碼 0 才代表安全），全程 0 配額、不動到任何真實影片。
+
 ### Phase 4: 執行寫回 (Execution)
 
 1. 收到確認後，執行寫回指令：
