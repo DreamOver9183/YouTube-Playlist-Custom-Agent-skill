@@ -1,14 +1,16 @@
 {
   "name": "cognitive-sorting-engine",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "通用型認知分群與多維度排序思考引擎 (Cognitive Sorting & Grouping Engine)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "plan": "node dist/cli.js",
+    "pretest": "npm run build",
     "test": "node --loader ts-node/esm tests/test_cognitive_engine.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json"
   },
   "keywords": [
     "sorting",

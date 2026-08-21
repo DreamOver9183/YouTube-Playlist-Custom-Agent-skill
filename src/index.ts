@@ -12,6 +12,8 @@ export type {
   SortDirection,
   NullHandlingStrategy,
   FallbackStrategy,
+  GroupOrderStrategy,
+  GapKind,
   GroupDimension,
   SortCriterion,
   CognitivePlan,
@@ -35,6 +37,9 @@ export { ECommerceAdapter, type ProductItem } from './adapters/ECommerceAdapter.
 import { Extractor, type NaturalLanguageIntent } from './core/cognitive/Extractor.js';
 import { Planner } from './core/cognitive/Planner.js';
 import { SortingEngine, type SortingResult } from './core/engine/SortingEngine.js';
+
+/** 推導欄位宇宙時取樣的筆數上限 */
+const FIELD_SAMPLE_SIZE = 20;
 
 /**
  * 通用認知分群與排序便利函式
@@ -68,9 +73,16 @@ export function cognitiveSort<T extends Record<string, unknown>>(
     };
   }
 
-  const sampleItem = items[0];
+  // 欄位宇宙取前 N 筆的聯集：只看 items[0] 會在第一筆剛好缺欄位時整組失準。
+  const fieldUnion = new Set<string>();
+  for (const item of items.slice(0, FIELD_SAMPLE_SIZE)) {
+    for (const field of Object.keys(item)) {
+      fieldUnion.add(field);
+    }
+  }
+
   const extractor = new Extractor();
-  const features = extractor.extract(sampleItem, intent);
+  const features = extractor.extractFromFields([...fieldUnion], intent);
 
   const planner = new Planner();
   const plan = planner.createPlan(features);

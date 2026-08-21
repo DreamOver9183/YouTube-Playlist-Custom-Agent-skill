@@ -15,6 +15,14 @@ export type NullHandlingStrategy = 'nulls_first' | 'nulls_last';
 export type FallbackStrategy = 'stable_keep' | 'move_to_end' | 'move_to_front';
 
 /**
+ * 群組之間的排列方式
+ * - `first_appearance`：依各群組首次出現的位置（預設；重排既有清單時移動量最小）
+ * - `lexical`：依群組鍵字典序
+ * - `count_desc`：依群組項目數由多到少
+ */
+export type GroupOrderStrategy = 'first_appearance' | 'lexical' | 'count_desc';
+
+/**
  * 高階實體分群維度定義
  */
 export interface GroupDimension {
@@ -26,6 +34,13 @@ export interface GroupDimension {
   readonly nullHandling: NullHandlingStrategy;
   /** 別名/規範化對照表（選填，用於同義詞歸類） */
   readonly aliasMap?: Readonly<Record<string, string>>;
+  /**
+   * 群組之間如何排列（預設 `first_appearance`）。
+   *
+   * 這對「重排一份既有清單」是關鍵設定：字典序會把所有群組重新洗牌，
+   * 需要移動的項目數遠高於依首次出現順序排列，而每一次移動都是配額成本。
+   */
+  readonly groupOrder?: GroupOrderStrategy;
 }
 
 /**
@@ -56,6 +71,13 @@ export interface CognitivePlan {
 }
 
 /**
+ * 斷層種類
+ * - `grouping`：同一分群鍵的項目未處於連續索引區間（可由提升權重修復）
+ * - `ordering`：群內排序未依 sortCriteria 單調遞增／遞減（計畫或提取器不一致）
+ */
+export type GapKind = 'grouping' | 'ordering';
+
+/**
  * 離散斷層描述
  * 記錄 Sub-Agent 掃描出之非連續項目區間
  */
@@ -64,6 +86,10 @@ export interface ContinuityGap {
   readonly groupKey: string;
   /** 項目於排序後陣列中出現之非連續索引列表 */
   readonly actualIndices: readonly number[];
+  /** 斷層種類（預設 `grouping`） */
+  readonly kind?: GapKind;
+  /** 發生斷層之欄位名稱 */
+  readonly field?: string;
 }
 
 /**
