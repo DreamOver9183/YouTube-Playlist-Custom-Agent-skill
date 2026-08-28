@@ -60,3 +60,18 @@ jobs:
         # Drives the real CLIs in real subprocesses against a fake YouTube API:
         # no credentials, no network, no quota.  See tests/e2e/README.md.
         run: python tests/e2e/run_e2e.py
+
+  skill-parity:
+    name: Skill entrypoint parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: SKILL.md must be identical across hosts
+        # Claude Code and Gemini CLI each load their own copy of SKILL.md.  They
+        # drifted once — the Gemini copy inlined a duplicate of AGENT_SOP.md that
+        # then went stale and lost two of the four core rules.  Keeping the two
+        # files byte-identical is what stops that happening again; anything that
+        # needs to grow belongs in docs/agent/AGENT_SOP.md, not in SKILL.md.
+        run: |
+          diff -u .claude/skills/yt-playlist-manager/SKILL.md \
+                  .gemini/skills/yt-playlist-manager/SKILL.md

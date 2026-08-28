@@ -3,6 +3,10 @@
 給任何在此工作區運作的 AI Agent（Codex、GitHub Copilot Workspace、Antigravity CLI 等）的入口說明。
 Claude Code 會另外自動載入 `.claude/skills/yt-playlist-manager/SKILL.md`；Gemini CLI 會載入 `.gemini/skills/yt-playlist-manager/SKILL.md`。三者指向同一份流程。
 
+> **兩份 `SKILL.md` 必須逐位元組相同**，CI 的 `skill-parity` job 會擋下分岔。
+> 它們只是「四條規則 + 指令速查 + 指向 `docs/agent/AGENT_SOP.md`」的入口，
+> 流程細節一律寫在 `AGENT_SOP.md`，不要複製進 `SKILL.md`——上一次分岔就是這樣來的。
+
 ## 這個專案是什麼
 
 一個 YouTube 播放清單管理 Agent-Skill：Agent 當大腦，`scripts/`（Python）負責 API 與配額最佳化，`src/`（TypeScript）提供通用的認知分群排序引擎。
