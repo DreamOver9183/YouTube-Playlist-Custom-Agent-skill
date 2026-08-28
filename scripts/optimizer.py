@@ -1000,5 +1000,8 @@ def run_full_optimization(
     report.unresolved_count = sum(
         1 for r in resolutions if r.method == "unknown"
     )
+    report.metadata_missing_count = sum(
+        1 for item in items if not item.metadata_available
+    )
 
     return target, changes, report, resolutions

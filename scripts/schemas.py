@@ -133,6 +133,16 @@ class EnrichedPlaylistItem(BaseModel):
     tags: list[str] = Field(default_factory=list)
     privacy_status: str = "public"
     is_available: bool = True
+    metadata_available: bool = Field(
+        default=True,
+        description=(
+            "videos.list 是否有回傳這支影片的 metadata。playlistItems 可見但 "
+            "videos.list 未回傳的情況（例如地區限制）會是 False：此時仍可正常"
+            "移動位置，但 title/channel_title 是空的，藝人辨識會落回 unknown，"
+            "分群品質會受影響。與 is_available（私人／已刪除，釘選不移動）是"
+            "兩件獨立的事。"
+        ),
+    )
 
     @classmethod
     def from_item_and_metadata(
@@ -148,6 +158,7 @@ class EnrichedPlaylistItem(BaseModel):
             "added_at": item.added_at,
             "playlist_id": item.playlist_id,
             "is_available": item.is_available,
+            "metadata_available": metadata is not None,
         }
         if metadata:
             base.update({
@@ -267,6 +278,15 @@ class OptimizationReport(BaseModel):
     pinned_count: int = Field(
         default=0,
         description="被釘在原位置、不參與重排的影片數量（私人／已刪除影片）",
+    )
+    metadata_missing_count: int = Field(
+        default=0,
+        description=(
+            "videos.list 未回傳 metadata 的影片數量（例如地區限制）。這些影片"
+            "仍會正常參與重排，但沒有標題／頻道名可用於辨識，通常會落入 "
+            "unknown 群組——`unresolved_count` 不會告訴你原因是「辨識失敗」"
+            "還是「根本沒有資料可辨識」，這個欄位補上這個區別。"
+        ),
     )
 
 

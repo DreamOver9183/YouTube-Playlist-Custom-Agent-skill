@@ -44,12 +44,14 @@
 2. 回傳值範例：
    ```json
    {"status": "success", "item_count": 200, "hidden_count": 3,
+    "metadata_missing_count": 2,
     "source": "cache", "fetched_at": "2026-08-21T04:00:00+00:00",
     "head_fingerprint": "9f2c...", "file": "data/current.json"}
    ```
    - `source`：`api` 代表剛從 API 讀取；`cache` 代表來自本地快取（TTL 30 分鐘）。
    - **若 `source` 是 `cache`，而使用者剛剛可能在 YouTube 上動過這份清單，請改用 `--refresh` 重新抓取**，否則排序會以過期的順序為基準。
    - `hidden_count > 0`：清單中含有私人／已刪除影片。它們仍佔用位置但無法移動，工具會把它們釘在原位；請在 Phase 3 主動告知使用者這會讓某些群組被切斷。
+   - `metadata_missing_count > 0`：有影片可在清單中看到，但 `videos.list` 沒有回傳它的資料（常見於地區限制）。這類影片仍會正常參與重排（不影響位置正確性），但沒有標題／頻道名可用於藝人辨識，分組時多半會落入 `unknown`。請在 Phase 3 一併告知使用者。
 3. 首次執行若需要 OAuth 登入，底層庫會觸發系統瀏覽器視窗。請提示使用者注意瀏覽器彈窗並完成授權。
 
 ### Phase 2: 本地計算 (Local Computation)
@@ -94,6 +96,7 @@
      "groups_found": ["bts", "blackpink", "yoasobi", "unknown"],
      "group_details": {"bts": 30, "blackpink": 25},
      "unresolved_count": 3,
+     "metadata_missing_count": 2,
      "fingerprint": "07580a1cecc69364"
    }
    ```
@@ -104,6 +107,10 @@
      key，或群組數接近影片數（幾乎全是單曲群），代表這份清單的命名形態不適合自動分群，
      應改用路徑 B/C 明確指定欄位。`artist_aliases.json` 只在辨識失敗時才會生效，
      無法用來合併「已辨識但分錯」的群組。
+   - `metadata_missing_count`：`unresolved_count` 當中，有多少是因為根本沒有資料可辨識
+     （`videos.list` 沒回傳，通常是地區限制），而不是辨識演算法失敗。這些影片無法靠
+     `artist_aliases.json` 救回來——沒有標題或頻道名可以比對。若這個數字偏高，如實告知
+     使用者「這幾支影片因地區限制缺少資料，只能歸入 unknown」，不要嘗試用別名表修正。
    - `estimated_quota`：確認是否在單日限額（10,000 units）內
 
 4. 直接跳至 **Phase 3** 使用 `data/changes_optimized.json`。

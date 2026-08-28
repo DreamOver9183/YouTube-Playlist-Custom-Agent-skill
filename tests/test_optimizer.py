@@ -448,6 +448,54 @@ def test_full_optimization_pipeline():
     print("  ✓ full pipeline: groups are contiguous, quota optimized")
 
 
+def test_metadata_missing_items_are_flagged_and_still_movable():
+    """videos.list omitting a video (e.g. region lock) must be distinguishable
+    from a genuine artist-resolution failure, and must not block reordering."""
+    items = [
+        make_item("p0", "v0", title="ArtistA - Song1", channel="ArtistA"),
+        make_item("p1", "v1", title="ArtistB - Song1", channel="ArtistB"),
+        make_item("p2", "v2", title="", channel=""),  # videos.list gap
+    ]
+    items[2] = items[2].model_copy(update={"metadata_available": False})
+
+    target, changes, report, resolutions = run_full_optimization(items)
+
+    assert report.metadata_missing_count == 1
+    assert report.unresolved_count == 1  # the gap item still resolves to "unknown"
+    # The gap item is a normal movable item, not pinned like a private video.
+    assert {item.playlist_item_id for item in target} == {"p0", "p1", "p2"}
+    assert report.pinned_count == 0
+
+
+def test_metadata_available_defaults_true_for_normal_items():
+    item = make_item("p0", "v0", title="ArtistA - Song1", channel="ArtistA")
+    assert item.metadata_available is True
+
+
+def test_from_item_and_metadata_flags_missing_metadata():
+    from scripts.schemas import PlaylistItemData, VideoMetadata, EnrichedPlaylistItem
+
+    playlist_item = PlaylistItemData(
+        playlist_item_id="p0",
+        video_id="v0",
+        position=0,
+        added_at=datetime.now(timezone.utc),
+        channel_title="",
+        playlist_id="PLtest",
+        is_available=True,
+    )
+
+    missing = EnrichedPlaylistItem.from_item_and_metadata(playlist_item, None)
+    assert missing.metadata_available is False
+    assert missing.is_available is True  # not the same thing as private/deleted
+
+    present = EnrichedPlaylistItem.from_item_and_metadata(
+        playlist_item,
+        VideoMetadata(video_id="v0", title="ArtistA - Song1", channel_title="ArtistA"),
+    )
+    assert present.metadata_available is True
+
+
 # ─── Test 8: Position Drift Simulation ──────────
 
 
@@ -539,6 +587,11 @@ def run_all_tests():
         ]),
         ("Full Pipeline", [
             test_full_optimization_pipeline,
+        ]),
+        ("Metadata Availability", [
+            test_metadata_missing_items_are_flagged_and_still_movable,
+            test_metadata_available_defaults_true_for_normal_items,
+            test_from_item_and_metadata_flags_missing_metadata,
         ]),
         ("Position Drift Simulation", [
             test_position_drift_simulation,

@@ -362,6 +362,7 @@ def cmd_fetch(args: argparse.Namespace) -> None:
     )
 
     hidden_count = sum(1 for item in items if not item.is_available)
+    metadata_missing_count = sum(1 for item in items if not item.metadata_available)
     emit(
         {
             "status": "success",
@@ -370,6 +371,14 @@ def cmd_fetch(args: argparse.Namespace) -> None:
             "hidden_note": (
                 "私人／已刪除影片仍佔用位置，已保留為釘選項目且不會被移動。"
                 if hidden_count
+                else ""
+            ),
+            "metadata_missing_count": metadata_missing_count,
+            "metadata_missing_note": (
+                "有影片可在清單中看到但 videos.list 未回傳其資料（常見於地區限制），"
+                "這類影片仍可正常移動位置，但缺少標題／頻道名可用於藝人辨識，"
+                "分組時多半會落入 unknown。"
+                if metadata_missing_count
                 else ""
             ),
             "source": source,
@@ -524,6 +533,7 @@ def cmd_optimize(args: argparse.Namespace) -> None:
             "groups_found": report.groups_found,
             "group_details": report.group_details,
             "unresolved_count": report.unresolved_count,
+            "metadata_missing_count": report.metadata_missing_count,
             "fingerprint": fingerprint,
             "target_file": str(target_path),
             "changes_file": str(out_path),
