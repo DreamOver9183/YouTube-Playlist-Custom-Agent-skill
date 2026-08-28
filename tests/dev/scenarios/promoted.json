@@ -1,0 +1,99 @@
+[
+  {
+    "id": "direction-without-field",
+    "probe": "每組裡面由新到舊排列",
+    "verdict": "ask",
+    "resolution": {
+      "scenario_key": "missing_sort_field/which-date",
+      "when": "使用者講了新舊、前後這類時間方向，卻沒指明是影片發布日期還是加入清單的日期",
+      "header": "依哪個日期",
+      "question": "你說的「新到舊」是指哪一個時間？",
+      "options": [
+        {
+          "label": "影片發布日期",
+          "sort_by": "published_at:desc",
+          "description": "依影片在 YouTube 上架的時間。想「先聽新歌」通常是指這個。"
+        },
+        {
+          "label": "加入清單的時間",
+          "sort_by": "added_at:desc",
+          "description": "依你把它收進這份清單的時間。想「看最近收藏了什麼」是指這個。"
+        }
+      ]
+    },
+    "promoted_at": "2026-08-28T16:08:04.817633+00:00",
+    "expected_gaps": [
+      "missing_sort_field"
+    ]
+  },
+  {
+    "id": "group-only",
+    "probe": "把同一個歌手的歌放在一起",
+    "verdict": "ask",
+    "resolution": {
+      "scenario_key": null,
+      "when": "",
+      "header": "群內排序",
+      "question": "同一位歌手的歌被聚在一起之後，群組「內部」要怎麼排？",
+      "options": [
+        {
+          "label": "維持原順序",
+          "sort_by": null,
+          "description": "只做分組，不動群內既有順序。移動次數最少、配額最省。若使用者只是想「找同一個歌手時不用滑來滑去」，這個就夠了。"
+        },
+        {
+          "label": "觀看次數 高→低",
+          "sort_by": "view_count:desc",
+          "description": "每位歌手的代表作排在該群最前面。會額外增加移動次數，配額比維持原順序高。"
+        },
+        {
+          "label": "發布日期 新→舊",
+          "sort_by": "published_at:desc",
+          "description": "每位歌手群內由新歌排到舊歌。配額成本與觀看次數排序相近。"
+        },
+        {
+          "label": "歌曲標題 A→Z",
+          "sort_by": "title:asc",
+          "description": "每位歌手群內依標題字典序。中英混雜的清單裡可讀性通常較差。"
+        }
+      ]
+    },
+    "promoted_at": "2026-08-28T16:08:04.819304+00:00",
+    "expected_gaps": [
+      "missing_sort_field"
+    ]
+  },
+  {
+    "id": "unrecorded-term",
+    "probe": "把同一個歌手的歌放在一起，依熱門程度由高到低排",
+    "verdict": "vocabulary",
+    "resolution": {
+      "vocabulary": {
+        "sort": {
+          "view": [
+            "熱門",
+            "熱門程度"
+          ]
+        }
+      }
+    },
+    "promoted_at": "2026-08-28T16:08:04.819304+00:00",
+    "expected_gaps": []
+  },
+  {
+    "id": "vague-verb-only",
+    "probe": "整理一下我的清單",
+    "verdict": "ask",
+    "resolution": {
+      "scenario_key": null,
+      "when": "",
+      "header": "群內排序",
+      "question": "同一位歌手的歌被聚在一起之後，群組「內部」要怎麼排？",
+      "options": []
+    },
+    "promoted_at": "2026-08-28T16:08:04.821601+00:00",
+    "expected_gaps": [
+      "missing_sort_field"
+    ]
+  }
+]

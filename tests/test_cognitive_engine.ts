@@ -14,6 +14,7 @@ import { TrackListAdapter, type MusicTrack } from '../src/adapters/TrackListAdap
 import { SortingEngine } from '../src/core/engine/SortingEngine.js';
 import { Extractor } from '../src/core/cognitive/Extractor.js';
 import { Evaluator } from '../src/core/cognitive/Evaluator.js';
+import { LEARNED_VOCABULARY } from '../src/core/cognitive/learned-vocabulary.js';
 
 let passed = 0;
 let failed = 0;
@@ -408,6 +409,46 @@ function testUnmatchedSortIntentSelectsNothing(): void {
 }
 
 // ─────────────────────────────────────────────
+// 測試 N：滾動式學習所得的詞彙確實併入 Extractor
+// ─────────────────────────────────────────────
+function testLearnedVocabularyIsMerged(): void {
+  console.log('\n============================================================');
+  console.log(' 測試：滾動式學習詞彙的合併');
+  console.log('============================================================');
+
+  const fields = [
+    'title', 'channel_title', 'published_at', 'duration_seconds',
+    'view_count', 'like_count', 'added_at',
+  ];
+  const extractor = new Extractor();
+
+  // 基礎詞彙不可因為合併而失效——學習只能加，不能改變既有解析結果。
+  const baseline = extractor.extractFromFields(fields, { text: '依觀看次數由高到低' });
+  assert(
+    baseline.sortCriteria.some((c) => c.field === 'view_count' && c.direction === 'desc'),
+    '合併學習詞彙後，基礎詞彙「觀看次數」仍須解析為 view_count:desc'
+  );
+
+  const sortEntries = Object.entries(LEARNED_VOCABULARY.sort);
+  if (sortEntries.length === 0) {
+    assert(true, '尚無學來的排序詞彙，略過（合併機制本身已由上一項涵蓋）');
+    return;
+  }
+
+  // 每一個經人工核可的同義詞，都必須真的能挑得出欄位；挑不到就代表
+  // learned-vocabulary.ts 沒有生效，滾動式學習等於空轉。
+  for (const [canonical, synonyms] of sortEntries) {
+    for (const synonym of synonyms) {
+      const features = extractor.extractFromFields(fields, { text: `依${synonym}排序` });
+      assert(
+        features.sortCriteria.length > 0,
+        `學來的「${synonym}」應能挑出排序欄位（正規詞 ${canonical}）`
+      );
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
 // 測試總進入點
 // ─────────────────────────────────────────────
 function main(): void {
@@ -422,6 +463,7 @@ function main(): void {
   testUnmatchedSortIntentSelectsNothing();
   testUniversalDomainBugReports();
   testNullSafetyAndFallback();
+  testLearnedVocabularyIsMerged();
 
   console.log('\n============================================================');
   console.log(` 測試結果總計: ${passed} 通過, ${failed} 失敗`);

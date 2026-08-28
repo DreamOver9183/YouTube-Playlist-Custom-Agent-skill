@@ -146,6 +146,15 @@ npm run plan -- -i data/current.json -o data/new.json \
 此時請追問使用者要依哪個欄位排序，或改用 `--sort-by` 明確指定後重跑，
 不要把「沒有排序」的結果當成完成。
 
+**追問前先查 `docs/agent/clarify_scenarios.json`。** 那是一份累積下來的問題模板庫，
+每一筆都對應一種「需求不完整」的斷層，並附上問法與選項（含各選項的配額代價）。
+依 `sort_criteria` / `group_dimensions` 為空所對應的斷層種類查表：先找 `when` 條件
+吻合的變體，沒有吻合的就用該斷層的預設變體（`when` 是空字串的那一筆），照它的
+`question` 與 `options` 發問。查無此情境時再自己擬問法。
+
+不要每次重新想問法與選項——模板裡的選項描述寫了各自的配額差異，那是使用者
+做決定所需要的資訊。
+
 接著同路徑 B 的第 3 步執行 `diff`。
 
 ### Phase 3: 差異計算與強制預覽 (Checkpoint)

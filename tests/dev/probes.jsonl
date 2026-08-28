@@ -1,0 +1,4 @@
+{"id": "group-only", "intent": "把同一個歌手的歌放在一起", "why": "只講了分群，完全沒交代群內順序——這正是 Agent 必須反問「群內排序」的原型。"}
+{"id": "direction-without-field", "intent": "每組裡面由新到舊排列", "why": "講了方向卻沒指名欄位。「新舊」可能是 published_at 也可能是 added_at，引擎無從猜起。"}
+{"id": "vague-verb-only", "intent": "整理一下我的清單", "why": "只有動詞沒有任何維度。與 group-only 落在同一個斷層，用來驗證同型情境會被併成同一個問題模板。"}
+{"id": "unrecorded-term", "intent": "把同一個歌手的歌放在一起，依熱門程度由高到低排", "why": "需求其實講得很完整，只是「熱門程度」不在詞彙表裡。這種該補詞彙，不該拿去煩使用者。"}

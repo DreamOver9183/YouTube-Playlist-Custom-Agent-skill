@@ -11,6 +11,7 @@
  */
 
 import type { GroupDimension, NullHandlingStrategy, SortCriterion, SortDirection } from '../types/schema.js';
+import { LEARNED_VOCABULARY } from './learned-vocabulary.js';
 
 /** 自然語言意圖或需求結構 */
 export interface NaturalLanguageIntent {
@@ -29,7 +30,7 @@ export interface ExtractedFeatures {
 }
 
 /** 高階實體語意詞彙表（正規詞 → 中英同義詞），通用抽象、非單一領域 */
-const GROUP_VOCABULARY: Readonly<Record<string, readonly string[]>> = {
+const BASE_GROUP_VOCABULARY: Readonly<Record<string, readonly string[]>> = {
   artist: ['artist', '歌手', '藝人', '演出者'],
   album: ['album', '專輯'],
   channel: ['channel', '頻道'],
@@ -42,7 +43,7 @@ const GROUP_VOCABULARY: Readonly<Record<string, readonly string[]>> = {
 };
 
 /** 群內純量排序語彙表（正規詞 → 中英同義詞） */
-const SORT_VOCABULARY: Readonly<Record<string, readonly string[]>> = {
+const BASE_SORT_VOCABULARY: Readonly<Record<string, readonly string[]>> = {
   track: ['track', '軌號', '曲序'],
   number: ['number', '編號'],
   index: ['index', '索引'],
@@ -57,7 +58,7 @@ const SORT_VOCABULARY: Readonly<Record<string, readonly string[]>> = {
 };
 
 /** 降冪語意標記 */
-const DESC_MARKERS: readonly string[] = [
+const BASE_DESC_MARKERS: readonly string[] = [
   'desc', 'descending', '降冪', '遞減', '倒序', '由高到低', '從高到低', '高到低',
   '由多到少', '從多到少', '多到少', '由新到舊', '從新到舊', '新到舊', '最多', '最高',
   // 長度／大小／新舊的口語說法：少了這些，「時間最長的排最前面」會被判成升冪。
@@ -66,7 +67,7 @@ const DESC_MARKERS: readonly string[] = [
 ];
 
 /** 升冪語意標記 */
-const ASC_MARKERS: readonly string[] = [
+const BASE_ASC_MARKERS: readonly string[] = [
   'asc', 'ascending', '升冪', '遞增', '正序', '由低到高', '從低到高', '低到高',
   '由少到多', '從少到多', '少到多', '由舊到新', '從舊到新', '舊到新', '最少', '最低',
   '由短到長', '從短到長', '短到長', '由小到大', '從小到大', '小到大',
@@ -75,6 +76,41 @@ const ASC_MARKERS: readonly string[] = [
 
 /** 在關鍵字之後往前看多少字元來判斷該欄位的排序方向 */
 const DIRECTION_LOOKAHEAD = 18;
+
+/**
+ * 把學習所得的同義詞併入基礎詞彙表。
+ *
+ * 既有同義詞永遠排在前面，學來的接在後面並去重：學習只會讓引擎「多認得幾種
+ * 講法」，不會改變任何既有需求描述的解析結果。
+ */
+function mergeVocabulary(
+  base: Readonly<Record<string, readonly string[]>>,
+  learned: Readonly<Record<string, readonly string[]>>
+): Readonly<Record<string, readonly string[]>> {
+  const merged: Record<string, readonly string[]> = { ...base };
+
+  for (const [canonical, synonyms] of Object.entries(learned)) {
+    merged[canonical] = [...new Set([...(base[canonical] ?? []), ...synonyms])];
+  }
+
+  return merged;
+}
+
+/** 併入學習所得的方向標記（去重；標記在陣列中的先後不影響比對結果） */
+function mergeMarkers(base: readonly string[], learned: readonly string[]): readonly string[] {
+  return [...new Set([...base, ...learned])];
+}
+
+/**
+ * 實際生效的詞彙表 = 基礎表 + 滾動式學習累積的增量。
+ *
+ * 學來的詞彙不享有任何特權：它一樣只走 `matchFields()`，一樣只能用來「挑選
+ * 實際存在的欄位」，不會讓不相關的欄位入選。
+ */
+const GROUP_VOCABULARY = mergeVocabulary(BASE_GROUP_VOCABULARY, LEARNED_VOCABULARY.group);
+const SORT_VOCABULARY = mergeVocabulary(BASE_SORT_VOCABULARY, LEARNED_VOCABULARY.sort);
+const DESC_MARKERS = mergeMarkers(BASE_DESC_MARKERS, LEARNED_VOCABULARY.descMarkers);
+const ASC_MARKERS = mergeMarkers(BASE_ASC_MARKERS, LEARNED_VOCABULARY.ascMarkers);
 
 /**
  * 語意屬性提取器

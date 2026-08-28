@@ -61,6 +61,29 @@ jobs:
         # no credentials, no network, no quota.  See tests/e2e/README.md.
         run: python tests/e2e/run_e2e.py
 
+  scenario-regression:
+    name: Rolling-learning scenarios
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          npm ci
+      - name: Promoted scenarios still behave as recorded
+        # Guards both directions of the rolling-learning loop: a gap judged
+        # "vocabulary" must stay closed (the learned term still resolves), and
+        # one judged "ask" must stay open — if the engine starts guessing what
+        # it used to ask the user, a vocabulary addition has overreached.
+        # Local computation only: no credentials, no network, no quota.
+        run: python tests/dev/learn_scenarios.py --check
+
   skill-parity:
     name: Skill entrypoint parity
     runs-on: ubuntu-latest
