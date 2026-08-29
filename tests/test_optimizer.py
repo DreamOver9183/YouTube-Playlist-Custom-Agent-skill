@@ -293,7 +293,7 @@ def test_group_merges_channel_spelling_variants():
                   channel="ImagineDragonsVEVO", position=1),
         make_item("p3", "v3", title="Thunder", channel="Imagine Dragons", position=2),
     ]
-    _target, groups, _res = group_by_artist(items)
+    _target, groups, _res, _overrides = group_by_artist(items)
     assert len(groups) == 1, groups
     assert sum(len(v) for v in groups.values()) == 3
     print(f"  ✓ Topic + VEVO + plain → one group {list(groups)[0]!r}")
@@ -306,7 +306,7 @@ def test_group_merges_localised_name_prefix():
         make_item("p2", "v2", title="紅髮艾德 Ed Sheeran - Perfect 完美無瑕",
                   channel="華納音樂西洋日韓頻道", position=1),
     ]
-    _target, groups, _res = group_by_artist(items)
+    _target, groups, _res, _overrides = group_by_artist(items)
     assert len(groups) == 1, groups
     print(f"  ✓ localised prefix folded into {list(groups)[0]!r}")
 
@@ -319,9 +319,93 @@ def test_unrelated_artists_stay_apart():
         make_item("p3", "v3", title="Skillet - Monster", channel="Atlantic Records", position=2),
         make_item("p4", "v4", title="Alphaville - Forever Young", channel="RHINO", position=3),
     ]
-    _target, groups, _res = group_by_artist(items)
+    _target, groups, _res, _overrides = group_by_artist(items)
     assert len(groups) == 3, groups
     print(f"  ✓ 3 distinct groups kept apart: {sorted(groups)}")
+
+
+# ─── Test 4b: Channel-Majority Override (Gray-Zone Second-Guessing) ───
+#
+# See docs/agent/AGENT_SOP.md's `channel_majority_overrides` report field.
+# resolve_artist() flags a gray-zone title win (confidence in [0.80, 0.90),
+# today only dash_separator) with `channel_override_candidate`; these tests
+# cover the aggregate pass in group_by_artist() that decides whether the
+# channel's own majority actually overrides it.
+
+
+def test_channel_majority_override_fixes_gray_zone_outlier():
+    """A dash_separator outlier is overridden when its channel has an
+    established majority elsewhere — the real Hiroyuki SAWANO case that
+    motivated this mechanism (Aldnoah.Zero OST tracks on his Topic channel)."""
+    items = [
+        make_item("p1", "v1", title="Aldnoah.Zero OP", channel="Hiroyuki SAWANO - Topic", position=0),
+        make_item("p2", "v2", title="&Z", channel="Hiroyuki SAWANO - Topic", position=1),
+        make_item("p3", "v3", title="ignited", channel="Hiroyuki SAWANO - Topic", position=2),
+        make_item("p4", "v4", title="Mio Mare (2V-Alk Version)", channel="Hiroyuki SAWANO - Topic", position=3),
+        make_item("p5", "v5", title="VV-Alk", channel="Hiroyuki SAWANO - Topic", position=4),
+    ]
+    _target, groups, _res, overrides = group_by_artist(items)
+    assert len(groups) == 1, groups
+    assert list(groups)[0] == "hiroyuki sawano", list(groups)
+    assert len(overrides) == 2, overrides
+    assert {o.title for o in overrides} == {"Mio Mare (2V-Alk Version)", "VV-Alk"}
+    for o in overrides:
+        assert o.to_artist_key == "hiroyuki sawano", o
+        assert o.corroborating_count == 3, o
+    print("  ✓ 2 gray-zone outliers overridden back to channel majority 'hiroyuki sawano'")
+
+
+def test_channel_majority_override_leaves_label_channel_alone():
+    """A label/reissue channel hosting several different real artists must
+    never be merged — none of them ever accumulate a channel-layer majority
+    under one key, so the override must not fire for any of them."""
+    items = [
+        make_item("p1", "v1",
+                   title="Starship - Nothing's Gonna Stop Us Now (Official Music Video) [HD]",
+                   channel="RHINO", position=0),
+        make_item("p2", "v2",
+                   title="Alphaville - Forever Young (Official Music Video)",
+                   channel="RHINO", position=1),
+        make_item("p3", "v3",
+                   title="Kim Wilde - Kids in America (Official Music Video)",
+                   channel="RHINO", position=2),
+    ]
+    _target, groups, _res, overrides = group_by_artist(items)
+    assert len(groups) == 3, groups
+    assert overrides == [], overrides
+    print("  ✓ label channel 'RHINO': 3 different artists stay apart, no override applied")
+
+
+def test_channel_majority_override_needs_at_least_two_corroborators():
+    """A single corroborating item is not enough evidence. This is the guard
+    against the channel really hosting two different artists: with only one
+    channel-layer hit, the gray-zone guess for the second artist must be left
+    alone rather than steamrolled into the first artist's key."""
+    items = [
+        make_item("p1", "v1", title="Homecoming", channel="Indie Collective", position=0),
+        make_item("p2", "v2", title="Artist Y - Roadtrip (Official Video)",
+                   channel="Indie Collective", position=1),
+    ]
+    _target, groups, _res, overrides = group_by_artist(items)
+    assert len(groups) == 2, groups
+    assert overrides == [], overrides
+    print("  ✓ single corroborator is not enough evidence; both artists stay apart")
+
+
+def test_bracket_prefix_never_overridden_even_with_channel_majority():
+    """An explicit 【Artist】 marker (confidence 0.95) is a deliberate,
+    human-authored signal and must never be second-guessed, even when the
+    channel has an established majority for a different artist."""
+    items = [
+        make_item("p1", "v1", title="Intro", channel="Various Uploads", position=0),
+        make_item("p2", "v2", title="Interlude", channel="Various Uploads", position=1),
+        make_item("p3", "v3", title="【Guest Artist】Special Collab Track",
+                   channel="Various Uploads", position=2),
+    ]
+    _target, groups, _res, overrides = group_by_artist(items)
+    assert len(groups) == 2, groups
+    assert overrides == [], overrides
+    print("  ✓ bracket_prefix (0.95) is never reconsidered, even with a 2-item channel majority")
 
 
 # ─── Test 5: LIS Anchor Computation ─────────────
@@ -575,6 +659,12 @@ def run_all_tests():
             test_group_merges_channel_spelling_variants,
             test_group_merges_localised_name_prefix,
             test_unrelated_artists_stay_apart,
+        ]),
+        ("Channel-Majority Override (Gray-Zone Second-Guessing)", [
+            test_channel_majority_override_fixes_gray_zone_outlier,
+            test_channel_majority_override_leaves_label_channel_alone,
+            test_channel_majority_override_needs_at_least_two_corroborators,
+            test_bracket_prefix_never_overridden_even_with_channel_majority,
         ]),
         ("LIS Anchor Computation", [
             test_lis_simple,

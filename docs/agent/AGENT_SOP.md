@@ -97,6 +97,7 @@
      "group_details": {"bts": 30, "blackpink": 25},
      "unresolved_count": 3,
      "metadata_missing_count": 2,
+     "channel_majority_overrides": [],
      "fingerprint": "07580a1cecc69364"
    }
    ```
@@ -111,6 +112,11 @@
      （`videos.list` 沒回傳，通常是地區限制），而不是辨識演算法失敗。這些影片無法靠
      `artist_aliases.json` 救回來——沒有標題或頻道名可以比對。若這個數字偏高，如實告知
      使用者「這幾支影片因地區限制缺少資料，只能歸入 unknown」，不要嘗試用別名表修正。
+   - `channel_majority_overrides`：非空時，代表有影片的分群結果被「頻道多數決」機制
+     修正過——標題辨識出的藝人跟頻道衝突、信心度落在灰色地帶，且同頻道已有其他影片
+     一致辨識出另一個藝人時，會改採頻道多數的判斷。每一筆都附 `title`／`from_artist_key`
+     （原本的猜測）／`to_artist_key`（改採用的結果）／`corroborating_count`（佐證數）。
+     這是自動修正，不是失敗，但**請在 Phase 3 預覽時列出來讓使用者知道**，不要靜默略過。
    - `estimated_quota`：確認是否在單日限額（10,000 units）內
 
 4. 直接跳至 **Phase 3** 使用 `data/changes_optimized.json`。

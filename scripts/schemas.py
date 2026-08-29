@@ -263,6 +263,34 @@ class ArtistResolution(BaseModel):
             "用來偵測反向標題與版本標記，避免把曲名當成藝人。"
         ),
     )
+    channel_override_candidate: str = Field(
+        default="",
+        description=(
+            "灰色地帶信心度（見 optimizer._GRAY_ZONE_CONFIDENCE）的 title 層猜測與 "
+            "channel 層衝突、且既有逃生閥都沒接住時，這裡暫存 channel 層原本會給出的 "
+            "藝人 key。resolve_artist() 逐支影片判斷時看不到其他影片，真正是否要"
+            "覆蓋回這個 key，交給有整份清單視野的 group_by_artist() 依頻道多數決決定"
+            "（見 _apply_channel_majority_override）。非灰色地帶（例如 bracket_prefix "
+            "0.95）永遠是空字串，不會被二次審查。"
+        ),
+    )
+
+
+class ChannelMajorityOverride(BaseModel):
+    """一筆被『頻道多數決』機制修正過的藝人辨識結果。
+
+    只有 title 層灰色地帶信心度（0.80–0.90，目前即 dash_separator）的猜測，
+    才可能出現在這裡；bracket_prefix（0.95）等高信心度來源永遠不會被覆蓋。
+    刻意攤開成獨立列表而不是靜默套用，讓 Phase 3 的人工預覽表能看到、覆核。
+    """
+    video_id: str
+    title: str
+    channel_title: str
+    from_artist_key: str = Field(description="覆蓋前：title 層灰色地帶的猜測")
+    to_artist_key: str = Field(description="覆蓋後：channel 層多數決採用的藝人 key")
+    corroborating_count: int = Field(
+        description="同頻道內，透過 channel 層獨立辨識出同一個藝人的其他影片數量"
+    )
 
 
 class OptimizationReport(BaseModel):
@@ -286,6 +314,14 @@ class OptimizationReport(BaseModel):
             "仍會正常參與重排，但沒有標題／頻道名可用於辨識，通常會落入 "
             "unknown 群組——`unresolved_count` 不會告訴你原因是「辨識失敗」"
             "還是「根本沒有資料可辨識」，這個欄位補上這個區別。"
+        ),
+    )
+    channel_majority_overrides: list[ChannelMajorityOverride] = Field(
+        default_factory=list,
+        description=(
+            "被『頻道多數決』機制修正過的藝人辨識結果列表。詳見 "
+            "ChannelMajorityOverride；Phase 3 預覽時應告知使用者這幾支影片的"
+            "分群結果是被頻道多數決覆蓋過的，而不是靜默套用。"
         ),
     )
 

@@ -22,13 +22,14 @@ import logging
 import re
 import unicodedata
 from bisect import bisect_left
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Optional
 
 from scripts.executor import apply_sort
 from scripts.schemas import (
     ArtistResolution,
+    ChannelMajorityOverride,
     EnrichedPlaylistItem,
     OptimizationReport,
     PositionChange,
@@ -103,6 +104,27 @@ _VERSION_MARKER_WORDS: frozenset[str] = frozenset({
     "radio", "duet", "mix", "audio", "video", "mv", "lyric", "lyrics",
     "performance", "visualizer", "hd", "4k", "8k", "1080p", "720p", "full",
 })
+
+#: Confidence band where a title-layer win over a disagreeing channel gets a
+#: second look from the channel's own majority (see
+#: _apply_channel_majority_override). Bounded below by 0.80 — the minimum
+#: confidence that ever beats a channel result at all, currently produced only
+#: by dash_separator — and above by bracket_prefix's 0.95 explicit 【Artist】
+#: marker, which is never reconsidered regardless of channel evidence: it is a
+#: deliberate, human-authored signal, not a syntactic guess that happened to
+#: clear a threshold.
+_GRAY_ZONE_CONFIDENCE: tuple[float, float] = (0.80, 0.90)
+
+#: Minimum number of *other* same-channel items independently resolved to one
+#: artist (via the channel layer) before a gray-zone title guess is overridden.
+#: Calibrated against two real playlists (248 items total): false-positive-prone
+#: label/compilation channels (RHINO, VEVO handles, Atlantic Records, Kontor.TV,
+#: ...) never accumulate >=2 items under one artist_key there — each of their
+#: videos is a different real artist — while a genuine single-artist channel
+#: with a title-hijacked outlier (e.g. Hiroyuki SAWANO's "Mio Mare (2V-Alk
+#: Version)") does. No case in that data needed a threshold of 1 to be rescued,
+#: so 2 is the smallest threshold the evidence supports.
+_MAJORITY_MIN_CORROBORATION: int = 2
 
 
 # ─────────────────────────────────────────────
@@ -430,6 +452,21 @@ def resolve_artist(
         # Otherwise the title still wins when it is confident — a label channel
         # ("RHINO") must not swallow the real artist named in the title.
         if title_result.confidence >= 0.80:
+            gray_lo, gray_hi = _GRAY_ZONE_CONFIDENCE
+            if gray_lo <= title_result.confidence < gray_hi:
+                # Borderline confidence (today: dash_separator only). This
+                # function only sees one item at a time, so it cannot tell a
+                # spurious hyphen-in-a-version-code guess ("VV-Alk" on
+                # Hiroyuki SAWANO's channel) apart from a genuine "Artist -
+                # Song" title. Flag the channel's reading as a fallback
+                # candidate; group_by_artist() has visibility across the
+                # whole playlist and decides via channel majority (see
+                # _apply_channel_majority_override). A high-confidence
+                # explicit marker like bracket_prefix (0.95) never reaches
+                # this branch's gray zone and is never second-guessed.
+                return title_result.model_copy(
+                    update={"channel_override_candidate": channel_result.artist_key}
+                )
             return title_result
         return channel_result
 
@@ -464,6 +501,67 @@ def resolve_artist(
         method="unknown",
         raw_candidate=item.channel_title or item.title,
     )
+
+
+def _apply_channel_majority_override(
+    items: list[EnrichedPlaylistItem],
+    resolutions: list[ArtistResolution],
+) -> list[ChannelMajorityOverride]:
+    """Second-guess gray-zone title wins against the channel's own majority.
+
+    ``resolve_artist`` flags a gray-zone title win (see _GRAY_ZONE_CONFIDENCE)
+    with ``channel_override_candidate`` but cannot decide alone — it only sees
+    one item at a time. Here, with every item's resolution in hand, that
+    flagged guess is overridden back to the channel's reading only if
+    ``_MAJORITY_MIN_CORROBORATION`` or more *other* items from the exact same
+    channel independently resolved to that same artist via the channel layer.
+    Label/compilation channels never accumulate that majority under one key
+    (each of their videos is a different real artist), so they are left
+    untouched; a single artist's own channel does, which is exactly the gap
+    this closes.
+
+    Mutates ``resolutions`` in place (by index) and returns the overrides
+    applied, so callers can surface them in the Phase 3 preview instead of
+    letting the correction happen silently.
+    """
+    channel_majority: dict[str, Counter[str]] = defaultdict(Counter)
+    for item, resolution in zip(items, resolutions):
+        if resolution.method == "channel" or resolution.method.endswith("+channel"):
+            channel_majority[item.channel_title][resolution.artist_key] += 1
+
+    overrides: list[ChannelMajorityOverride] = []
+    for idx, (item, resolution) in enumerate(zip(items, resolutions)):
+        candidate = resolution.channel_override_candidate
+        if not candidate:
+            continue
+        corroborating = channel_majority.get(item.channel_title, {}).get(candidate, 0)
+        if corroborating < _MAJORITY_MIN_CORROBORATION:
+            continue
+        overrides.append(
+            ChannelMajorityOverride(
+                video_id=item.video_id,
+                title=item.title,
+                channel_title=item.channel_title,
+                from_artist_key=resolution.artist_key,
+                to_artist_key=candidate,
+                corroborating_count=corroborating,
+            )
+        )
+        resolutions[idx] = resolution.model_copy(
+            update={
+                "artist_key": candidate,
+                "method": f"{resolution.method}+channel_majority_override",
+            }
+        )
+
+    if overrides:
+        logger.info(
+            "Channel-majority override reclassified %d item(s): %s",
+            len(overrides),
+            ", ".join(f"{o.title!r} -> {o.to_artist_key!r}" for o in overrides),
+        )
+
+    return overrides
 
 
 # ─────────────────────────────────────────────
@@ -527,7 +625,7 @@ def group_by_artist(
     aliases_path: Path | None = None,
     group_order: str = "first_appearance",
     within_group_sort: SortConfig | None = None,
-) -> tuple[list[EnrichedPlaylistItem], dict[str, list[int]], list[ArtistResolution]]:
+) -> tuple[list[EnrichedPlaylistItem], dict[str, list[int]], list[ArtistResolution], list[ChannelMajorityOverride]]:
     """Group playlist items by resolved artist and build target ordering.
 
     Unavailable (private / deleted) items never take part in the grouping —
@@ -549,6 +647,9 @@ def group_by_artist(
         - target: The reordered list (grouped by artist).
         - groups: Dict mapping artist_key → list of original indices.
         - resolutions: ArtistResolution for each item (same order as input).
+        - channel_majority_overrides: Gray-zone title guesses that were
+          overridden back to the channel's majority reading (see
+          _apply_channel_majority_override); empty when none applied.
     """
     aliases = _load_aliases(aliases_path)
     alias_lookup = _build_alias_lookup(aliases)
@@ -568,6 +669,8 @@ def group_by_artist(
             continue
 
         resolutions.append(resolve_artist(item, alias_lookup))
+
+    channel_majority_overrides = _apply_channel_majority_override(items, resolutions)
 
     # Keys that differ only in spacing or punctuation are the same artist
     # ("imaginedragons" from a VEVO channel vs "imagine dragons" from a title).
@@ -638,7 +741,7 @@ def group_by_artist(
         within_group_sort.field.value if within_group_sort else "none",
         len(items) - len(movable_order),
     )
-    return target, dict(groups), resolutions
+    return target, dict(groups), resolutions, channel_majority_overrides
 
 
 # ─────────────────────────────────────────────
@@ -989,7 +1092,7 @@ def run_full_optimization(
     Returns:
         A tuple of (target_order, ordered_changes, report, resolutions).
     """
-    target, groups, resolutions = group_by_artist(
+    target, groups, resolutions, channel_majority_overrides = group_by_artist(
         items, aliases_path, group_order, within_group_sort
     )
     changes, report = plan_reorder(items, target)
@@ -1003,5 +1106,6 @@ def run_full_optimization(
     report.metadata_missing_count = sum(
         1 for item in items if not item.metadata_available
     )
+    report.channel_majority_overrides = channel_majority_overrides
 
     return target, changes, report, resolutions

@@ -518,6 +518,9 @@ def cmd_optimize(args: argparse.Namespace) -> None:
             "pinned_count": report.pinned_count,
             "quota_saved_vs_naive": report.quota_saved_vs_naive,
             "groups_found": report.groups_found,
+            "channel_majority_overrides": [
+                o.model_dump(mode="json") for o in report.channel_majority_overrides
+            ],
         },
     )
 
@@ -534,6 +537,9 @@ def cmd_optimize(args: argparse.Namespace) -> None:
             "group_details": report.group_details,
             "unresolved_count": report.unresolved_count,
             "metadata_missing_count": report.metadata_missing_count,
+            "channel_majority_overrides": [
+                o.model_dump(mode="json") for o in report.channel_majority_overrides
+            ],
             "fingerprint": fingerprint,
             "target_file": str(target_path),
             "changes_file": str(out_path),
