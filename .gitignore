@@ -6,6 +6,9 @@ credentials/
 # after downloading it from the Google Cloud Console).
 client_secret*.json
 token*.json
+# ytmusicapi 的認證檔。browser.json 裡是瀏覽器 session cookie，等同帳號憑證。
+browser.json
+oauth.json
 scripts/cache/
 scripts/logs/
 scripts/progress/

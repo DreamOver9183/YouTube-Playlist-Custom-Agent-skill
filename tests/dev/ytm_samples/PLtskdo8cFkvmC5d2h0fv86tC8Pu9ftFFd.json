@@ -1,0 +1,1016 @@
+{
+  "playlist_id": "PLtskdo8cFkvmC5d2h0fv86tC8Pu9ftFFd",
+  "ytm_track_count": 82,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_ATV": 71,
+    "MUSIC_VIDEO_TYPE_OMV": 9,
+    "MUSIC_VIDEO_TYPE_UGC": 2
+  },
+  "album_coverage": 71,
+  "album_distinct": 38,
+  "artist_entity_coverage": 82,
+  "api_item_count": 83,
+  "invisible_to_ytm": [
+    {
+      "video_id": "7k_d3bjpaeY",
+      "title": "SawanoHiroyuki[nZk]:Uru『Binary Star』Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]"
+    }
+  ],
+  "rows": [
+    {
+      "video_id": "sa4Bq0qtayM",
+      "title": "CRY",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "iv",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "k2MWBy-Hb1M",
+      "title": "Till I",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "iv",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Tr-h5-lKiSc",
+      "title": "Keep on keeping on ᐸMODvᐳ",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "iv",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "y9Od-PQm24g",
+      "title": "Chaos Drifters",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "iv",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "YIqQ2XR4_UQ",
+      "title": "N0VA",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "iv",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "TWFQSWFtDbQ",
+      "title": "NEXUS ᐸPODvᐳ",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "iv",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "y4_R2OYZWUc",
+      "title": "FLAW(LESS)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "iv",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "TKLwwzQIV0o",
+      "title": "Abura",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "iv",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "yuN-rFsig7U",
+      "title": "aLIEz (Remastered)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:mizuki"
+      ],
+      "ytm_album": "BEST OF VOCAL WORKS [nZk] 2 -Side SawanoHiroyuki[nZk]",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "2gdvr97sAMc",
+      "title": "sh0ut (Remastered)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Tielle&Gemie"
+      ],
+      "ytm_album": "BEST OF VOCAL WORKS [nZk] 2 -Side SawanoHiroyuki[nZk]",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Cy2OoUICIrc",
+      "title": "BELONG",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Yosh"
+      ],
+      "ytm_album": "BEST OF VOCAL WORKS [nZk] 2 -Side SawanoHiroyuki[nZk]",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "0s93gfmrD9I",
+      "title": "Avid",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "V",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "MUQIQLsfGDY",
+      "title": "LEveL",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "LEveL",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Urcnqat6P0s",
+      "title": "FAKEit",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "V",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "C1OfbbI849o",
+      "title": "LilaS",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "V",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "LZgEbdhf3ME",
+      "title": "Hands Up to the Sky",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "V",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "O4DaFgWgyw8",
+      "title": "COLORs",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "V",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "fu3DCH3BULc",
+      "title": "LEMONADE",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "V",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "SBo7Ybojn4E",
+      "title": "OUTSIDERS",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "V",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "HxlysqrFjHo",
+      "title": "Perfect Time",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "The Seven Deadly Sins (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Cxz-W6rNscM",
+      "title": "Voices of the Chord",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "86 EIGHTY-SIX original soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "N6xMg5CzJLI",
+      "title": "SHADOWBORN",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "SHADOWBORN",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ahDLQbhgW5Y",
+      "title": "THE ANSWER",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "86 EIGHTY-SIX original soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "83vAJ5TQ5Is",
+      "title": "Bios ᐸMK+nZk Versionᐳ",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "GUILTY CROWN (COMPLETE SOUNDTRACK)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "wh11u95kimU",
+      "title": "No Differences",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "ALDNOAH.ZERO (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "rPsmJSrj4i8",
+      "title": "Bre@th//Less",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "ALDNOAH.ZERO (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "5t5zJPB7GL0",
+      "title": "Release My Soul",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "GUILTY CROWN ORIGINAL SOUNDTRACK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "24NNGlRsRTg",
+      "title": "REVIVER",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "REVIVER",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "gHueVn_KXms",
+      "title": "Ninelie (Lv)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "KABANERI OF THE IRON FORTRESS COMPLETE SOUNDTRACK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "cjsCelnqcAk",
+      "title": "InfernoᐸxPTᐳ",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "Inferno<xPT>",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "hjx2tir3pp8",
+      "title": "Roads to Ride",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "Fanfare of Adolescence Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "B-1ZzOp0UUA",
+      "title": "Call of Silence",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": "TV Anime \"Attack on Titan Season 2\" (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "H76_uW1Fnso",
+      "title": "Vogel im Käfig",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano",
+        "Cyua"
+      ],
+      "ytm_album": "TV Anime \"Attack on Titan\" Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "nMNU9lhVdy4",
+      "title": "The Reluctant Heroes",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano",
+        "mpi"
+      ],
+      "ytm_album": "TV Anime \"Attack on Titan\" Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "oLyXJHsYCq8",
+      "title": "Call your name",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano",
+        "mpi",
+        "CASG(Caramel Apple Sound Gadget)"
+      ],
+      "ytm_album": "TV Anime \"Attack on Titan\" Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "glCgRS8eGhs",
+      "title": "Call your name ᐸGvᐳ",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano",
+        "Gemie"
+      ],
+      "ytm_album": "\"Attack on Titan\" Season 3 Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "o3mSR4Ltax0",
+      "title": "arma",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": "MECHA-UDE Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "d29o-GdlW4g",
+      "title": "REMEMBER",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "R∃/MEMBER",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "VWk7Ni1N-_8",
+      "title": "NOISEofRAIN",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Takanori Nishikawa"
+      ],
+      "ytm_album": "R∃/MEMBER",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "d5nLYNTeze0",
+      "title": "ON YOUR MARK",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "澤野弘之"
+      ],
+      "ytm_album": "機動戦士ガンダムUC オリジナルサウンドトラック 1",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "VpkGHZlA-w0",
+      "title": "EGO [SODv] (feat. mizuki & SUGIZO)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "Mobile Suit Gundam 40th Anniversary Album ~BEYOND~",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "GP6eTCK11M4",
+      "title": "Gravity Wall",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "2V-ALK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "ZAm9w92sBfo",
+      "title": "Into the Sky",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "2V-ALK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "AOTVFVXr1fY",
+      "title": "Amazing Trees",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "2V-ALK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "g7j0zz09aww",
+      "title": "Crystalise",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "2V-ALK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "76ViSedvsNo",
+      "title": "Emotion",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "2V-ALK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "LtKbYccS-vo",
+      "title": "Mio Mare (2V-Alk Version)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "2V-ALK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "455FZsfN4is",
+      "title": "VV-Alk",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "bLACKbLUE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "JturKcwpB9Q",
+      "title": "DARK ARIA ᐸLV2ᐳ",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "bLACKbLUE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "NgDSGE5Y_UQ",
+      "title": "COLORs",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "bLACKbLUE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "LXlYppUd7WQ",
+      "title": "Next 2 U - Euc",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "bLACKbLUE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Q3pPmmhARgQ",
+      "title": "Ego",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Aimer"
+      ],
+      "ytm_album": "UnChild",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Cp5y1hvtKPQ",
+      "title": "S-ave",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Aimer"
+      ],
+      "ytm_album": "o1",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "2_xSwVnWysc",
+      "title": "Saving Us",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Gemie"
+      ],
+      "ytm_album": "o1",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "dNGiRuLABgI",
+      "title": "aLIEz",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:mizuki"
+      ],
+      "ytm_album": "A/Z / aLIEz",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "467QVTuCI4s",
+      "title": "Cage",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Tielle"
+      ],
+      "ytm_album": "Binary Star/Cage",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "1s8PArsf68M",
+      "title": "Tranquility",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "PZjcussnmy4",
+      "title": "Sh0ut",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Tielle&Gemie"
+      ],
+      "ytm_album": "Gravity wall / sh0ut",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "jwpvf16e1Yo",
+      "title": "Binary Star",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Uru"
+      ],
+      "ytm_album": "Binary Star/Cage",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "sZNRx4ekTMo",
+      "title": "A/Z ᐸMODvᐳ",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "Avid / Hands Up to the Sky",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "EVEfJkU3AcI",
+      "title": "Into the Sky ᐸMODvᐳ",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "Avid / Hands Up to the Sky",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "T21AwI7pAF0",
+      "title": "Tranquility ᐸMODvᐳ",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "Avid / Hands Up to the Sky",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "P9o2WUMG58E",
+      "title": "Into the Sky",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "Into the Sky EP",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "3_pMQpaSaVc",
+      "title": "Roller Coaster",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Gemie"
+      ],
+      "ytm_album": "Binary Star/Cage",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "EUlb4ozadMw",
+      "title": "Trollz",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Laco"
+      ],
+      "ytm_album": "Tranquility / Trollz",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "OPDJsHsNlFA",
+      "title": "INERTIA",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "INERTIA",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "dH7DQfDAR4A",
+      "title": "Never Stop (feat. Laco)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "Never Stop",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "pHlxEMCu4E8",
+      "title": "& Z",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "&Z",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "nPEmFApFn9o",
+      "title": "Christmas Scene",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:mizuki & Tielle"
+      ],
+      "ytm_album": "Narrative NOISEofRAIN",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "adsIgrQt_To",
+      "title": "odd:I",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "odd:I",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "qIIUjo4agMI",
+      "title": "Dark Aria (from \"Solo Leveling\")",
+      "channel_title": "Diego Mitre - Topic",
+      "current_key": "diego mitre",
+      "ytm_artists": [
+        "Diego Mitre"
+      ],
+      "ytm_album": "Dark Aria (from \"Solo Leveling\")",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "zMuE4WwPCQs",
+      "title": "NEXUS - feat. Laco / Hiroyuki Sawano (Promare Original Soundtrack) [with lyrics]",
+      "channel_title": "Crunchnee",
+      "current_key": "nexus",
+      "ytm_artists": [
+        "Crunchnee"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "rXgZOCiIMrE",
+      "title": "ON YOUR MARK - Hiroyuki Sawano Ft. Tielle",
+      "channel_title": "SocialRoom",
+      "current_key": "on your mark",
+      "ytm_artists": [
+        "SocialRoom"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "yoYo_9lBJH4",
+      "title": "BELONG - From THE FIRST TAKE",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "BELONG (From \"THE FIRST TAKE\")",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "0tm9_guMKxk",
+      "title": "\"aLIEz\" from SawanoHiroyuki[nZk] 10th Anniversary Studio Live",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "MIZUKI",
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "GMUHQKMHQzU",
+      "title": "澤野弘之『Inferno』LIVE ver. （Vocal Benjamin&mpi）",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "bJdGE5miZVY",
+      "title": "\"Hands Up to the Sky\" from SawanoHiroyuki[nZk] 10th Anniversary Studio Live",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "_x1PNvn1iT4",
+      "title": "澤野弘之 『Grey to Blue』 at LIVE 【emU】 2022  Interlude",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "mizuki",
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Lsv4wg9YU8Y",
+      "title": "SawanoHiroyuki[nZk]:Rei『INERTIA』 Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "hVTCPKiIC8U",
+      "title": "SawanoHiroyuki[nZk]:Gemie『X.U.』Music Video Short Ver.（TVアニメ「終わりのセラフ」オープニングテーマ）",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Cm0mv2qQBes",
+      "title": "SawanoHiroyuki[nZk]:okazakitaiiku『膏』Music Video YouTube ver.",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO",
+        "okazakitaiiku"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "nCm5ySso-eM",
+      "title": "SawanoHiroyuki[nZk]:naNami『N0VA』Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    }
+  ],
+  "colon_credit_ratio": 0.17073170731707318,
+  "group_count_ratio": 1.4
+}

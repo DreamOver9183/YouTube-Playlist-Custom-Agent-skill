@@ -1,0 +1,2305 @@
+{
+  "playlist_id": "PLtskdo8cFkvn4yfJLBqg68ClUGVSDPfsA",
+  "ytm_track_count": 188,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_ATV": 141,
+    "MUSIC_VIDEO_TYPE_OMV": 40,
+    "MUSIC_VIDEO_TYPE_UGC": 6,
+    "null": 1
+  },
+  "album_coverage": 141,
+  "album_distinct": 129,
+  "artist_entity_coverage": 188,
+  "api_item_count": 192,
+  "invisible_to_ytm": [
+    {
+      "video_id": "ELQL6P21ZFg",
+      "title": "Innocence",
+      "channel_title": "Eir Aoi - Topic"
+    },
+    {
+      "video_id": "dlFA0Zq1k2A",
+      "title": "KANA-BOON - Silhouette",
+      "channel_title": "KANABOONVEVO"
+    },
+    {
+      "video_id": "yQEUGxngQN4",
+      "title": "BURNOUT SYNDROMES 『Good Morning World!』Music Video（TVアニメ「Ｄｒ．ＳＴＯＮＥ」オープニングテーマ）",
+      "channel_title": "BURNOUT SYNDROMES Official YouTube Channel"
+    },
+    {
+      "video_id": "OPDJsHsNlFA",
+      "title": "INERTIA",
+      "channel_title": "Hiroyuki SAWANO - Topic"
+    }
+  ],
+  "rows": [
+    {
+      "video_id": "CjaM8qWzssk",
+      "title": "晩餐歌 - Bansanka",
+      "channel_title": "tuki. - Topic",
+      "current_key": "晩餐歌",
+      "ytm_artists": [
+        "tuki."
+      ],
+      "ytm_album": "Bansanka",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "p_KckcJxzrY",
+      "title": "ひゅるりらぱっぱ - HYURURIRAPAPPA",
+      "channel_title": "tuki. - Topic",
+      "current_key": "ひゅるりらぱっぱ",
+      "ytm_artists": [
+        "tuki."
+      ],
+      "ytm_album": "15",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "MKtkrhZBqE8",
+      "title": "一輪花 - Ichirinka",
+      "channel_title": "tuki. - Topic",
+      "current_key": "一輪花",
+      "ytm_artists": [
+        "tuki."
+      ],
+      "ytm_album": "Ichirinka",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "z92aB8wPUl0",
+      "title": "愛の賞味期限 - Love Expiration Date",
+      "channel_title": "tuki. - Topic",
+      "current_key": "愛の賞味期限",
+      "ytm_artists": [
+        "tuki."
+      ],
+      "ytm_album": "Love expiration date",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "mX9IJ7Urn28",
+      "title": "月面着陸計画 - Moon Landing Plan",
+      "channel_title": "tuki. - Topic",
+      "current_key": "月面着陸計画",
+      "ytm_artists": [
+        "tuki."
+      ],
+      "ytm_album": "15",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "ZRYSOwz5r5A",
+      "title": "地獄恋文 - Inferno Love Letter",
+      "channel_title": "tuki. - Topic",
+      "current_key": "地獄恋文",
+      "ytm_artists": [
+        "tuki."
+      ],
+      "ytm_album": "15",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "NffeFmn0vvQ",
+      "title": "tuki. 『ひゅるりらぱっぱ』1st Live at NIPPON BUDOKAN",
+      "channel_title": "tuki.(17)",
+      "current_key": "tuki.(17)",
+      "ytm_artists": [
+        "tuki."
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "NLIGDjKBLY0",
+      "title": "アイナ・ジ・エンド / 革命道中 - On The Way [Official Music Video]（TVアニメ『ダンダダン』第2期オープニングテーマ）",
+      "channel_title": "アイナ・ジ・エンド Official",
+      "current_key": "アイナ・ジ・エンド",
+      "ytm_artists": [
+        "AiNA THE END"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "SZhcN4jVVzA",
+      "title": "音羽-otoha-「no man’s world」Music Video / TVアニメ「Dr.STONE SCIENCE FUTURE」 第4期最終シーズン第2クール エンディングテーマ",
+      "channel_title": "音羽-otoha-",
+      "current_key": "音羽",
+      "ytm_artists": [
+        "otoha"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "vkMkARv_zvk",
+      "title": "Asu no Yozora Shoukaihan (10th Anniversary mix)",
+      "channel_title": "Yuaru - Topic",
+      "current_key": "yuaru",
+      "ytm_artists": [
+        "Yuaru"
+      ],
+      "ytm_album": "Asu no Yozora Shoukaihan (10th Anniversary mix)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "vwZAqxL8rgs",
+      "title": "Show",
+      "channel_title": "Ado - Topic",
+      "current_key": "ado",
+      "ytm_artists": [
+        "Ado"
+      ],
+      "ytm_album": "Show",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "vHfAjfKVMew",
+      "title": "Backlight (UTA from ONE PIECE FILM RED)",
+      "channel_title": "Ado - Topic",
+      "current_key": "ado",
+      "ytm_artists": [
+        "Ado"
+      ],
+      "ytm_album": "逆光 (ウタ from ONE PIECE FILM RED)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "XTDjp4YdS1o",
+      "title": "I’m invincible (UTA from ONE PIECE FILM RED)",
+      "channel_title": "Ado - Topic",
+      "current_key": "ado",
+      "ytm_artists": [
+        "Ado"
+      ],
+      "ytm_album": "I’m invincible (UTA from ONE PIECE FILM RED)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "DttWpRemVfU",
+      "title": "unravel",
+      "channel_title": "Ado - Topic",
+      "current_key": "ado",
+      "ytm_artists": [
+        "Ado"
+      ],
+      "ytm_album": "unravel",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "3HuyRf6tV4E",
+      "title": "Where the Wind Blows",
+      "channel_title": "Ado - Topic",
+      "current_key": "ado",
+      "ytm_artists": [
+        "Ado"
+      ],
+      "ytm_album": "UTA'S SONGS ONE PIECE FILM RED",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "SiULHyA2Z9c",
+      "title": "Senbonzakura",
+      "channel_title": "Ado - Topic",
+      "current_key": "ado",
+      "ytm_artists": [
+        "Ado"
+      ],
+      "ytm_album": "Senbonzakura",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "oi8ArKYLwBY",
+      "title": "AliA / かくれんぼ【Official Music Video】",
+      "channel_title": "AliA OFFICIAL",
+      "current_key": "alia",
+      "ytm_artists": [
+        "AliA"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "7940nuwCEYA",
+      "title": "菅田将暉 『まちがいさがし』",
+      "channel_title": "菅田将暉 Official Channel",
+      "current_key": "菅田将暉",
+      "ytm_artists": [
+        "Masaki Suda"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "mkVyQpmDYG8",
+      "title": "PAINT",
+      "channel_title": "I Don't Like Mondays. - Topic",
+      "current_key": "i don't like mondays.",
+      "ytm_artists": [
+        "I Don't Like Mondays."
+      ],
+      "ytm_album": "PAINT",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "WHKlMwYHb34",
+      "title": "The Peak",
+      "channel_title": "SEKAI NO OWARI - Topic",
+      "current_key": "sekai no owari",
+      "ytm_artists": [
+        "SEKAI NO OWARI"
+      ],
+      "ytm_album": "Nautilus",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "3SqhXiimlrg",
+      "title": "departure!",
+      "channel_title": "Masatoshi Ono - Topic",
+      "current_key": "masatoshi ono",
+      "ytm_artists": [
+        "Masatoshi Ono"
+      ],
+      "ytm_album": "departure!",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "xyVatKhd4s4",
+      "title": "残酷な天使のテーゼ",
+      "channel_title": "Yoko Takahashi - Topic",
+      "current_key": "yoko takahashi",
+      "ytm_artists": [
+        "Yoko Takahashi"
+      ],
+      "ytm_album": "Zankoku na Tenshi no Thesis",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "n09u19l805k",
+      "title": "LISTEN TO THE STEREO!!",
+      "channel_title": "GOING UNDER GROUND - Topic",
+      "current_key": "going under ground",
+      "ytm_artists": [
+        "GOING UNDER GROUND"
+      ],
+      "ytm_album": "LISTEN TO THE STEREO!!",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "mJ1N7-HyH1A",
+      "title": "夜に駆ける",
+      "channel_title": "YOASOBI - Topic",
+      "current_key": "yoasobi",
+      "ytm_artists": [
+        "YOASOBI"
+      ],
+      "ytm_album": "THE BOOK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "dGZqpVCJP3k",
+      "title": "群青",
+      "channel_title": "YOASOBI - Topic",
+      "current_key": "yoasobi",
+      "ytm_artists": [
+        "YOASOBI"
+      ],
+      "ytm_album": "THE BOOK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "2eNEQ0cQtkI",
+      "title": "祝福",
+      "channel_title": "YOASOBI - Topic",
+      "current_key": "yoasobi",
+      "ytm_artists": [
+        "YOASOBI"
+      ],
+      "ytm_album": "祝福",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "M4-XU0a2hf0",
+      "title": "勇者",
+      "channel_title": "YOASOBI - Topic",
+      "current_key": "yoasobi",
+      "ytm_artists": [
+        "YOASOBI"
+      ],
+      "ytm_album": "THE BOOK 3",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "hYF438PiuPI",
+      "title": "怪物",
+      "channel_title": "YOASOBI - Topic",
+      "current_key": "yoasobi",
+      "ytm_artists": [
+        "YOASOBI"
+      ],
+      "ytm_album": "怪物",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "TQ8WlA2GXbk",
+      "title": "Official髭男dism - Pretender［Official Video］",
+      "channel_title": "Official髭男dism",
+      "current_key": "official髭男dism",
+      "ytm_artists": [
+        "OFFICIAL HIGE DANDISM"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "CbH2F0kXgTY",
+      "title": "OFFICIAL HIGE DANDISM - MIXED NUTS [ Official Video ]",
+      "channel_title": "Official髭男dism",
+      "current_key": "official hige dandism",
+      "ytm_artists": [
+        "OFFICIAL HIGE DANDISM"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "sCxyiE1pI0k",
+      "title": "FUNKIST [ Snow fairy ] OFFICIAL MUSIC VIDEO",
+      "channel_title": "FUNKIST official",
+      "current_key": "funkist",
+      "ytm_artists": [
+        "FUNKIST"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "N5HxbW_OcJI",
+      "title": "Nightcore - 夢と葉桜 // Yume To Hazakura「 ヲタみん // Wotamin Cover 」Original song by: 青木月光 // Aoki Gekkoh",
+      "channel_title": "AnS Nightcore",
+      "current_key": "nightcore",
+      "ytm_artists": [
+        "AnS Nightcore"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "XXV6oIory8s",
+      "title": "Ignite",
+      "channel_title": "Eir Aoi - Topic",
+      "current_key": "eir aoi",
+      "ytm_artists": [
+        "Eir Aoi"
+      ],
+      "ytm_album": "D'azur",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "J9ZLO7wZlXk",
+      "title": "藍井エイル「INNOCENCE」Music Video（TVアニメ『ソードアート・オンライン』フェアリィ・ダンス編OPテーマ）",
+      "channel_title": "藍井エイル Official YouTube Channel",
+      "current_key": "藍井エイル official youtube",
+      "ytm_artists": [
+        "Eir Aoi"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "rmgbR2vrrT8",
+      "title": "Heart",
+      "channel_title": "Eir Aoi - Topic",
+      "current_key": "eir aoi",
+      "ytm_artists": [
+        "Eir Aoi"
+      ],
+      "ytm_album": "Heart",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "sO4DEqVzlD4",
+      "title": "Knew day",
+      "channel_title": "(K)NoW_NAME - Topic",
+      "current_key": "(k)now_name",
+      "ytm_artists": [
+        "(K)NoW_NAME"
+      ],
+      "ytm_album": "「灰と幻想のグリムガル」オープニング・テーマ「Knew day」",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Odv-zbpy-Y8",
+      "title": "yama『Oz.』MV",
+      "channel_title": "yama",
+      "current_key": "yama",
+      "ytm_artists": [
+        "yama"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "dxqMJ4SGYCc",
+      "title": "Scarborough Fair",
+      "channel_title": "Yamada Tamaru - Topic",
+      "current_key": "yamada tamaru",
+      "ytm_artists": [
+        "YAMADA TAMARU"
+      ],
+      "ytm_album": "TV Animation \"Do you have what THE END? Are you busy? Shall you save XXX?\" Original Soundtrack: Aoi Kioku",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "k9r74T2d5zc",
+      "title": "フィナーレ。",
+      "channel_title": "eill - Topic",
+      "current_key": "eill",
+      "ytm_artists": [
+        "eill"
+      ],
+      "ytm_album": "Pre-Romance / Finale.",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "MYo5alIaUOk",
+      "title": "MISIA - 逢いたくていま（Official HD Music Video）",
+      "channel_title": "MISIA",
+      "current_key": "misia",
+      "ytm_artists": [
+        "MISIA"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "a62NeCzZmuU",
+      "title": "Voice",
+      "channel_title": "Pay money To my Pain - Topic",
+      "current_key": "pay money to my pain",
+      "ytm_artists": [
+        "Pay money To my Pain"
+      ],
+      "ytm_album": "gene",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "OxzdMNTJXmg",
+      "title": "Novelbright - Walking with you [Official Music Video]",
+      "channel_title": "Novelbright",
+      "current_key": "novelbright",
+      "ytm_artists": [
+        "Novelbright"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "C5PMgq5uNlg",
+      "title": "Aitoka Koitoka",
+      "channel_title": "Novelbright - Topic",
+      "current_key": "novelbright",
+      "ytm_artists": [
+        "Novelbright"
+      ],
+      "ytm_album": "Assort",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "2M5Vq57sUdU",
+      "title": "Sound of Snow",
+      "channel_title": "Novelbright - Topic",
+      "current_key": "novelbright",
+      "ytm_artists": [
+        "Novelbright"
+      ],
+      "ytm_album": "CIRCUS",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "HFtn3y77Vs0",
+      "title": "BETELGEUSE",
+      "channel_title": "Yuuri - Topic",
+      "current_key": "yuuri",
+      "ytm_artists": [
+        "Yuuri"
+      ],
+      "ytm_album": "Ichi",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "vUsikBoa8i0",
+      "title": "優里『ビリミリオン』Official Music Video",
+      "channel_title": "優里 Official YouTube Channel",
+      "current_key": "優里 official youtube",
+      "ytm_artists": [
+        "Yuuri"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "r93rVW--5ZU",
+      "title": "『晩餐歌』 acoustic ver. tuki.×優里",
+      "channel_title": "優里ちゃんねる【公式】",
+      "current_key": "優里ちゃんねる【公式】",
+      "ytm_artists": [
+        "tuki."
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "txN4t64Ik_k",
+      "title": "『メリーゴーランド』 acoustic ver. 優里×春茶",
+      "channel_title": "優里ちゃんねる【公式】",
+      "current_key": "優里ちゃんねる【公式】",
+      "ytm_artists": [
+        "優里ちゃんねる【公式】"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "fzvShDD9RGg",
+      "title": "Billimillion",
+      "channel_title": "Yuuri - Topic",
+      "current_key": "yuuri",
+      "ytm_artists": [
+        "Yuuri"
+      ],
+      "ytm_album": "Ni",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "P9cuGQNDf-A",
+      "title": "merry-go-round",
+      "channel_title": "Yuuri - Topic",
+      "current_key": "yuuri",
+      "ytm_artists": [
+        "Yuuri"
+      ],
+      "ytm_album": "Ni",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "SCFPjuWgnaw",
+      "title": "Butter-Fly （from ''デジモンアドベンチャー全話OP''）",
+      "channel_title": "Oosawa Shou - Topic",
+      "current_key": "butter",
+      "ytm_artists": [
+        "Oosawa Shou"
+      ],
+      "ytm_album": "Netsuretsu! Anison Spirits THE BEST -Cover Music Selection- TV Anime Series ''Digimon Series'' Vol. 1",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "uHYp6ckqR9I",
+      "title": "Endless Tears feat. 中村舞子",
+      "channel_title": "CLIFF EDGE - Topic",
+      "current_key": "cliff edge",
+      "ytm_artists": [
+        "CLIFF EDGE"
+      ],
+      "ytm_album": "Best of LOVE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "5nv9mWy0prg",
+      "title": "Just Awake",
+      "channel_title": "Fear, and Loathing in Las Vegas - Topic",
+      "current_key": "fear, and loathing in las vegas",
+      "ytm_artists": [
+        "Fear, and Loathing in Las Vegas"
+      ],
+      "ytm_album": "All That We Have Now",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "j-5F1QjPAkI",
+      "title": "In My World",
+      "channel_title": "Rookiez Is Punk'd - Topic",
+      "current_key": "rookiez is punk'd",
+      "ytm_artists": [
+        "Rookiez Is Punk'd"
+      ],
+      "ytm_album": "IN MY WORLD",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "isY3rtuSsK8",
+      "title": "Kaikai Kitan",
+      "channel_title": "Eve - Topic",
+      "current_key": "eve",
+      "ytm_artists": [
+        "Eve"
+      ],
+      "ytm_album": "Kaikai Kitan / Ao No Waltz",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "dEfl-ObuapA",
+      "title": "Dramaturgy",
+      "channel_title": "Eve - Topic",
+      "current_key": "eve",
+      "ytm_artists": [
+        "Eve"
+      ],
+      "ytm_album": "Bunka",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "BEEFXAltoqo",
+      "title": "闇夜 - Eve MV \"Dark night\"",
+      "channel_title": "Eve",
+      "current_key": "闇夜",
+      "ytm_artists": [
+        "Eve"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "UM8-yjDOTSI",
+      "title": "Okinimesumama",
+      "channel_title": "Eve - Topic",
+      "current_key": "eve",
+      "ytm_artists": [
+        "Eve"
+      ],
+      "ytm_album": "Bunka",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "5L4a2mKxV-E",
+      "title": "ブレーメン - Bremen",
+      "channel_title": "BAK - Topic",
+      "current_key": "ブレーメン",
+      "ytm_artists": [
+        "BAK"
+      ],
+      "ytm_album": "Bremen",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "XfKDuBUoVrg",
+      "title": "｢アスノヨゾラ哨戒班｣ 歌ってみた ／ ゆある 中文字幕",
+      "channel_title": "Yun",
+      "current_key": "yun",
+      "ytm_artists": [
+        "Yun"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "koMIirdj2gs",
+      "title": "Bokuranoteniha Nanimonaikedo,",
+      "channel_title": "Ram Wire - Topic",
+      "current_key": "ram wire",
+      "ytm_artists": [
+        "Ram Wire"
+      ],
+      "ytm_album": "Bokurano Teniwa Nanimonaikedo",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "I6c9_Yc5Q_s",
+      "title": "アスノヨゾラ哨戒班 (feat. 星乃一歌)",
+      "channel_title": "Leo/need - Topic",
+      "current_key": "leo/need",
+      "ytm_artists": [
+        "Leo/need"
+      ],
+      "ytm_album": "Leo/need SEKAI ALBUM vol.1",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "nHGW_wUfqkQ",
+      "title": "千本桜 (feat. 初音ミク)",
+      "channel_title": "WhiteFlame - Topic",
+      "current_key": "whiteflame",
+      "ytm_artists": [
+        "WhiteFlame",
+        "Hatsune Miku"
+      ],
+      "ytm_album": "Senbonzakura",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "8QPyFlJNmus",
+      "title": "心臓を捧げよ！",
+      "channel_title": "Linked Horizon - Topic",
+      "current_key": "linked horizon",
+      "ytm_artists": [
+        "Linked Horizon"
+      ],
+      "ytm_album": "Shingeki no Kiseki",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "749DIRUHhNY",
+      "title": "紅蓮の弓矢",
+      "channel_title": "Linked Horizon - Topic",
+      "current_key": "linked horizon",
+      "ytm_artists": [
+        "Linked Horizon"
+      ],
+      "ytm_album": "Shingeki no Kiseki",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "czJHHta2vz8",
+      "title": "憧憬と屍の道",
+      "channel_title": "Linked Horizon - Topic",
+      "current_key": "linked horizon",
+      "ytm_artists": [
+        "Linked Horizon"
+      ],
+      "ytm_album": "Shinjitsu eno Shingeki",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "KFETh_4GbcM",
+      "title": "暁の鎮魂歌",
+      "channel_title": "Linked Horizon - Topic",
+      "current_key": "linked horizon",
+      "ytm_artists": [
+        "Linked Horizon"
+      ],
+      "ytm_album": "Rakuen e no Shingeki",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "8_jqN2DpaDQ",
+      "title": "自由の翼",
+      "channel_title": "Linked Horizon - Topic",
+      "current_key": "linked horizon",
+      "ytm_artists": [
+        "Linked Horizon"
+      ],
+      "ytm_album": "Shingeki no Kiseki",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "OMrkUUNvM48",
+      "title": "1,000,000 TIMES feat. chelly (EGOIST)",
+      "channel_title": "MY FIRST STORY - Topic",
+      "current_key": "my first story",
+      "ytm_artists": [
+        "MY FIRST STORY"
+      ],
+      "ytm_album": "1,000,000 TIMES",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "-p0IjnBhG10",
+      "title": "The Everlasting Guilty Crown",
+      "channel_title": "EGOIST - Topic",
+      "current_key": "egoist",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": "The Everlasting Guilty Crown",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "29Nk3dnMUCA",
+      "title": "Departures - Anata Ni Okuru Ai No Uta",
+      "channel_title": "EGOIST - Topic",
+      "current_key": "egoist",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": "Departures - Anata Ni Okuru Ai No Uta",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "dvXRX5RJiIo",
+      "title": "Euterpe",
+      "channel_title": "EGOIST - Topic",
+      "current_key": "egoist",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": "Departures - Anata Ni Okuru Ai No Uta",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "8CfHTQGoPv4",
+      "title": "EGOIST『BANG!!!』Music Video（TVアニメ「ビルディバイド -#000000-」オープニングテーマ）",
+      "channel_title": "EGOIST Official YouTube Channel",
+      "current_key": "egoist『bang!!!』(tvアニメ「ビルディバイド",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "qMx_Mrta-yQ",
+      "title": "SAIGO NO HANABIRA (The meaning of love)",
+      "channel_title": "EGOIST - Topic",
+      "current_key": "egoist",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": "saigonohanabira the meaning of love",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "m6plIdZr5Uk",
+      "title": "Sakaseyasakase",
+      "channel_title": "EGOIST - Topic",
+      "current_key": "egoist",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": "Sakaseyasakase",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Bkcouyoj9Sg",
+      "title": "Kabaneri of the Iron Fortress",
+      "channel_title": "EGOIST - Topic",
+      "current_key": "egoist",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": "KABANERI OF THE IRON FORTRESS",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_oieOxMIgAA",
+      "title": "Touzisya",
+      "channel_title": "EGOIST - Topic",
+      "current_key": "egoist",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": "Touzisya",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "37btDkXck-E",
+      "title": "Gold",
+      "channel_title": "EGOIST - Topic",
+      "current_key": "egoist",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": "Gold",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "TsuHacswhHk",
+      "title": "Planetes",
+      "channel_title": "EGOIST - Topic",
+      "current_key": "egoist",
+      "ytm_artists": [
+        "EGOIST"
+      ],
+      "ytm_album": "Extra Terrestrial Biological Entities",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "RcPU6yzR29k",
+      "title": "好きになってはいけない理由／藤川千愛　TVアニメ『盾の勇者の成り上がり Season 3』EDテーマ",
+      "channel_title": "藤川千愛",
+      "current_key": "藤川千愛",
+      "ytm_artists": [
+        "Chiai Fujikawa"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "c35CilEWqeM",
+      "title": "きみの名前",
+      "channel_title": "Chiai Fujikawa - Topic",
+      "current_key": "chiai fujikawa",
+      "ytm_artists": [
+        "Chiai Fujikawa"
+      ],
+      "ytm_album": "Laika (Special Edition)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "edcZaqRceKc",
+      "title": "Sing My Pleasure (Grace Version)",
+      "channel_title": "Grace (Vo.Hikari Kodama) - Topic",
+      "current_key": "grace (vo.hikari kodama)",
+      "ytm_artists": [
+        "Grace (Vo.Hikari Kodama)"
+      ],
+      "ytm_album": "Sing My Pleasure (Grace Version)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "MJeqcGPtTqQ",
+      "title": "amazarashi『空に歌えば』“Singin' to the Sky” Music Video｜「僕のヒーローアカデミア」OP曲",
+      "channel_title": "amazarashi Official YouTube Channel",
+      "current_key": "amazarashi official youtube",
+      "ytm_artists": [
+        "amazarashi"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "HEf7p_7MjkM",
+      "title": "NieR: Automata meets amazarashi 『命にふさわしい』Music Video",
+      "channel_title": "amazarashi Official YouTube Channel",
+      "current_key": "amazarashi official youtube",
+      "ytm_artists": [
+        "amazarashi"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "HPMwDxi9-e0",
+      "title": "Kisetsu Wa Tsugitsugi Shindeiku",
+      "channel_title": "amazarashi - Topic",
+      "current_key": "amazarashi",
+      "ytm_artists": [
+        "amazarashi"
+      ],
+      "ytm_album": "Sekaishuusoku Niichiichiroku",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "1Bk9YpwWEsg",
+      "title": "WANDS 「世界が終るまでは… [WANDS第５期ver.]」 MV",
+      "channel_title": "WANDS Official",
+      "current_key": "wands",
+      "ytm_artists": [
+        "WANDS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "Jb6Zlg30rgk",
+      "title": "MAN WITH A MISSION×milet「絆ノ奇跡」Music Video",
+      "channel_title": "mwamjapan",
+      "current_key": "mwamjapan",
+      "ytm_artists": [
+        "MAN WITH A MISSION",
+        "milet"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "r105CzDvoo0",
+      "title": "milet「Anytime Anywhere」MUSIC VIDEO (TVアニメ『葬送のフリーレン』エンディングテーマ)",
+      "channel_title": "milet Official YouTube Channel",
+      "current_key": "milet official youtube",
+      "ytm_artists": [
+        "milet"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "R-X5WYD-X1M",
+      "title": "milet「Who I Am」MUSIC VIDEO & CROSSFADE  (TVドラマ『七人の秘書』主題歌・先行配信中！)",
+      "channel_title": "milet Official YouTube Channel",
+      "current_key": "milet official youtube",
+      "ytm_artists": [
+        "milet"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "OqQAFmkrzew",
+      "title": "Anytime Anywhere",
+      "channel_title": "milet - Topic",
+      "current_key": "milet",
+      "ytm_artists": [
+        "milet"
+      ],
+      "ytm_album": "Anytime Anywhere",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "zqKrpw36xnU",
+      "title": "Silhouette",
+      "channel_title": "KANA-BOON - Topic",
+      "current_key": "kana-boon",
+      "ytm_artists": [
+        "KANA-BOON"
+      ],
+      "ytm_album": "TIME",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "saDmN2f3HI0",
+      "title": "Grand Escape (feat. Toko Miura)",
+      "channel_title": "Radwimps - Topic",
+      "current_key": "radwimps",
+      "ytm_artists": [
+        "RADWIMPS"
+      ],
+      "ytm_album": "Weathering With You -Complete Version-",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "S3PVIkvPfks",
+      "title": "Suzume",
+      "channel_title": "Radwimps - Topic",
+      "current_key": "radwimps",
+      "ytm_artists": [
+        "RADWIMPS"
+      ],
+      "ytm_album": "Suzume (Motion Picture Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "W0C_VJqjtpw",
+      "title": "RADWIMPS - うるうびと [Official Music Video]",
+      "channel_title": "RADWIMPS",
+      "current_key": "radwimps",
+      "ytm_artists": [
+        "Radwimps"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "y6YwiNFuTtw",
+      "title": "KANATA HALUKA",
+      "channel_title": "Radwimps - Topic",
+      "current_key": "radwimps",
+      "ytm_artists": [
+        "RADWIMPS"
+      ],
+      "ytm_album": "KANATA HALUKA",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Fve_lHIPa-I",
+      "title": "TK from 凛として時雨 『unravel』 Music Video(Full Size)",
+      "channel_title": "凛として時雨 / TK",
+      "current_key": "凛として時雨 / tk",
+      "ytm_artists": [
+        "Ling tosite sigure"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "FR91CB5SBWU",
+      "title": "命に嫌われている。/ カンザキイオリ(Covered by コバソロ & 相沢)",
+      "channel_title": "kobasolo",
+      "current_key": "kobasolo",
+      "ytm_artists": [
+        "Aizawa",
+        "KOBASOLO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "weGtT2hxFvg",
+      "title": "FLY HIGH!!",
+      "channel_title": "Burnout Syndromes - Topic",
+      "current_key": "burnout syndromes",
+      "ytm_artists": [
+        "BURNOUT SYNDROMES"
+      ],
+      "ytm_album": "FLY HIGH!!",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Z1pnDW8Wraw",
+      "title": "Good Morning World!",
+      "channel_title": "Burnout Syndromes - Topic",
+      "current_key": "burnout syndromes",
+      "ytm_artists": [
+        "BURNOUT SYNDROMES"
+      ],
+      "ytm_album": "TOKYO",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ohUbKy5XG4I",
+      "title": "【合唱】　千本桜！！！",
+      "channel_title": "もちぃ",
+      "current_key": "合唱",
+      "ytm_artists": [
+        "もちぃ"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "tIhL2KHVdgE",
+      "title": "【MV】 MYTH&ROID - STYX HELIX(OFFICIAL)",
+      "channel_title": "KADOKAWAanime",
+      "current_key": "myth&roid",
+      "ytm_artists": [
+        "MYTH & ROID"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "M3Y9GxRxjFM",
+      "title": "Seventeen",
+      "channel_title": "Harukatomiyuki - Topic",
+      "current_key": "harukatomiyuki",
+      "ytm_artists": [
+        "Harukatomiyuki"
+      ],
+      "ytm_album": "Seventeen",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ZQRMSEPFxQQ",
+      "title": "雪解け (feat. 倚水)",
+      "channel_title": "tayori - Topic",
+      "current_key": "tayori",
+      "ytm_artists": [
+        "Islet"
+      ],
+      "ytm_album": "memento",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "mUSVav9pKO4",
+      "title": "Sunny",
+      "channel_title": "Yorushika - Topic",
+      "current_key": "yorushika",
+      "ytm_artists": [
+        "Yorushika"
+      ],
+      "ytm_album": "Sunny",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "qaOPHnbaBdM",
+      "title": "Ghost In A Flower",
+      "channel_title": "Yorushika - Topic",
+      "current_key": "yorushika",
+      "ytm_artists": [
+        "Yorushika"
+      ],
+      "ytm_album": "Ghost in a Flower",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "WHdL2vstvL8",
+      "title": "言って。",
+      "channel_title": "Yorushika - Topic",
+      "current_key": "yorushika",
+      "ytm_artists": [
+        "ヨルシカ"
+      ],
+      "ytm_album": "夏草が邪魔をする",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "cjkYtafI5ks",
+      "title": "remember",
+      "channel_title": "Uru - Topic",
+      "current_key": "uru",
+      "ytm_artists": [
+        "Uru"
+      ],
+      "ytm_album": "Orion Blue (Special Edition)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "6ZyZRFChIPU",
+      "title": "Anataga Iru Kotode",
+      "channel_title": "Uru - Topic",
+      "current_key": "uru",
+      "ytm_artists": [
+        "Uru"
+      ],
+      "ytm_album": "Anataga Iru Kotode",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "KUDFJ3e2cHM",
+      "title": "Datsu Karitekita Neko Syoukougun",
+      "channel_title": "Uru - Topic",
+      "current_key": "uru",
+      "ytm_artists": [
+        "Uru"
+      ],
+      "ytm_album": "contrast(Special Edition)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "yuTesDwv6uA",
+      "title": "Uchiagehanabi",
+      "channel_title": "DAOKO - Topic",
+      "current_key": "daoko",
+      "ytm_artists": [
+        "DAOKO",
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": "打上花火",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Eppci-N4UOs",
+      "title": "Longing",
+      "channel_title": "Sayaka Kanda - Topic",
+      "current_key": "sayaka kanda",
+      "ytm_artists": [
+        "Yuna (CV:Sayaka Kanda)"
+      ],
+      "ytm_album": "Sword Art Online the Movie: Ordinal Scale (Original Motion Picture Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Jg73p9udbAQ",
+      "title": "Bling-Bang-Bang-Born",
+      "channel_title": "Creepy Nuts - Topic",
+      "current_key": "creepy nuts",
+      "ytm_artists": [
+        "Creepy Nuts"
+      ],
+      "ytm_album": "Bling-Bang-Bang-Born",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "aY7r1tGsGOw",
+      "title": "Nidone",
+      "channel_title": "Creepy Nuts - Topic",
+      "current_key": "creepy nuts",
+      "ytm_artists": [
+        "Creepy Nuts"
+      ],
+      "ytm_album": "Nidone",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "RCyzP0i8s9k",
+      "title": "doppelgänger",
+      "channel_title": "Creepy Nuts - Topic",
+      "current_key": "creepy nuts",
+      "ytm_artists": [
+        "Creepy Nuts"
+      ],
+      "ytm_album": "LEGION",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "iWLrvytcUcI",
+      "title": "Chxxai",
+      "channel_title": "Creepy Nuts - Topic",
+      "current_key": "creepy nuts",
+      "ytm_artists": [
+        "Creepy Nuts"
+      ],
+      "ytm_album": "LEGION",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "OEBtL9N5Crk",
+      "title": "BIRIKEN",
+      "channel_title": "Creepy Nuts - Topic",
+      "current_key": "creepy nuts",
+      "ytm_artists": [
+        "Creepy Nuts"
+      ],
+      "ytm_album": "LEGION",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "p-jWJ79p8D8",
+      "title": "dust",
+      "channel_title": "SennaRin - Topic",
+      "current_key": "sennarin",
+      "ytm_artists": [
+        "SennaRin"
+      ],
+      "ytm_album": "dust",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "1nZYJER16mE",
+      "title": "theFLOWER",
+      "channel_title": "SennaRin - Topic",
+      "current_key": "sennarin",
+      "ytm_artists": [
+        "SennaRin"
+      ],
+      "ytm_album": "ADRENA",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "CUj-Or54XDg",
+      "title": "88",
+      "channel_title": "LM.C - Topic",
+      "current_key": "lm.c",
+      "ytm_artists": [
+        "LM.C"
+      ],
+      "ytm_album": "88",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "u10U7BHQQ2Y",
+      "title": "MY FIRST STORY -Missing You-【Official Video】",
+      "channel_title": "JMS BASE",
+      "current_key": "my first story",
+      "ytm_artists": [
+        "MY FIRST STORY"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "9QqqVxIC_oQ",
+      "title": "REVIVER オリジナルVer.",
+      "channel_title": "MY FIRST STORY - Topic",
+      "current_key": "my first story",
+      "ytm_artists": [
+        "MY FIRST STORY"
+      ],
+      "ytm_album": "オルタンシア･サーガ -蒼の騎士団- オリジナル･サウンドトラック",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "jcsCpTQj6zI",
+      "title": "楔",
+      "channel_title": "Hanako Oku - Topic",
+      "current_key": "hanako oku",
+      "ytm_artists": [
+        "Hanako Oku"
+      ],
+      "ytm_album": "Vol. Best",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "-JzIBUHot4M",
+      "title": "Gokuraku Joudo",
+      "channel_title": "GARNiDELiA - Topic",
+      "current_key": "garnidelia",
+      "ytm_artists": [
+        "GARNiDELiA"
+      ],
+      "ytm_album": "Gokuraku Joudo",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "0HTAKT-JIaA",
+      "title": "【單曲推薦】【僕が死のうと思ったのは】【薇爾莉特】",
+      "channel_title": "李健宏",
+      "current_key": "單曲推薦",
+      "ytm_artists": [
+        "李健宏"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "wfo4PEzp-lE",
+      "title": "君が僕の心臓じゃないせいで - Because you're not my heart",
+      "channel_title": "BAK - Topic",
+      "current_key": "君が僕の心臓じゃないせいで",
+      "ytm_artists": [
+        "BAK"
+      ],
+      "ytm_album": "Because you're not my heart",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "tJuJ0Dls1hI",
+      "title": "Initial d Deja vu (中文字幕)",
+      "channel_title": "鈾鈦人毒氣過度需要",
+      "current_key": "鈾鈦人毒氣過度需要",
+      "ytm_artists": [
+        "鈾鈦人毒氣過度需要"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "YfXVuKr6AjM",
+      "title": "秋山黄色『アイデンティティ』",
+      "channel_title": "秋山黄色",
+      "current_key": "秋山黄色",
+      "ytm_artists": [
+        "Kiro Akiyama"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "URR_Nv-6MZs",
+      "title": "喜劇",
+      "channel_title": "星野源 Gen Hoshino - Topic",
+      "current_key": "星野源 gen hoshino",
+      "ytm_artists": [
+        "Gen Hoshino"
+      ],
+      "ytm_album": "Comedy",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "8PbGeKwEnK0",
+      "title": "Pop Virus",
+      "channel_title": "星野源 Gen Hoshino - Topic",
+      "current_key": "星野源 gen hoshino",
+      "ytm_artists": [
+        "Gen Hoshino"
+      ],
+      "ytm_album": "POP VIRUS",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "9bLpyGlQGtg",
+      "title": "Luminous Sword",
+      "channel_title": "Yuki Kajiura - Topic",
+      "current_key": "yuki kajiura",
+      "ytm_artists": [
+        "Yuki Kajiura"
+      ],
+      "ytm_album": "SWORD ART ONLINE MUSIC COLLECTION",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "UCIsZ4zS9Ck",
+      "title": "EASY GO",
+      "channel_title": "katoukazuki - Topic",
+      "current_key": "katoukazuki",
+      "ytm_artists": [
+        "katoukazuki"
+      ],
+      "ytm_album": "GLAMOROUS BEAT",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "gYuO6OUm6SQ",
+      "title": "僕の戦争",
+      "channel_title": "Shinsei Kamattechan - Topic",
+      "current_key": "shinsei kamattechan",
+      "ytm_artists": [
+        "SHINSEI KAMATTE CHAN"
+      ],
+      "ytm_album": "Boku no Sensou",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "EqnuF2WyhbU",
+      "title": "ANIMA",
+      "channel_title": "reona - Topic",
+      "current_key": "reona",
+      "ytm_artists": [
+        "ReoNa"
+      ],
+      "ytm_album": "unknown",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "JqN4_mufE2U",
+      "title": "Sing My Pleasure",
+      "channel_title": "Vivy (Vo.Kairi Yagi) - Topic",
+      "current_key": "vivy (vo.kairi yagi)",
+      "ytm_artists": [
+        "Vivy (Vo.Kairi Yagi)"
+      ],
+      "ytm_album": "Sing My Pleasure",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "2qcvp5nE4Lc",
+      "title": "Fluorite Eye's Song",
+      "channel_title": "Vivy (Vo.Kairi Yagi) - Topic",
+      "current_key": "vivy (vo.kairi yagi)",
+      "ytm_artists": [
+        "Vivy (Vo.Kairi Yagi)"
+      ],
+      "ytm_album": "Fluorite Eye's Song",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "40dJS_LC6S8",
+      "title": "ウォルピスカーター MV 『泥中に咲く』",
+      "channel_title": "ウォルピス社",
+      "current_key": "ウォルピス社",
+      "ytm_artists": [
+        "Wolpis Carter"
+      ],
+      "ytm_album": null,
+      "video_type": null,
+      "agrees": false
+    },
+    {
+      "video_id": "SX_ViT4Ra7k",
+      "title": "米津玄師  Kenshi Yonezu  - Lemon",
+      "channel_title": "Kenshi Yonezu  米津玄師",
+      "current_key": "kenshi yonezu",
+      "ytm_artists": [
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "9aJVr5tTTWk",
+      "title": "米津玄師 - ピースサイン , Kenshi Yonezu - Peace Sign",
+      "channel_title": "Kenshi Yonezu  米津玄師",
+      "current_key": "米津玄師",
+      "ytm_artists": [
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "gJX2iy6nhHc",
+      "title": "米津玄師  - 灰色と青（ ＋菅田将暉 ）,  Kenshi Yonezu - Haiirotoao（+Masaki Suda)",
+      "channel_title": "Kenshi Yonezu  米津玄師",
+      "current_key": "米津玄師",
+      "ytm_artists": [
+        "Masaki Suda",
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Cb0JZhdmjtg",
+      "title": "IRIS OUT",
+      "channel_title": "Kenshi Yonezu - Topic",
+      "current_key": "kenshi yonezu",
+      "ytm_artists": [
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": "IRIS OUT",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "-wb2PAx6aEs",
+      "title": "米津玄師 - さよーならまたいつか！ Kenshi Yonezu - Sayonara, Mata Itsuka !",
+      "channel_title": "Kenshi Yonezu  米津玄師",
+      "current_key": "米津玄師",
+      "ytm_artists": [
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "xhqb7JJvK6Y",
+      "title": "Haiirotoao (+ Masaki Suda)",
+      "channel_title": "Kenshi Yonezu - Topic",
+      "current_key": "kenshi yonezu",
+      "ytm_artists": [
+        "Kenshi Yonezu",
+        "Masaki Suda"
+      ],
+      "ytm_album": "BOOTLEG",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "BOll7hFQu08",
+      "title": "Uma to Shika",
+      "channel_title": "Kenshi Yonezu - Topic",
+      "current_key": "kenshi yonezu",
+      "ytm_artists": [
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": "Uma to Shika",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ctYugm9dg1s",
+      "title": "Chikyugi - Spinning Globe",
+      "channel_title": "Kenshi Yonezu - Topic",
+      "current_key": "kenshi yonezu",
+      "ytm_artists": [
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": "Chikyugi - Spinning Globe",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "H04556CgbEk",
+      "title": "Spirits of the Sea",
+      "channel_title": "Kenshi Yonezu - Topic",
+      "current_key": "kenshi yonezu",
+      "ytm_artists": [
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": "Uma to Shika",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "TqyfmFaZlqw",
+      "title": "Gurenge",
+      "channel_title": "LiSA - Topic",
+      "current_key": "lisa",
+      "ytm_artists": [
+        "LiSA"
+      ],
+      "ytm_album": "LEO-NiNE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "NinLIDs9qmU",
+      "title": "homura",
+      "channel_title": "LiSA - Topic",
+      "current_key": "lisa",
+      "ytm_artists": [
+        "LiSA"
+      ],
+      "ytm_album": "homura",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "F9GXgPHeKfA",
+      "title": "Crossing Field",
+      "channel_title": "LiSA - Topic",
+      "current_key": "lisa",
+      "ytm_artists": [
+        "LiSA"
+      ],
+      "ytm_album": "LANDSPACE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "UljR2IQAVfw",
+      "title": "ADAMAS",
+      "channel_title": "LiSA - Topic",
+      "current_key": "lisa",
+      "ytm_artists": [
+        "LiSA"
+      ],
+      "ytm_album": "Akai wana who loves it? / ADAMAS",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Qf3KC5DxVm4",
+      "title": "Yu-Ke",
+      "channel_title": "LiSA - Topic",
+      "current_key": "lisa",
+      "ytm_artists": [
+        "LiSA"
+      ],
+      "ytm_album": "Yu-Ke",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "qpHvj5pvvhg",
+      "title": "The Rumbling",
+      "channel_title": "SiM - Topic",
+      "current_key": "sim",
+      "ytm_artists": [
+        "SiM"
+      ],
+      "ytm_album": "The Rumbling",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "fMU6nclDzNs",
+      "title": "Polaris",
+      "channel_title": "BLUE ENCOUNT - Topic",
+      "current_key": "blue encount",
+      "ytm_artists": [
+        "BLUE ENCOUNT"
+      ],
+      "ytm_album": "q.e.d",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "tdzsOODJiX8",
+      "title": "悪魔の子",
+      "channel_title": "Ai Higuchi - Topic",
+      "current_key": "ai higuchi",
+      "ytm_artists": [
+        "Ai Higuchi"
+      ],
+      "ytm_album": "Akuma no Ko",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "rC6wtnFDygQ",
+      "title": "No.1",
+      "channel_title": "Dish - Topic",
+      "current_key": "dish",
+      "ytm_artists": [
+        "DISH//"
+      ],
+      "ytm_album": "No.1",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "B0GpxW8K0vY",
+      "title": "Secret Base~Kimigakuretamono - 10 Years After Version",
+      "channel_title": "Meiko Honma (CV:Ai Kayano) - Topic",
+      "current_key": "secret base~kimigakuretamono",
+      "ytm_artists": [
+        "Meiko Honma (CV:Ai Kayano)",
+        "Naruko Anjyo (CV:Haruka Tomatsu)",
+        "Chiriko Tsurumi (CV:Saori Hayami)"
+      ],
+      "ytm_album": "secret base kimigakuretamono",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "d6NPs3OQIAU",
+      "title": "Zankyosanka",
+      "channel_title": "Aimer - Topic",
+      "current_key": "aimer",
+      "ytm_artists": [
+        "Aimer"
+      ],
+      "ytm_album": "Open a Door",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "hvVN2i6o4A4",
+      "title": "Brave Shine",
+      "channel_title": "Aimer - Topic",
+      "current_key": "aimer",
+      "ytm_artists": [
+        "Aimer"
+      ],
+      "ytm_album": "DAWN",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "XF1Cblkt3Ic",
+      "title": "Ref:rain",
+      "channel_title": "Aimer - Topic",
+      "current_key": "aimer",
+      "ytm_artists": [
+        "Aimer"
+      ],
+      "ytm_album": "Ref:rain / Mabayui Bakari",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "OVXnizdIxtc",
+      "title": "Ninelie",
+      "channel_title": "Aimer - Topic",
+      "current_key": "aimer",
+      "ytm_artists": [
+        "Aimer"
+      ],
+      "ytm_album": "ninelie EP",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "kcBaL2zkERM",
+      "title": "Koiwazurai",
+      "channel_title": "Aimer - Topic",
+      "current_key": "aimer",
+      "ytm_artists": [
+        "Aimer"
+      ],
+      "ytm_album": "Sun Dance",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "quTQs77qN38",
+      "title": "grace note",
+      "channel_title": "Aimer - Topic",
+      "current_key": "aimer",
+      "ytm_artists": [
+        "Aimer"
+      ],
+      "ytm_album": "grace note",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ICwo91B82xA",
+      "title": "LOST IN PARADISE (Jujutsu Kaisen Ending Theme Song)",
+      "channel_title": "ALI - Topic",
+      "current_key": "ali",
+      "ytm_artists": [
+        "ALI"
+      ],
+      "ytm_album": "LOST IN PARADISE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "tV8zhwgiL2A",
+      "title": "Hyouriittai",
+      "channel_title": "YUZU - Topic",
+      "current_key": "yuzu",
+      "ytm_artists": [
+        "YUZU"
+      ],
+      "ytm_album": "Shinsekai",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Y03xZBQs1pk",
+      "title": "キャンバス",
+      "channel_title": "+Plus - Topic",
+      "current_key": "+plus",
+      "ytm_artists": [
+        "+Plus"
+      ],
+      "ytm_album": "キャンバス",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "WmZQFfypvhg",
+      "title": "My Dearest",
+      "channel_title": "supercell - Topic",
+      "current_key": "supercell",
+      "ytm_artists": [
+        "supercell"
+      ],
+      "ytm_album": "My Dearest",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "AuwxFEXhALU",
+      "title": "Courage",
+      "channel_title": "Haruka Tomatsu - Topic",
+      "current_key": "haruka tomatsu",
+      "ytm_artists": [
+        "Haruka Tomatsu"
+      ],
+      "ytm_album": "courage",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "fR8iPh9S9qg",
+      "title": "Kizuna No Kiseki",
+      "channel_title": "MAN WITH A MISSION - Topic",
+      "current_key": "man with a mission",
+      "ytm_artists": [
+        "MAN WITH A MISSION",
+        "milet"
+      ],
+      "ytm_album": "Kizuna No Kiseki / Koi Kogare",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "TLIFRkM1otU",
+      "title": "Haibokuno Shounen",
+      "channel_title": "PENGUIN RESEARCH - Topic",
+      "current_key": "penguin research",
+      "ytm_artists": [
+        "PENGUIN RESEARCH"
+      ],
+      "ytm_album": "WILL",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "-hd3xTneN2w",
+      "title": "One day",
+      "channel_title": "The ROOTLESS - Topic",
+      "current_key": "the rootless",
+      "ytm_artists": [
+        "THE ROOTLESS"
+      ],
+      "ytm_album": "One day",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_YNtUuuBL78",
+      "title": "ザ・ベイビースターズ「ヒカリへ」MUSIC VIDEO",
+      "channel_title": "MUSIC Liverary",
+      "current_key": "music liverary",
+      "ytm_artists": [
+        "The Babystars"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "cyq5bUXpnYI",
+      "title": "ゆず「REASON」",
+      "channel_title": "TOYSFACTORYJP",
+      "current_key": "toysfactoryjp",
+      "ytm_artists": [
+        "YUZU"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "4VdkmyVcX6Q",
+      "title": "【歌ってみた】第一夜/あれくん",
+      "channel_title": "あれくん ",
+      "current_key": "歌ってみた",
+      "ytm_artists": [
+        "Arekun"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "IHaUGQVrBa8",
+      "title": "Kyouran Hey Kids!!",
+      "channel_title": "THE ORAL CIGARETTES - Topic",
+      "current_key": "the oral cigarettes",
+      "ytm_artists": [
+        "THE ORAL CIGARETTES"
+      ],
+      "ytm_album": "FIXION",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ox8-kJjLpWI",
+      "title": "粉雪",
+      "channel_title": "Remioromen - Topic",
+      "current_key": "remioromen",
+      "ytm_artists": [
+        "Remioromen"
+      ],
+      "ytm_album": "HORIZON",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "a5fTbi23IvY",
+      "title": "Primary Colors",
+      "channel_title": "PELICAN FANCLUB - Topic",
+      "current_key": "pelican fanclub",
+      "ytm_artists": [
+        "PELICAN FANCLUB"
+      ],
+      "ytm_album": "Primary Colors",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "lDXvtuSs8BA",
+      "title": "Believe",
+      "channel_title": "Folder 5 - Topic",
+      "current_key": "folder 5",
+      "ytm_artists": [
+        "Folder 5"
+      ],
+      "ytm_album": "Folder+Folder 5 SINGLE COLLECTION and more",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "KfwhApeV5ZE",
+      "title": "Wake up!",
+      "channel_title": "AAA - Topic",
+      "current_key": "aaa",
+      "ytm_artists": [
+        "AAA"
+      ],
+      "ytm_album": "GOLD SYMPHONY",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "eCGip3br7yY",
+      "title": "Horizon Dreamer",
+      "channel_title": "Daichi Miura - Topic",
+      "current_key": "daichi miura",
+      "ytm_artists": [
+        "Daichi Miura"
+      ],
+      "ytm_album": "Horizon Dreamer",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "hRc_QTLPpyA",
+      "title": "Polytope",
+      "channel_title": "Daichi Miura - Topic",
+      "current_key": "daichi miura",
+      "ytm_artists": [
+        "Daichi Miura"
+      ],
+      "ytm_album": "Horizon Dreamer / Polytope",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "6DVEjsJhcCA",
+      "title": "Brian the Sun - Heroes (Full Version)",
+      "channel_title": "BriantheSunVEVO",
+      "current_key": "brian the sun",
+      "ytm_artists": [
+        "Brian the Sun"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "dJth8oW7CAQ",
+      "title": "spiral",
+      "channel_title": "LONGMAN - Topic",
+      "current_key": "longman",
+      "ytm_artists": [
+        "LONGMAN"
+      ],
+      "ytm_album": "spiral",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "iqEr3P78fz8",
+      "title": "back number - 水平線",
+      "channel_title": "back number",
+      "current_key": "back number",
+      "ytm_artists": [
+        "back number"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "90koJyqymI0",
+      "title": "また夏を追う",
+      "channel_title": "ATARAYO - Topic",
+      "current_key": "atarayo",
+      "ytm_artists": [
+        "Atarayo"
+      ],
+      "ytm_album": "Matanatsuwoou",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "AhGMZVnfmeU",
+      "title": "Nulbarich – Lost Game (HELLO WORLD Music Video edition)",
+      "channel_title": "Nulbarich",
+      "current_key": "nulbarich",
+      "ytm_artists": [
+        "Nulbarich"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "EVoWz321A7M",
+      "title": "Tanjiro Kamado's Song -OST version-",
+      "channel_title": "Go Shiina - Topic",
+      "current_key": "tanjiro kamado's song",
+      "ytm_artists": [
+        "Go Shiina"
+      ],
+      "ytm_album": "Anime \"Kimetsu no Yaiba\" Tanjiro Kamado, Unwavering Resolve Arc Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "dnBMG2PgHNE",
+      "title": "Hana Hope - 旅のゆくえ",
+      "channel_title": "Hana Hope",
+      "current_key": "hana hope",
+      "ytm_artists": [
+        "Hana Hope"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "_PNFMuT6e4o",
+      "title": "Hakujitsu",
+      "channel_title": "King Gnu - Topic",
+      "current_key": "king gnu",
+      "ytm_artists": [
+        "King Gnu"
+      ],
+      "ytm_album": "Ceremony",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "-eUYBNIntTI",
+      "title": "Dai Zero Kan",
+      "channel_title": "10-FEET - Topic",
+      "current_key": "10-feet",
+      "ytm_artists": [
+        "10-FEET"
+      ],
+      "ytm_album": "Dai Zero Kan",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    }
+  ],
+  "colon_credit_ratio": 0.010638297872340425,
+  "group_count_ratio": 0.84
+}

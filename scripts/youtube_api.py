@@ -523,6 +523,8 @@ def classify_http_error(exc: HttpError) -> tuple[str, bool, bool]:
         return "ITEM_NOT_FOUND", False, False
     if status == 429:
         return "RATE_LIMITED", True, False
+    if status == 409 or reason in ("SERVICE_UNAVAILABLE", "backendError"):
+        return "CONFLICT_RETRY", True, False
     if status is not None and status >= 500:
         return "SERVER_ERROR", True, False
     return f"HTTP_{status or 'UNKNOWN'}", False, False

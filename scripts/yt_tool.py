@@ -40,6 +40,12 @@ from typing import TYPE_CHECKING, Any
 from scripts.cache_manager import PlaylistCache
 from scripts.executor import estimate_quota
 from scripts.optimizer import plan_reorder, run_full_optimization
+
+# Ensure UTF-8 output on all platforms (especially Windows PowerShell/cmd)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 from scripts.schemas import (
     EnrichedPlaylistItem,
     ExecutionResult,
@@ -80,7 +86,7 @@ MAX_RETRIES = 4
 RETRY_DELAYS = (2, 4, 8, 16)
 
 #: Pause between write calls to stay friendly to the API.
-WRITE_PAUSE_SECONDS = 0.3
+WRITE_PAUSE_SECONDS = 0.5
 
 # Agent-friendly logging: File gets everything (DEBUG), stdout gets only CRITICAL errors if not caught.
 logger = logging.getLogger("yt_tool")
