@@ -21,10 +21,40 @@
 
 ### Phase 0: 需求診斷與憑證檢查
 
-1. **確認 Playlist ID**：若使用者未提供 ID 或網址，主動追問。你不需要自己用 Regex 解析，直接把整串 URL 或 ID 傳給 `yt_tool.py`，它有內建解析器。
-2. **執行 Fetch 測試**：
+1. **需求維度盤點（必做，先於一切計算）**
+
+   把使用者的**原話**拆成兩個維度，逐一標記「有講」或「沒講」：
+
+   | 維度 | 例句 | 沒講的話 |
+   |---|---|---|
+   | **分群依據** | 「同歌手放一起」→ artist | 查表發問 |
+   | **群內順序** | 「每組裡面熱門的排前面」→ view_count:desc | **查表發問，不可自行假設** |
+
+   > ⚠️ **這是最容易出錯的一步。** 「把同歌手的影片整齊排序」只指定了分群，**沒有**
+   > 指定群內順序。此時若自行補上觀看數排序，會對「本來就已經連在一起」的群組產生
+   > 純粹為了群內重排的移動 —— 每筆 50 units，而使用者根本沒要求。真實測試中這件事
+   > 已經發生過：清單開頭 7 首同一位歌手原本就相鄰，卻因為擅自加上的群內排序多花了
+   > 5 筆移動，使用者的評語是「無意義搬動」。
+
+   任何一格是「沒講」，就**先查 `docs/agent/clarify_scenarios.json`**：依斷層種類
+   （`missing_sort_field` / `missing_group_field`）找 `when` 條件吻合的變體，沒有吻合
+   的就用該斷層的預設變體（`when` 是空字串的那一筆），照它的 `question` 與 `options`
+   發問。查無此情境時才自己擬問法。
+
+   模板裡的選項描述寫了各自的**配額代價**，那是使用者做決定所需要的資訊，不要省略。
+   `missing_sort_field` 的第一個選項就是「維持原順序 —— 只做分組，不動群內既有順序。
+   移動次數最少、配額最省」，多數「我只是想找同一個歌手時不用滑來滑去」的需求選這個
+   就夠了。
+
+   **這道閘門對三條路徑（A／B／C）一律適用**，不是只有路徑 C 才要查表。特別注意：
+   不要先把自己補的維度寫進 intent 字串再丟給認知引擎 —— 那樣斷層在進引擎前就被填掉，
+   引擎不會回報 `sort_criteria` 為空，閘門就永遠不會開。**判斷依據永遠是使用者的原話，
+   不是你組出來的參數。**
+
+2. **確認 Playlist ID**：若使用者未提供 ID 或網址，主動追問。你不需要自己用 Regex 解析，直接把整串 URL 或 ID 傳給 `yt_tool.py`，它有內建解析器。
+3. **執行 Fetch 測試**：
    直接執行 `python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json`
-3. **處理憑證缺失 (`CREDENTIALS_MISSING`)**：
+4. **處理憑證缺失 (`CREDENTIALS_MISSING`)**：
    - 若指令回傳 `{"status": "error", "code": "CREDENTIALS_MISSING", ...}`，代表尚未設定 OAuth 憑證。
    - Agent **必須**在聊天視窗向使用者詢問憑證路徑：
      > 「您尚未設定 Google OAuth 憑證。請提供您下載的 `client_secret.json` 憑證檔案的絕對路徑（例如：`C:\Users\Name\Downloads\client_secret.json`）。」
@@ -71,12 +101,16 @@
    ```
 
 2. **執行最佳化計算**：
+
+   > ⚠️ **`--within-group-sort` 只有在 Phase 0 盤點出「使用者明確指定了群內順序」時才可加上。**
+   > 它不是預設值，也不是「順便做比較好」的加值。省略它＝群內維持原順序，移動筆數最少、
+   > 配額最省。以下範例刻意**不含**這個參數。
+
    ```
    python -m scripts.yt_tool optimize data/current.json \
        --target-out data/new.json \
        --out data/changes_optimized.json \
        --group-order first_appearance \
-       --within-group-sort viewCount:desc \
        --aliases data/artist_aliases.json
    ```
    - `--group-order`：`first_appearance`（預設）、`alphabetical`、`count_desc`
@@ -152,14 +186,13 @@ npm run plan -- -i data/current.json -o data/new.json \
 此時請追問使用者要依哪個欄位排序，或改用 `--sort-by` 明確指定後重跑，
 不要把「沒有排序」的結果當成完成。
 
-**追問前先查 `docs/agent/clarify_scenarios.json`。** 那是一份累積下來的問題模板庫，
-每一筆都對應一種「需求不完整」的斷層，並附上問法與選項（含各選項的配額代價）。
-依 `sort_criteria` / `group_dimensions` 為空所對應的斷層種類查表：先找 `when` 條件
-吻合的變體，沒有吻合的就用該斷層的預設變體（`when` 是空字串的那一筆），照它的
-`question` 與 `options` 發問。查無此情境時再自己擬問法。
+**追問方式見 Phase 0 的「需求維度盤點」**，一律查 `docs/agent/clarify_scenarios.json`
+的模板發問，不要每次重新想問法與選項。
 
-不要每次重新想問法與選項——模板裡的選項描述寫了各自的配額差異，那是使用者
-做決定所需要的資訊。
+⚠️ **引擎的 `warnings` 是第二道防線，不是第一道。** 主閘門在 Phase 0，判斷依據是
+**使用者的原話**。如果你在組 `--intent` 字串時就自行補上了使用者沒說的維度，引擎會
+正常解析出 `sort_criteria`、不會發出任何警告，這道防線就形同虛設。順序永遠是
+「先照原話盤點 → 缺就問 → 才組 intent」。
 
 接著同路徑 B 的第 3 步執行 `diff`。
 
@@ -182,6 +215,36 @@ npm run plan -- -i data/current.json -o data/new.json \
    - **錨點影片（不消耗配額）：XX 支**
    - **較 Naive 方法節省：XXXX units**
    - 若 `pinned_count > 0`：**「清單中有 N 支私人／已刪除影片無法移動，將留在原位置，可能會切斷某些群組。」**
+
+3.5. **有用 `--within-group-sort` 時，必須把移動拆成兩桶**
+
+   群內排序的成本是**可以單獨算出來**的，而且不花配額：把同一份 `current.json`
+   再跑一次 `optimize`，但**不加** `--within-group-sort`，輸出到別的檔名：
+
+   ```
+   python -m scripts.yt_tool optimize data/current.json \
+       --target-out data/new_grouponly.json \
+       --out data/changes_grouponly.json \
+       --group-order first_appearance \
+       --aliases data/artist_aliases.json
+   ```
+
+   兩次的 `need_to_move` 相減，就是群內排序的**額外**代價。在預覽表下方列出：
+
+   ```
+   為了把群組聚在一起：      N₁ 筆（N₁ × 50 units）
+   只為了群內排序額外增加：  N₂ − N₁ 筆（(N₂ − N₁) × 50 units）
+   ────────────────────────────────────
+   合計：                    N₂ 筆（N₂ × 50 units）
+   ```
+
+   接著明確告訴使用者**第二桶可以單獨取消**：
+
+   > 「其中 X 筆移動只是為了把每組內部依觀看數排序。有些歌手的歌本來就已經連在一起了，
+   > 這部分移動不會改變『同歌手放一起』的結果。要省下這 X × 50 units 的話，我可以改用
+   > 只做分組的版本。」
+
+   使用者選擇只做分組時，直接改用 `data/changes_grouponly.json` 進入 Phase 4。
 
 4. **配額警告**：若 `estimated_quota` > 2500，加上以下醒目警告：
    > ⚠️ 此次操作預估消耗配額超過 2,500 units。每日 API 上限為 10,000 units，請確認是否執行。

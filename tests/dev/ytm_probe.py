@@ -67,6 +67,8 @@ from pathlib import Path
 # 與 yt_tool.py 同一道保險：Windows 主控台預設 cp950，直接 print 中日文會炸。
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))

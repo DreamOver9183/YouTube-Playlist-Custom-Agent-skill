@@ -35,11 +35,13 @@ from pathlib import Path
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "User Testing"
 
-#: 產生 Task3-2 ~ 3-5 時使用的種子，與 scripts/generate_randomized_tasks.py 一致。
+#: 產生 Task3-2 ~ 3-5 時使用的種子，與 tests/dev/build_task3_samples.py 一致。
 SEEDS = {"3-2": 42, "3-3": 108, "3-4": 256, "3-5": 777}
 
 #: |tau| 的容許上限，以獨立虛無假設下的標準差為單位。
@@ -66,14 +68,18 @@ def main() -> int:
     failures: list[str] = []
 
     base = load("3-1")
-    tracks = base["tracks"]
-    n = len(tracks)
-    pids = [t["playlist_item_id"] for t in tracks]
-    vids = [t["video_id"] for t in tracks]
+    items = base["items"]
+    n = len(items)
+    pids = [t["playlist_item_id"] for t in items]
+    vids = [t["video_id"] for t in items]
 
     print(f"基準版 Task3-1：{n} 個清單項目，{len(set(vids))} 支不重複影片")
 
     # ── 0. 主鍵健全性 ────────────────────────────────────────────
+    if base.get("schema") != "yt-playlist-sample/v1":
+        failures.append(f"schema 應為 yt-playlist-sample/v1，實際為 {base.get('schema')!r}")
+    if base.get("item_count") != n:
+        failures.append(f"item_count {base.get('item_count')} != len(items) {n}")
     if len(set(pids)) != n:
         failures.append(f"playlist_item_id 不唯一（{len(set(pids))}/{n}），無法當排名鍵")
     if len(set(vids)) == n:
@@ -81,20 +87,13 @@ def main() -> int:
     else:
         print(f"  含 {n - len(set(vids))} 個重複項目 —— 排名鍵使用 playlist_item_id")
 
-    total_views = sum(t["views"] for t in tracks)
-    total_likes = sum(t["likes"] for t in tracks)
-    if base["overview"]["total_views"] != total_views:
-        failures.append(f"overview.total_views {base['overview']['total_views']} != 實算 {total_views}")
-    if base["overview"]["total_likes"] != total_likes:
-        failures.append(f"overview.total_likes {base['overview']['total_likes']} != 實算 {total_likes}")
-
     # ── 1. 種子可重現 ────────────────────────────────────────────
     print("\n[1/3] 種子可重現性")
     for suffix, seed in SEEDS.items():
         rng = random.Random(seed)
-        expected = copy.deepcopy(tracks)
+        expected = copy.deepcopy(items)
         rng.shuffle(expected)
-        actual = [t["playlist_item_id"] for t in load(suffix)["tracks"]]
+        actual = [t["playlist_item_id"] for t in load(suffix)["items"]]
         ok = [t["playlist_item_id"] for t in expected] == actual
         print(f"  Task{suffix} seed={seed:<4d} {'✓ 可重現' if ok else '✗ 無法重現'}")
         if not ok:
@@ -104,19 +103,19 @@ def main() -> int:
     print("\n[2/3] 元素一致性 (Jaccard, 以 playlist_item_id 為元素)")
     base_set = set(pids)
     for suffix in SEEDS:
-        other = load(suffix)["tracks"]
+        other = load(suffix)["items"]
         other_set = {t["playlist_item_id"] for t in other}
         jaccard = len(base_set & other_set) / len(base_set | other_set)
-        idx_ok = [t["index"] for t in other] == list(range(1, n + 1))
+        idx_ok = [t["position"] for t in other] == list(range(n))
         print(
             f"  3-1 vs {suffix}  Jaccard={jaccard:.4f}"
             f"  ∩={len(base_set & other_set)}  ∪={len(base_set | other_set)}"
-            f"  index 連號={'✓' if idx_ok else '✗'}"
+            f"  position 連號={'✓' if idx_ok else '✗'}"
         )
         if jaccard != 1.0:
             failures.append(f"Task{suffix} Jaccard={jaccard:.4f}，不是基準版的嚴格排列")
         if not idx_ok:
-            failures.append(f"Task{suffix} 的 index 欄位沒有重新編號成 1..{n}")
+            failures.append(f"Task{suffix} 的 position 欄位沒有重新編號成 0..{n-1}")
 
     # ── 3. Kendall's tau ────────────────────────────────────────
     sigma = math.sqrt(2 * (2 * n + 5) / (9 * n * (n - 1)))
@@ -126,7 +125,7 @@ def main() -> int:
     pos = {p: i for i, p in enumerate(pids)}
     orders = {"3-1": list(range(n))}
     for suffix in SEEDS:
-        orders[suffix] = [pos[t["playlist_item_id"]] for t in load(suffix)["tracks"]]
+        orders[suffix] = [pos[t["playlist_item_id"]] for t in load(suffix)["items"]]
 
     keys = ["3-1", *SEEDS]
     for a, b in combinations(keys, 2):
