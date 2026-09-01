@@ -1,0 +1,1402 @@
+{
+  "playlist_id": "PLtskdo8cFkvkNWh5d47epcdDs_W4SbRtg",
+  "ytm_track_count": 115,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_ATV": 84,
+    "MUSIC_VIDEO_TYPE_OMV": 24,
+    "null": 4,
+    "MUSIC_VIDEO_TYPE_UGC": 3
+  },
+  "album_coverage": 84,
+  "album_distinct": 73,
+  "artist_entity_coverage": 114,
+  "api_item_count": 115,
+  "invisible_to_ytm": [],
+  "rows": [
+    {
+      "video_id": "BfZ77lVOF4E",
+      "title": "光輝歲月",
+      "channel_title": "Beyond - Topic",
+      "current_key": "beyond",
+      "ytm_artists": [
+        "Beyond"
+      ],
+      "ytm_album": "命運派對",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "CDGSohkec-E",
+      "title": "百战成诗（王者荣耀·100英雄群像献礼歌） (完整版)",
+      "channel_title": "王者荣耀同人局 - Topic",
+      "current_key": "王者荣耀同人局",
+      "ytm_artists": [
+        "王者荣耀同人局"
+      ],
+      "ytm_album": "百战成诗（王者荣耀·100英雄群像献礼歌）",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "YdsKNrow7dw",
+      "title": "出山",
+      "channel_title": "花粥 - Topic",
+      "current_key": "花粥",
+      "ytm_artists": [
+        "花粥",
+        "王胜娚"
+      ],
+      "ytm_album": "出山",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "6ItE-UIHZYU",
+      "title": "下山",
+      "channel_title": "要不要买菜 - Topic",
+      "current_key": "要不要买菜",
+      "ytm_artists": [
+        "要不要买菜"
+      ],
+      "ytm_album": "下山",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "HV5pBuPITH0",
+      "title": "Never Again",
+      "channel_title": "永彬Ryan.B - Topic",
+      "current_key": "永彬ryan.b",
+      "ytm_artists": [
+        "Ryan.B",
+        "AY杨佬叁"
+      ],
+      "ytm_album": "Never Again",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "rAoHFM6oDqI",
+      "title": "像极了",
+      "channel_title": "Release - Topic",
+      "current_key": "release",
+      "ytm_artists": [
+        "永彬"
+      ],
+      "ytm_album": "像极了",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "-5OO4hov_l4",
+      "title": "可惜沒如果",
+      "channel_title": "JJ Lin - Topic",
+      "current_key": "jj lin",
+      "ytm_artists": [
+        "林俊傑"
+      ],
+      "ytm_album": "新地球",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "9sBvKDPEUWs",
+      "title": "虞兮叹",
+      "channel_title": "闻人听書_ - Topic",
+      "current_key": "闻人听書",
+      "ytm_artists": [
+        "闻人听書_"
+      ],
+      "ytm_album": "虞兮叹",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "XT8JUAPQ7P0",
+      "title": "夜空中最亮的星",
+      "channel_title": "Escape Plan - Topic",
+      "current_key": "escape plan",
+      "ytm_artists": [
+        "逃跑計劃"
+      ],
+      "ytm_album": "世界",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "WV2661lu2cA",
+      "title": "浪漫血液",
+      "channel_title": "JJ Lin - Topic",
+      "current_key": "jj lin",
+      "ytm_artists": [
+        "林俊傑"
+      ],
+      "ytm_album": "新地球",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "U8E3j6y__BA",
+      "title": "七里香",
+      "channel_title": "Jay Chou - Topic",
+      "current_key": "jay chou",
+      "ytm_artists": [
+        "周杰倫"
+      ],
+      "ytm_album": "七里香",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "9FGQZrG3B4M",
+      "title": "手心的薔薇",
+      "channel_title": "JJ Lin - Topic",
+      "current_key": "jj lin",
+      "ytm_artists": [
+        "林俊傑"
+      ],
+      "ytm_album": "新地球",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "ytGrT9JV3G0",
+      "title": "Under The Cloud",
+      "channel_title": "韩红 - Topic",
+      "current_key": "韩红",
+      "ytm_artists": [
+        "Han Hong",
+        "JJ Lin"
+      ],
+      "ytm_album": "Under The Cloud",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "oyQZg2X_cd0",
+      "title": "范逸臣 Van Fan《 國境之南》（電影【海角七號 Cape No. 7】 范逸臣、田中千繪 主演）官方MV (Official Music Video)",
+      "channel_title": "金曲年代GOLDEN ERA",
+      "current_key": "金曲年代golden era",
+      "ytm_artists": [
+        "Van Fan"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Dw-R85AcN_w",
+      "title": "萬芳 Wan Fang【新不了情 New everlasting love】Official Music Video",
+      "channel_title": "滾石唱片 ROCK RECORDS",
+      "current_key": "滾石唱片 rock",
+      "ytm_artists": [
+        "Wan Fang"
+      ],
+      "ytm_album": null,
+      "video_type": null,
+      "agrees": false
+    },
+    {
+      "video_id": "KqjgLbKZ1h0",
+      "title": "胡夏 Xia Hu - Those Bygone Years 那些年",
+      "channel_title": "HuXiaVEVO",
+      "current_key": "胡夏 xia hu",
+      "ytm_artists": [
+        "Xia Hu"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "F5FlN-NBGo8",
+      "title": "[avex官方] A-Lin 給我一個理由忘記 (MV完整版)",
+      "channel_title": "愛貝克思 avex taiwan",
+      "current_key": "avex官方",
+      "ytm_artists": [
+        "A-Lin+"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "7wvNwOPprBE",
+      "title": "Della丁噹【手掌心】MV官方版-中視古裝大戲[蘭陵王]片尾曲",
+      "channel_title": "相信音樂BinMusic",
+      "current_key": "相信音樂bin",
+      "ytm_artists": [
+        "丁噹 Della Ding"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "pQlAWZLOpgo",
+      "title": "林憶蓮 Sandy Lam - 至少還有你 At Least I've Got You (官方完整版MV)",
+      "channel_title": "Timeless Music",
+      "current_key": "林憶蓮 sandy lam",
+      "ytm_artists": [
+        "Sandy Lam"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "aaM7qG2ycjk",
+      "title": "周杰倫 Jay Chou【髮如雪 Hair White as Snow】-Official Music Video",
+      "channel_title": "周杰倫 Jay Chou",
+      "current_key": "jay chou",
+      "ytm_artists": [
+        "Jay Chou"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "1YJ8wSH6HBU",
+      "title": "張宇 Phil Chang -  月亮惹的禍 Troubled By The Moon (官方完整版MV)",
+      "channel_title": "Timeless Music",
+      "current_key": "張宇 phil chang",
+      "ytm_artists": [
+        "Yu Zhang"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "KQTCO417h_M",
+      "title": "Huang Hun (Sunset)",
+      "channel_title": "Steve Chou - Topic",
+      "current_key": "steve chou",
+      "ytm_artists": [
+        "Steve Chou"
+      ],
+      "ytm_album": "Steve Chou Transfer",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "n1Z6yxB6hY8",
+      "title": "浪人情歌",
+      "channel_title": "Wu Bai & China Blue - Topic",
+      "current_key": "wu bai & china blue",
+      "ytm_artists": [
+        "伍佰 & China Blue"
+      ],
+      "ytm_album": "浪人情歌",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "3J_bkgexrE8",
+      "title": "林俊傑 JJ Lin【曹操 CaoCao】官方完整版 MV",
+      "channel_title": "太合音樂 Taihe Music-精選",
+      "current_key": "太合音樂 taihe music-精選",
+      "ytm_artists": [
+        "JJ Lin"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "n5Uow4k1ATg",
+      "title": "MAYDAY五月天 [ 星空 Starry Sky ] Official Live Video",
+      "channel_title": "相信音樂BinMusic",
+      "current_key": "相信音樂bin",
+      "ytm_artists": [
+        "Mayday"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "io3vAI8UXfA",
+      "title": "MAYDAY 五月天 [ 盛夏光年 Eternal Summer ] Official Live Video",
+      "channel_title": "相信音樂BinMusic",
+      "current_key": "相信音樂bin",
+      "ytm_artists": [
+        "Mayday"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "z9drIRdLh88",
+      "title": "林俊傑 JJ Lin【醉赤壁 Tales of the Red Cliff】官方完整版 MV",
+      "channel_title": "太合音樂 Taihe Music-精選",
+      "current_key": "太合音樂 taihe music-精選",
+      "ytm_artists": [
+        "JJ Lin"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "DxpndDEAqGk",
+      "title": "青花瓷",
+      "channel_title": "Jay Chou - Topic",
+      "current_key": "jay chou",
+      "ytm_artists": [
+        "周杰倫"
+      ],
+      "ytm_album": "我很忙",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "T81NmSIzYkY",
+      "title": "暮色回响（电影《默杀》推广曲）",
+      "channel_title": "Angela Chang - Topic",
+      "current_key": "angela chang",
+      "ytm_artists": [
+        "張韶涵"
+      ],
+      "ytm_album": "暮色回响（电影《默杀》推广曲）",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "MtwignGBQyo",
+      "title": "黑暗騎士 (feat. 五月天)",
+      "channel_title": "JJ Lin - Topic",
+      "current_key": "jj lin",
+      "ytm_artists": [
+        "林俊傑"
+      ],
+      "ytm_album": "因你 而在",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "NYpBk6mdSIc",
+      "title": "OAOA（現在就是永遠）",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天 (Mayday)"
+      ],
+      "ytm_album": "第二人生 Now Here 明日版",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "O1lCXP9gN6g",
+      "title": "我不是刘德华 (完整版)",
+      "channel_title": "新地 - Topic",
+      "current_key": "新地",
+      "ytm_artists": [
+        "新地"
+      ],
+      "ytm_album": "我不是刘德华",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "MvhNHTGctt4",
+      "title": "倔強 live in the sky",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天"
+      ],
+      "ytm_album": "五月天 突然好想見到你 live in the sky",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "qvXJo9kykp4",
+      "title": "過火",
+      "channel_title": "Jeff Chang - Topic",
+      "current_key": "jeff chang",
+      "ytm_artists": [
+        "張信哲"
+      ],
+      "ytm_album": "寬容",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "uxLu2jPXBbY",
+      "title": "玫瑰少年",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天"
+      ],
+      "ytm_album": "玫瑰少年",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "jc86iE1DYLw",
+      "title": "一百萬個可能 A Million Possibilities",
+      "channel_title": "克麗絲叮 (Christine Welch) - Topic",
+      "current_key": "克麗絲叮 (christine welch)",
+      "ytm_artists": [
+        "克麗絲叮 (Christine Welch)"
+      ],
+      "ytm_album": "一百萬個可能 (1000000 POSSIBILITIES)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "3dJpTH08V7U",
+      "title": "無名之輩 (電視劇《親愛的，熱愛的》主題曲)",
+      "channel_title": "Xueran Chen - Topic",
+      "current_key": "xueran chen",
+      "ytm_artists": [
+        "陳雪燃"
+      ],
+      "ytm_album": "親愛的, 熱愛的 (電視劇原聲帶)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "OaQlTi-8-SY",
+      "title": "剛好遇見你",
+      "channel_title": "李玉刚 - Topic",
+      "current_key": "李玉刚",
+      "ytm_artists": [
+        "李玉刚"
+      ],
+      "ytm_album": "剛好遇見你",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "0xFFGzZq75w",
+      "title": "浮誇",
+      "channel_title": "Eason Chan - Topic",
+      "current_key": "eason chan",
+      "ytm_artists": [
+        "Eason Chan"
+      ],
+      "ytm_album": "U 87",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "kqSfKJhNZ9c",
+      "title": "紅紅青春敲呀敲",
+      "channel_title": "東方快車 - Topic",
+      "current_key": "東方快車",
+      "ytm_artists": [
+        "東方快車"
+      ],
+      "ytm_album": "搖滾寓言",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "vP9W8lfasAE",
+      "title": "成全",
+      "channel_title": "Yoga Lin - Topic",
+      "current_key": "yoga lin",
+      "ytm_artists": [
+        "林宥嘉"
+      ],
+      "ytm_album": "The GREAT YOGA世界巡迴演唱會 Live精選",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "NiHF-cwto_A",
+      "title": "林俊杰《输了你赢了世界又如何》 轻轻松松飙高音 绝对不可错过的神级live现场！《梦想的声音2》EP4 | 纯享 ZJSTV",
+      "channel_title": "浙江卫视音乐频道 ZJSTV Music Channel - 欢迎订阅 -",
+      "current_key": "浙江卫视音乐频道 zjstv music channel - 欢迎订阅",
+      "ytm_artists": [
+        " ZJSTV Music Channel-Welcome to subscribe-"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "Lhel0tzHE08",
+      "title": "G.E.M.【再見 GOODBYE】Official MV [HD] 鄧紫棋",
+      "channel_title": "GEMblog",
+      "current_key": "gemblog",
+      "ytm_artists": [
+        "G.E.M."
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "hjXrL7CuAvc",
+      "title": "《等一個人咖啡》電影主題曲＿哈林庾澄慶【缺口】官方MV",
+      "channel_title": "Harlem Yu",
+      "current_key": "harlem yu",
+      "ytm_artists": [
+        "Harlem Yu"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "AeWWFxplRC4",
+      "title": "黃義達 Yida Huang - 那女孩對我說",
+      "channel_title": "yidahuangVEVO",
+      "current_key": "yida huang",
+      "ytm_artists": [
+        "Yida Huang"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "hFJAzTqYFHc",
+      "title": "動力火車 Power Station [ 忠孝東路走九遍 ] Official Music Video",
+      "channel_title": "華研國際",
+      "current_key": "華研國際",
+      "ytm_artists": [
+        "Power Station"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "xHsSWiLsIRY",
+      "title": "曹格 Gary Chaw【背叛】Official Music Video",
+      "channel_title": "滾石唱片 ROCK RECORDS",
+      "current_key": "滾石唱片 rock",
+      "ytm_artists": [
+        "Gary Chaw"
+      ],
+      "ytm_album": null,
+      "video_type": null,
+      "agrees": false
+    },
+    {
+      "video_id": "gPpZJlE0Ca8",
+      "title": "伍佰 Wu Bai&China Blue【挪威的森林 Norwegian forest】Official Music Video",
+      "channel_title": "滾石唱片 ROCK RECORDS",
+      "current_key": "滾石唱片 rock",
+      "ytm_artists": [
+        "Wu Bai & China Blue"
+      ],
+      "ytm_album": null,
+      "video_type": null,
+      "agrees": false
+    },
+    {
+      "video_id": "lmFlqWPzl-E",
+      "title": "[avex官方] A-Lin 失戀無罪 (MV完整版)",
+      "channel_title": "愛貝克思 avex taiwan",
+      "current_key": "avex官方",
+      "ytm_artists": [
+        "A-Lin官方專屬頻道"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "YJfHuATJYsQ",
+      "title": "周杰倫 Jay Chou【擱淺 Step Aside】-Official Music Video",
+      "channel_title": "周杰倫 Jay Chou",
+      "current_key": "jay chou",
+      "ytm_artists": [
+        "Jay Chou"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "FWtbGkpdoP4",
+      "title": "G.E.M.【來自天堂的魔鬼 AWAY】Official MV [HD] 鄧紫棋",
+      "channel_title": "GEMblog",
+      "current_key": "gemblog",
+      "ytm_artists": [
+        "G.E.M."
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "iE0l8Tx62DE",
+      "title": "林俊傑 JJ Lin - 那些你很冒險的夢 Those Were The Days (官方完整 HD 高畫質版 MV)",
+      "channel_title": "華納音樂 Warner Music Taiwan",
+      "current_key": "林俊傑 jj lin",
+      "ytm_artists": [
+        "華納音樂 Warner Music Taiwan"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "X1VEYwOSRVY",
+      "title": "赤伶 (游戏《逆水寒》戏曲玩法推广曲)",
+      "channel_title": "谭晶 - Topic",
+      "current_key": "谭晶",
+      "ytm_artists": [
+        "谭晶"
+      ],
+      "ytm_album": "赤伶 (游戏《逆水寒》戏曲玩法推广曲)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "7qeShSmmsNg",
+      "title": "富士山下",
+      "channel_title": "Eason Chan - Topic",
+      "current_key": "eason chan",
+      "ytm_artists": [
+        "Eason Chan"
+      ],
+      "ytm_album": "What's Going On...?",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "XHhgvY0ZIx8",
+      "title": "揮著翅膀的女孩 (國)",
+      "channel_title": "Joey Yung - Topic",
+      "current_key": "joey yung",
+      "ytm_artists": [
+        "容祖兒"
+      ],
+      "ytm_album": "我的驕傲",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "ivqVNORpylY",
+      "title": "訣愛 (劇集《蒼蘭訣》片頭曲)",
+      "channel_title": "Faye - Topic",
+      "current_key": "faye",
+      "ytm_artists": [
+        "Faye 詹雯婷"
+      ],
+      "ytm_album": "訣愛",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "6kxd4DvQHmY",
+      "title": "Our Love",
+      "channel_title": "F.I.R - Topic",
+      "current_key": "f.i.r",
+      "ytm_artists": [
+        "F.I.R."
+      ],
+      "ytm_album": "F.I.R.",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "wdC-gSkgeJQ",
+      "title": "星火",
+      "channel_title": "F.I.R - Topic",
+      "current_key": "f.i.r",
+      "ytm_artists": [
+        "F.I.R."
+      ],
+      "ytm_album": "末日青春:補完計劃",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "s-uogu8umGE",
+      "title": "Lydia",
+      "channel_title": "F.I.R - Topic",
+      "current_key": "f.i.r",
+      "ytm_artists": [
+        "F.I.R."
+      ],
+      "ytm_album": "F.I.R.",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "BRir0qs538Q",
+      "title": "修煉愛情",
+      "channel_title": "JJ Lin - Topic",
+      "current_key": "jj lin",
+      "ytm_artists": [
+        "林俊傑"
+      ],
+      "ytm_album": "因你 而在",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "LRpuWIA6RDY",
+      "title": "無別 (動畫《天官賜福》片頭曲)",
+      "channel_title": "Jeff Chang - Topic",
+      "current_key": "jeff chang",
+      "ytm_artists": [
+        "張信哲"
+      ],
+      "ytm_album": "就懂了",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "GDJLGf1wMq0",
+      "title": "我相信",
+      "channel_title": "杨培安 - Topic",
+      "current_key": "杨培安",
+      "ytm_artists": [
+        "楊培安"
+      ],
+      "ytm_album": "午夜兩點半的我",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "QUNcX9Z3Mqo",
+      "title": "江南",
+      "channel_title": "JJ Lin - Topic",
+      "current_key": "jj lin",
+      "ytm_artists": [
+        "林俊傑"
+      ],
+      "ytm_album": "第二天堂",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "QsheIMDMPM4",
+      "title": "Chun Ni",
+      "channel_title": "Harlem Yu - Topic",
+      "current_key": "harlem yu",
+      "ytm_artists": [
+        "Harlem Yu"
+      ],
+      "ytm_album": "Harlem's Heaven",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "OSCuOsaOE48",
+      "title": "童話",
+      "channel_title": "Michael Wong - Topic",
+      "current_key": "michael wong",
+      "ytm_artists": [
+        "光良"
+      ],
+      "ytm_album": "童話",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Tziswp8xQ_4",
+      "title": "你的答案",
+      "channel_title": "阿冗 - Topic",
+      "current_key": "阿冗",
+      "ytm_artists": [
+        "阿冗"
+      ],
+      "ytm_album": "你的答案",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "PYbwES_ISUc",
+      "title": "起风了（The Wind）",
+      "channel_title": "馮沁苑LaJiao - Topic",
+      "current_key": "馮沁苑lajiao",
+      "ytm_artists": [
+        "馮沁苑LaJiao"
+      ],
+      "ytm_album": "起风了（The Wind）",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "yOLY3qz8F1Q",
+      "title": "盛夏",
+      "channel_title": "Mao Buyi - Topic",
+      "current_key": "mao buyi",
+      "ytm_artists": [
+        "毛不易"
+      ],
+      "ytm_album": "平凡的一天",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "JxVjblTh5Yc",
+      "title": "借",
+      "channel_title": "Mao Buyi - Topic",
+      "current_key": "mao buyi",
+      "ytm_artists": [
+        "毛不易"
+      ],
+      "ytm_album": "平凡的一天",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "DzywLYPPUJY",
+      "title": "平凡的一天",
+      "channel_title": "Mao Buyi - Topic",
+      "current_key": "mao buyi",
+      "ytm_artists": [
+        "毛不易"
+      ],
+      "ytm_album": "平凡的一天",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "vqbh0h6kquQ",
+      "title": "不染 (電視劇《香蜜沉沉燼如霜》主題曲)",
+      "channel_title": "Mao Buyi - Topic",
+      "current_key": "mao buyi",
+      "ytm_artists": [
+        "毛不易"
+      ],
+      "ytm_album": "香蜜沉沉燼如霜 (電視劇原聲帶)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "2-wpRKxuWIE",
+      "title": "像我这样的人",
+      "channel_title": "Mao Buyi - Topic",
+      "current_key": "mao buyi",
+      "ytm_artists": [
+        "毛不易"
+      ],
+      "ytm_album": "平凡的一天",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "f8IqVtY_4jo",
+      "title": "光年之外 (電影 《Passengers》 中文主題曲)",
+      "channel_title": "G.E.M. - Topic",
+      "current_key": "g.e.m.",
+      "ytm_artists": [
+        "G.E.M."
+      ],
+      "ytm_album": "光年之外 (電影 《Passengers》 中文主題曲)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "1QgYTquePgk",
+      "title": "致青春 (Young Guns)",
+      "channel_title": "八三夭 - Topic",
+      "current_key": "八三夭",
+      "ytm_artists": [
+        "八三夭 831"
+      ],
+      "ytm_album": "「一事無成的偉大」自選作品輯",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "abz1pNrClkM",
+      "title": "傷心的人別聽慢歌",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天"
+      ],
+      "ytm_album": "五月天 | 步步 | 自選作品輯 the Best of 1999-2013",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "tjr3SrCg3pc",
+      "title": "十年 (國)",
+      "channel_title": "Eason Chan - Topic",
+      "current_key": "eason chan",
+      "ytm_artists": [
+        "陳奕迅"
+      ],
+      "ytm_album": "七 (新歌+精選)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "dozAVKrIBBM",
+      "title": "Red Scarf (\"Till We Meet Again\" Movie Theme Song)",
+      "channel_title": "韦礼安 - Topic",
+      "current_key": "韦礼安",
+      "ytm_artists": [
+        "WeiBird"
+      ],
+      "ytm_album": "Red Scarf (\"Till We Meet Again\" Movie Theme Song)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "eadGlKJCmg4",
+      "title": "我的未來不是夢",
+      "channel_title": "Chang Yu-Shen - Topic",
+      "current_key": "chang yu-shen",
+      "ytm_artists": [
+        "張雨生"
+      ],
+      "ytm_album": "六個朋友",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "E_O9MikeO_Q",
+      "title": "The Sea",
+      "channel_title": "Chang Yu-Shen - Topic",
+      "current_key": "chang yu-shen",
+      "ytm_artists": [
+        "Chang Yu-Shen"
+      ],
+      "ytm_album": "The Sea",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "kyUAUj8ixos",
+      "title": "Dan Shen Qing Ge (Album Version)",
+      "channel_title": "Terry Lin - Topic",
+      "current_key": "terry lin",
+      "ytm_artists": [
+        "Terry Lin"
+      ],
+      "ytm_album": "Bachlor's Love Song",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "DU_yNJ3UVwU",
+      "title": "派對動物",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天 (Mayday)"
+      ],
+      "ytm_album": "自傳",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "zSWnNE0tkiw",
+      "title": "如果我們不曾相遇",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天 (Mayday)"
+      ],
+      "ytm_album": "自傳",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "DyNiujSHnOk",
+      "title": "乾杯",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天 (Mayday)"
+      ],
+      "ytm_album": "第二人生 Now Here 明日版",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "uW950XMEzPU",
+      "title": "Back Here Again",
+      "channel_title": "EggPlantEgg - Topic",
+      "current_key": "eggplantegg",
+      "ytm_artists": [
+        "EggPlantEgg"
+      ],
+      "ytm_album": "Cartoon Character",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "vNloGR7mF1Y",
+      "title": "愛情你比我想的閣較偉大 (《當男人戀愛時》電影主題曲)",
+      "channel_title": "EggPlantEgg - Topic",
+      "current_key": "eggplantegg",
+      "ytm_artists": [
+        "EggPlantEgg"
+      ],
+      "ytm_album": "愛情你比我想的閣較偉大 (《當男人戀愛時》電影主題曲)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "bGRFDm7pW50",
+      "title": "Encounter",
+      "channel_title": "Yanzi Sun - Topic",
+      "current_key": "yanzi sun",
+      "ytm_artists": [
+        "Sun Yanzi"
+      ],
+      "ytm_album": "The Moment",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "54AN2Ikljfo",
+      "title": "消愁",
+      "channel_title": "Mao Buyi - Topic",
+      "current_key": "mao buyi",
+      "ytm_artists": [
+        "毛不易"
+      ],
+      "ytm_album": "平凡的一天",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "k8DfEmVbZ-A",
+      "title": "入陣曲",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天"
+      ],
+      "ytm_album": "【蘭陵王】戲劇原聲帶",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "PzVgfLLZ954",
+      "title": "後來的我們",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天 (Mayday)"
+      ],
+      "ytm_album": "自傳",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "6q5Syk54i9U",
+      "title": "平凡之路",
+      "channel_title": "朴树 - Topic",
+      "current_key": "朴树",
+      "ytm_artists": [
+        "朴树"
+      ],
+      "ytm_album": "猎户星座",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "3AOC1AUVwwo",
+      "title": "讓我留在你身邊",
+      "channel_title": "Eason Chan - Topic",
+      "current_key": "eason chan",
+      "ytm_artists": [
+        "Eason Chan"
+      ],
+      "ytm_album": "讓我留在你身邊",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "z-ijSgp7qxM",
+      "title": "Sky (Edit)",
+      "channel_title": "Beyond - Topic",
+      "current_key": "beyond",
+      "ytm_artists": [
+        "Beyond"
+      ],
+      "ytm_album": "Rock N Roll",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "eSvnAyHFoyo",
+      "title": "好想爱这个世界啊",
+      "channel_title": "Hua Chen Yu - Topic",
+      "current_key": "hua chen yu",
+      "ytm_artists": [
+        "华晨宇"
+      ],
+      "ytm_album": "新世界",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "dFYlR5TGcJc",
+      "title": "自然醒 (Wake up)",
+      "channel_title": "Yoga Lin - Topic",
+      "current_key": "yoga lin",
+      "ytm_artists": [
+        "林宥嘉"
+      ],
+      "ytm_album": "美妙生活",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "w1Wnm2ITHPw",
+      "title": "光輝歲月",
+      "channel_title": "Beyond - Topic",
+      "current_key": "beyond",
+      "ytm_artists": [
+        "Beyond"
+      ],
+      "ytm_album": "Best Of Millennium",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "p-ehKBc9p9k",
+      "title": "[avex官方] 信樂團 - 死了都要愛 (官方完整版MV)",
+      "channel_title": "愛貝克思 avex taiwan",
+      "current_key": "愛貝克思 avex taiwan",
+      "ytm_artists": [
+        "愛貝克思 avex taiwan"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "UM2y3lZ4u8s",
+      "title": "盧卡斯葛拉漢樂團 Lukas Graham -  7 Years 那年七歲  (華納官方中字版)",
+      "channel_title": "華納音樂西洋日韓頻道",
+      "current_key": "盧卡斯葛拉漢樂團 lukas graham",
+      "ytm_artists": [
+        "華納音樂西洋日韓頻道"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "CKG1AxTYW0c",
+      "title": "你是我的花朵",
+      "channel_title": "Wu Bai & China Blue - Topic",
+      "current_key": "wu bai & china blue",
+      "ytm_artists": [
+        "伍佰 & China Blue"
+      ],
+      "ytm_album": "純真年代",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Tkw8jT-9xZc",
+      "title": "Last Dance",
+      "channel_title": "Wu Bai & China Blue - Topic",
+      "current_key": "wu bai & china blue",
+      "ytm_artists": [
+        "伍佰 & China Blue"
+      ],
+      "ytm_album": "愛情的盡頭",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "555u7ePEjBY",
+      "title": "淚橋",
+      "channel_title": "Wu Bai & China Blue - Topic",
+      "current_key": "wu bai & china blue",
+      "ytm_artists": [
+        "伍佰 & China Blue"
+      ],
+      "ytm_album": "淚橋",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Nh7xeMJ5pBg",
+      "title": "Infinite",
+      "channel_title": "G.E.M. - Topic",
+      "current_key": "g.e.m.",
+      "ytm_artists": [
+        "G.E.M."
+      ],
+      "ytm_album": "T.I.M.E.",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "E52qnW59iEE",
+      "title": "愛人錯過",
+      "channel_title": "告五人 - Topic",
+      "current_key": "告五人",
+      "ytm_artists": [
+        "告五人"
+      ],
+      "ytm_album": "我肯定在幾百年前就說過愛你",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "jHVZAcF5_6g",
+      "title": "山海",
+      "channel_title": "草東沒有派對 - Topic",
+      "current_key": "草東沒有派對",
+      "ytm_artists": [
+        "草東沒有派對"
+      ],
+      "ytm_album": "醜奴兒",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "jJuwD56M9h8",
+      "title": "漂向北方",
+      "channel_title": "Namewee - Topic",
+      "current_key": "namewee",
+      "ytm_artists": [
+        "黃明志"
+      ],
+      "ytm_album": "亞洲通車",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Th7XKEpWdaM",
+      "title": "追光者 (電視劇《夏至未至》插曲)",
+      "channel_title": "Yoyo Sham - Topic",
+      "current_key": "yoyo sham",
+      "ytm_artists": [
+        "Yoyo Sham"
+      ],
+      "ytm_album": "夏至未至 影視原聲帶",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "GAPjEj3aQTg",
+      "title": "赤伶",
+      "channel_title": "等什么君(邓寓君) - Topic",
+      "current_key": "等什么君(邓寓君)",
+      "ytm_artists": [
+        "等什么君"
+      ],
+      "ytm_album": "赤伶",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "sHD_z90ZKV0",
+      "title": "周杰倫 Jay Chou【稻香 Rice Field】-Official Music Video",
+      "channel_title": "周杰倫 Jay Chou",
+      "current_key": "jay chou",
+      "ytm_artists": [
+        "Jay Chou"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "T4SimnaiktU",
+      "title": "G.E.M.【光年之外 LIGHT YEARS AWAY 】MV (電影《太空潛航者 Passengers》中文主題曲) [HD] 鄧紫棋",
+      "channel_title": "GEMblog",
+      "current_key": "gemblog",
+      "ytm_artists": [
+        "G.E.M."
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "jUb1XQzNiCI",
+      "title": "林宥嘉 Yoga Lin [自然醒 Wake Up] Official MV",
+      "channel_title": "華研國際",
+      "current_key": "華研國際",
+      "ytm_artists": [
+        "Yoga Lin"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "B2S1EngkjQk",
+      "title": "王傑 Dave Wang – 一場遊戲一場夢 One Game, One Dream (官方完整版MV)",
+      "channel_title": "Timeless Music",
+      "current_key": "王傑 dave wang",
+      "ytm_artists": [
+        "Dave Wang"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "rhwHpIRsIu0",
+      "title": "好不容易 (《華燈初上》片尾曲)",
+      "channel_title": "告五人 - Topic",
+      "current_key": "告五人",
+      "ytm_artists": [
+        "告五人"
+      ],
+      "ytm_album": "好不容易",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "s26Wbqat4Vw",
+      "title": "起風了 (電視劇《加油, 你是最棒的》主題曲)",
+      "channel_title": "Release - Topic",
+      "current_key": "release",
+      "ytm_artists": [
+        "吳青峰"
+      ],
+      "ytm_album": "起風了 (電視劇《加油, 你是最棒的》主題曲)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "SOBg6SA_fJ0",
+      "title": "不為誰而作的歌",
+      "channel_title": "JJ Lin - Topic",
+      "current_key": "jj lin",
+      "ytm_artists": [
+        "林俊傑"
+      ],
+      "ytm_album": "和自己對話",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "83I_5lq5MwI",
+      "title": "MAYDAY五月天 [ 將軍令Your Legend ] 電影版MV-電影「黃飛鴻」主題曲",
+      "channel_title": "相信音樂BinMusic",
+      "current_key": "相信音樂bin",
+      "ytm_artists": [
+        "Mayday"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "CgAJAmP14kQ",
+      "title": "伍佰 Wu Bai&China Blue【愛你一萬年 Love you ten thousand years】Official Music Video",
+      "channel_title": "滾石唱片 ROCK RECORDS",
+      "current_key": "滾石唱片 rock",
+      "ytm_artists": [
+        "Wu Bai & China Blue"
+      ],
+      "ytm_album": null,
+      "video_type": null,
+      "agrees": false
+    }
+  ],
+  "colon_credit_ratio": 0.0,
+  "group_count_ratio": 1.14
+}

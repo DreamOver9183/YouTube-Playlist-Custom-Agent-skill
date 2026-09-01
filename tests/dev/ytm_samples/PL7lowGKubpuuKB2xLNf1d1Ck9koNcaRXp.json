@@ -1,0 +1,676 @@
+{
+  "playlist_id": "PL7lowGKubpuuKB2xLNf1d1Ck9koNcaRXp",
+  "ytm_track_count": 56,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_ATV": 42,
+    "MUSIC_VIDEO_TYPE_UGC": 8,
+    "MUSIC_VIDEO_TYPE_OMV": 5,
+    "null": 1
+  },
+  "album_coverage": 42,
+  "album_distinct": 38,
+  "artist_entity_coverage": 55,
+  "api_item_count": 56,
+  "invisible_to_ytm": [
+    {
+      "video_id": "H0L0RvADHz8",
+      "title": "One Day",
+      "channel_title": "Hans Zimmer - Topic"
+    },
+    {
+      "video_id": "KaR5I_sT7kQ",
+      "title": "Drink Up Me Hearties Yo Ho",
+      "channel_title": "Hans Zimmer - Topic"
+    },
+    {
+      "video_id": "Oy5BXvrd3AA",
+      "title": "Battle Adagio",
+      "channel_title": "Northwest Sinfonia - Topic"
+    },
+    {
+      "video_id": "NBb_D1bkxpM",
+      "title": "It's Our Fight (Transformers) (Epic Version)",
+      "channel_title": "Sam B Music - Topic"
+    }
+  ],
+  "rows": [
+    {
+      "video_id": "Eu9nPPJhcn4",
+      "title": "Tennessee",
+      "channel_title": "Hans Zimmer - Topic",
+      "current_key": "hans zimmer",
+      "ytm_artists": [
+        "Hans Zimmer"
+      ],
+      "ytm_album": "Pearl Harbor - Original Motion Picture Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Trfc1khaGZM",
+      "title": "Star Wars (Epic Main Theme)",
+      "channel_title": "Samuel Kim, Lorien - Topic",
+      "current_key": "samuel kim, lorien",
+      "ytm_artists": [
+        "Samuel Kim"
+      ],
+      "ytm_album": "Star Wars: The Rise of Skywalker Tribute",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ONTcdZdUQMA",
+      "title": "The Battle (From \"Narnia\") - Epic Version",
+      "channel_title": "Pianistec - Topic",
+      "current_key": "the battle",
+      "ytm_artists": [
+        "Pianistec"
+      ],
+      "ytm_album": "The Battle (From \"Narnia\")",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "mRdwKq4meVY",
+      "title": "✔️Transformers 3  - It's our fight (The Score - Soundtrack)",
+      "channel_title": "Orion Pax",
+      "current_key": "✔️transformers 3",
+      "ytm_artists": [
+        "Orion Pax"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "7CWYzFk2V6s",
+      "title": "The Battle",
+      "channel_title": "Harry Gregson-Williams - Topic",
+      "current_key": "harry gregson-williams",
+      "ytm_artists": [
+        "Harry Gregson-Williams"
+      ],
+      "ytm_album": "The Chronicles of Narnia:  The Lion, The Witch and The Wardrobe (Original Motion Picture Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ylrySrsfCZs",
+      "title": "Outlawed Tunes On Outlawed Pipes",
+      "channel_title": "Tara Howley - Topic",
+      "current_key": "tara howley",
+      "ytm_artists": [
+        "Tara Howley"
+      ],
+      "ytm_album": "Outlawed Tunes On Outlawed Pipes",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "TS-SO-kz9tU",
+      "title": "Pirates of the Caribbean: One Day / Up is Down (Epic Version)",
+      "channel_title": "2Hooks - Topic",
+      "current_key": "2hooks",
+      "ytm_artists": [
+        "2Hooks"
+      ],
+      "ytm_album": "Pirates of the Caribbean: One Day / Up is Down (Epic Version)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "zlLYhgaWQk0",
+      "title": "War/Fanfare from Rocky IV (From \"Rocky IV\" Soundtrack)",
+      "channel_title": "Vince DiCola - Topic",
+      "current_key": "vince dicola",
+      "ytm_artists": [
+        "Vince DiCola"
+      ],
+      "ytm_album": "Rocky IV",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "uiYc7SpyBro",
+      "title": "Training Montage (From \"Rocky IV\" Soundtrack)",
+      "channel_title": "Vince DiCola - Topic",
+      "current_key": "vince dicola",
+      "ytm_artists": [
+        "Vince DiCola"
+      ],
+      "ytm_album": "Rocky IV",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "wI4W0fkmGJs",
+      "title": "Already Gone (Mazza Remix)",
+      "channel_title": "Klaas - Topic",
+      "current_key": "klaas",
+      "ytm_artists": [
+        "Klaas",
+        "Mister Ruiz"
+      ],
+      "ytm_album": "Already Gone (Mazza Remix)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "iMlFnfxzy_c",
+      "title": "Test Drive - Epic Majestic Orchestral - How To Train Your Dragon Cover",
+      "channel_title": "Frostudio Chambersonic",
+      "current_key": "test drive",
+      "ytm_artists": [
+        "Frostudio Chambersonic"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "boN8wxGakTc",
+      "title": "Spirit - Homeland (Epic Version)",
+      "channel_title": "Mathias Fritsche - Topic",
+      "current_key": "spirit",
+      "ytm_artists": [
+        "Mathias Fritsche"
+      ],
+      "ytm_album": "Spirit - Homeland (Epic Version)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Q4ksp-14-Og",
+      "title": "Test Driving Toothless (from How to Train Your Dragon)",
+      "channel_title": "John Powell - Topic",
+      "current_key": "john powell",
+      "ytm_artists": [
+        "John Powell"
+      ],
+      "ytm_album": "Test Driving Toothless (from How to Train Your Dragon)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "aNQhcbOIZdA",
+      "title": "Tessa",
+      "channel_title": "Steve Jablonsky - Topic",
+      "current_key": "steve jablonsky",
+      "ytm_artists": [
+        "Steve Jablonsky"
+      ],
+      "ytm_album": "Transformers: Age of Extinction (Music from the Motion Picture) - EP",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "G_oIHCg6cH8",
+      "title": "- Departure To The Front Lines - Naruto Shippuden [EPIC COVER]",
+      "channel_title": "Alexis DL",
+      "current_key": "- departure to the front lines",
+      "ytm_artists": [
+        "Alexis DL"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "ShQg_ZxWFyA",
+      "title": "Demon Slayer: Infinity Castle Arc OST - Marked Giyu Tomioka vs Akaza Fight Theme | EPIC VERSION ",
+      "channel_title": "eL_mot4z Music",
+      "current_key": "demon slayer: infinity castle arc ost",
+      "ytm_artists": [
+        "eL_mot4z Music"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "1mlLv97kxFI",
+      "title": "Dance of the Centipede (from \"Demon Slayer: Infinity Castle\")",
+      "channel_title": "Diego Mitre - Topic",
+      "current_key": "diego mitre",
+      "ytm_artists": [
+        "Diego Mitre"
+      ],
+      "ytm_album": "Dance of the Centipede (from \"Demon Slayer: Infinity Castle\")",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "rcPKDCp3EMQ",
+      "title": "Test Drive (Epic Orchestra)",
+      "channel_title": "Mathias Fritsche - Topic",
+      "current_key": "mathias fritsche",
+      "ytm_artists": [
+        "Mathias Fritsche"
+      ],
+      "ytm_album": "Test Drive (Epic Orchestra)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "2Yw9IIPiD9Y",
+      "title": "Akaza vs Giyu & Tanjiro - Demon Slayer: Infinity Castle (Epic Version)",
+      "channel_title": "Kensei Music - Topic",
+      "current_key": "akaza vs giyu & tanjiro",
+      "ytm_artists": [
+        "Kensei Music"
+      ],
+      "ytm_album": "Demon Slayer: Infinity Castle Soundtrack (Complete Epic Collection)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "aI1HyTjeZ-U",
+      "title": "Marked Giyu Vs Akaza Theme - Demon Slayer Infinity Castle Movie OST | Epic Version ",
+      "channel_title": "Sam B Music",
+      "current_key": "marked giyu vs akaza theme",
+      "ytm_artists": [
+        "Sam B Music"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "TuzfXgUpboA",
+      "title": "Golden",
+      "channel_title": "HUNTR/X - Topic",
+      "current_key": "huntr/x",
+      "ytm_artists": [
+        "HUNTR/X",
+        "EJAE",
+        "AUDREY NUNA",
+        "REI AMI"
+      ],
+      "ytm_album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_keEjqYjkzQ",
+      "title": "How to Train Your Dragon - Epic Version",
+      "channel_title": "MattyBor - Topic",
+      "current_key": "how to train your dragon",
+      "ytm_artists": [
+        "MattyBor"
+      ],
+      "ytm_album": "How to Train Your Dragon - Epic Version",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "-qDwMNsQmNQ",
+      "title": "Demon Slayer : The Entrance To The infinity castle EPIC COVER",
+      "channel_title": "Alexis DL - Topic",
+      "current_key": "alexis dl",
+      "ytm_artists": [
+        "Alexis DL"
+      ],
+      "ytm_album": "Demon Slayer : The Entrance To The infinity castle EPIC COVER",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "4TZmNObLkAU",
+      "title": "What It Sounds Like",
+      "channel_title": "HUNTR/X - Topic",
+      "current_key": "huntr/x",
+      "ytm_artists": [
+        "HUNTR/X",
+        "EJAE",
+        "AUDREY NUNA",
+        "REI AMI"
+      ],
+      "ytm_album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "fR8iPh9S9qg",
+      "title": "Kizuna No Kiseki",
+      "channel_title": "MAN WITH A MISSION - Topic",
+      "current_key": "man with a mission",
+      "ytm_artists": [
+        "MAN WITH A MISSION",
+        "milet"
+      ],
+      "ytm_album": "Kizuna No Kiseki / Koi Kogare",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ywmWcKKHlqo",
+      "title": "Country Roads (Epic Orchestral Cover)",
+      "channel_title": "Compass Pictures - Composer",
+      "current_key": "compass pictures - composer",
+      "ytm_artists": [
+        "Compass Pictures - Composer"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "6zXNNPS7sPo",
+      "title": "How It’s Done (from the Netflix film KPop Demon Hunters)",
+      "channel_title": "HUNTR/X - Topic",
+      "current_key": "huntr/x",
+      "ytm_artists": [
+        "HUNTR/X",
+        "EJAE",
+        "AUDREY NUNA",
+        "REI AMI"
+      ],
+      "ytm_album": "How It’s Done (from the Netflix film KPop Demon Hunters)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_u9xQghRUkc",
+      "title": "Stoick's Ship - Epic/Heroic Version -- From: How To Train Your Dragon 2",
+      "channel_title": "Project: Infinity",
+      "current_key": "stoick's ship",
+      "ytm_artists": [
+        "Project: Infinity"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "52cAINXCz5Y",
+      "title": "Take Me Home, Country Roads (Orchestral Cover)",
+      "channel_title": "FL Music - Topic",
+      "current_key": "fl",
+      "ytm_artists": [
+        "FL Music"
+      ],
+      "ytm_album": "Take Me Home, Country Roads (Orchestral Cover)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "W_QsredVBoA",
+      "title": "Akaza's Love Theme (from \"Demon Slayer: Infinity Castle\")",
+      "channel_title": "Diego Mitre - Topic",
+      "current_key": "diego mitre",
+      "ytm_artists": [
+        "Diego Mitre"
+      ],
+      "ytm_album": "Akaza's Love Theme (from \"Demon Slayer: Infinity Castle\")",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_C7gblG1OYQ",
+      "title": "Departure To The Front Lines Naruto Shippuden (Epic Version)",
+      "channel_title": "Ashif N - Topic",
+      "current_key": "ashif n",
+      "ytm_artists": [
+        "Ashif N"
+      ],
+      "ytm_album": "Departure To The Front Lines Naruto Shippuden (Epic Version)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "hbBxiwlCKbk",
+      "title": "Awakening Tanjiro: Transparent World - Demon Slayer: Infinity Castle (Epic Version)",
+      "channel_title": "Kensei Music - Topic",
+      "current_key": "awakening tanjiro: transparent world",
+      "ytm_artists": [
+        "Kensei Music"
+      ],
+      "ytm_album": "Demon Slayer: Infinity Castle Soundtrack (Complete Epic Collection)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "ErgLmgnKXZQ",
+      "title": "Alan Walker - Faded (Epic Orchestra Remix)",
+      "channel_title": "Beyond Gaia's Horizon",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Beyond Gaia's Horizon"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "O5Ov_nY530E",
+      "title": "Sia - Unstoppable (EPIC VERSION)",
+      "channel_title": "Boris Harizanov",
+      "current_key": "sia",
+      "ytm_artists": [
+        "Boris Harizanov"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "QXmLhbDlVFs",
+      "title": "Naruto - Sadness and Sorrow | CINEMATIC VERSION (Hans Zimmer Style)",
+      "channel_title": "Samuel Kim Music",
+      "current_key": "naruto",
+      "ytm_artists": [
+        "Samuel Kim"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "yaRwWY52iUE",
+      "title": "Naruto Shippuden OST - Way of the Ninja (Jiraiya's Death)",
+      "channel_title": "Shinzu Music",
+      "current_key": "naruto shippuden ost",
+      "ytm_artists": [
+        "Shinzu Music"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "myIdugavX8E",
+      "title": "How Far I'll Go - Moana - Epic Orchestral",
+      "channel_title": "Frostudio Chambersonic",
+      "current_key": "how far i'll go",
+      "ytm_artists": [
+        "Frostudio Chambersonic"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "dsq9Gy29Buc",
+      "title": "Mufasa | Honoring James Earl Jones",
+      "channel_title": "Ariel Yznardo - Topic",
+      "current_key": "ariel yznardo",
+      "ytm_artists": [
+        "Ariel Yznardo"
+      ],
+      "ytm_album": "Mufasa | Honoring James Earl Jones",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "s-ylYKoEFGA",
+      "title": "Take Me Home, Country Roads (Original Version) [Remastered]",
+      "channel_title": "John Denver - Topic",
+      "current_key": "john denver",
+      "ytm_artists": [
+        "John Denver"
+      ],
+      "ytm_album": "Pure... America",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ZVgHPSyEIqk",
+      "title": "Let Down (Remastered)",
+      "channel_title": "Radiohead - Topic",
+      "current_key": "radiohead",
+      "ytm_artists": [
+        "Radiohead"
+      ],
+      "ytm_album": "OK Computer OKNOTOK 1997 2017",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ZB0amc1TZ3Y",
+      "title": "NO BATIDÃO",
+      "channel_title": "ZXKAI - Topic",
+      "current_key": "zxkai",
+      "ytm_artists": [
+        "ZXKAI",
+        "slxughter"
+      ],
+      "ytm_album": "NO BATIDÃO",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "QafbSjGdNbA",
+      "title": "LONOWN - AVANGARD X STEREO LOVE (FL4ME - REMIX) V3",
+      "channel_title": "FL4ME",
+      "current_key": "lonown",
+      "ytm_artists": [
+        "Nov 25, 2025"
+      ],
+      "ytm_album": null,
+      "video_type": null,
+      "agrees": false
+    },
+    {
+      "video_id": "tQiHG2P4pnc",
+      "title": "STEREO LOVE 2",
+      "channel_title": "DVRKLXGHT - Topic",
+      "current_key": "dvrklxght",
+      "ytm_artists": [
+        "DVRKLXGHT"
+      ],
+      "ytm_album": "STEREO LOVE 2",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "KZVNA2Pxd8M",
+      "title": "Odnogo (legendaris ultrafunk Remix)",
+      "channel_title": "DJ BRATT - Topic",
+      "current_key": "dj bratt",
+      "ytm_artists": [
+        "DJ BRATT"
+      ],
+      "ytm_album": "Odnogo",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "KFXzg_XpUVo",
+      "title": "Giyu's Demon Slayer Mark \"Demon Slayer: Infinity Castle Soundtrack\" EPIC VERSION",
+      "channel_title": "Kensei Music - Topic",
+      "current_key": "kensei",
+      "ytm_artists": [
+        "Kensei Music"
+      ],
+      "ytm_album": "Giyu's Demon Slayer Mark \"Demon Slayer: Infinity Castle Soundtrack\" EPIC VERSION",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "cZJtzgGhTXc",
+      "title": "In The Dark",
+      "channel_title": "Elian Skye - Topic",
+      "current_key": "elian skye",
+      "ytm_artists": [
+        "Elian Skye"
+      ],
+      "ytm_album": "In The Dark",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Sp-TePDm1vI",
+      "title": "Vois Sur Ton Chemin",
+      "channel_title": "deprezz - Topic",
+      "current_key": "deprezz",
+      "ytm_artists": [
+        "deprezz"
+      ],
+      "ytm_album": "Vois Sur Ton Chemin",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "f933xaejeIk",
+      "title": "That's the Way It Is (Short Version)",
+      "channel_title": "Christian Larsson - Topic",
+      "current_key": "christian larsson",
+      "ytm_artists": [
+        "Christian Larsson"
+      ],
+      "ytm_album": "Redemption",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "U1yfpCfGsFE",
+      "title": "Avangards",
+      "channel_title": "Fajar Asia Music - Topic",
+      "current_key": "fajar asia",
+      "ytm_artists": [
+        "Fajar Asia Music"
+      ],
+      "ytm_album": "Purpose",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "MTBmJO62zps",
+      "title": "AVANGARD (Slowed + Reverb)",
+      "channel_title": "LONOWN - Topic",
+      "current_key": "lonown",
+      "ytm_artists": [
+        "LONOWN"
+      ],
+      "ytm_album": "AVANGARD",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Vv_z2obBFd0",
+      "title": "Final Ascent",
+      "channel_title": "Hans Zimmer - Topic",
+      "current_key": "hans zimmer",
+      "ytm_artists": [
+        "Hans Zimmer"
+      ],
+      "ytm_album": "No Time To Die (Original Motion Picture Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "YdsZrYL_DzM",
+      "title": "극장판 귀멸의 칼날 무한성편 OST : 아카자vs기유 테마곡 Cover",
+      "channel_title": "용짱의 취미일지",
+      "current_key": "용짱의 취미일지",
+      "ytm_artists": [
+        "용짱의 취미일지"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    }
+  ],
+  "colon_credit_ratio": 0.017857142857142856,
+  "group_count_ratio": 0.88
+}

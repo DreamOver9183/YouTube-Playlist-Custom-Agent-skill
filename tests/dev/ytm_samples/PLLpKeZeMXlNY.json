@@ -1,0 +1,2354 @@
+{
+  "playlist_id": "PLLpKeZeMXlNY",
+  "ytm_track_count": 192,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_OMV": 59,
+    "MUSIC_VIDEO_TYPE_ATV": 124,
+    "MUSIC_VIDEO_TYPE_UGC": 7,
+    "null": 2
+  },
+  "album_coverage": 125,
+  "album_distinct": 101,
+  "artist_entity_coverage": 189,
+  "api_item_count": 192,
+  "invisible_to_ytm": [
+    {
+      "video_id": "p57Yjs35ymA",
+      "title": "Beethoven Für Elise (Hardstyle Remix)",
+      "channel_title": "CrazyDaniel - Topic"
+    }
+  ],
+  "rows": [
+    {
+      "video_id": "PWIkRLwbAsw",
+      "title": "K-391, Hoaprox, Nick Strand - Die Alone (Visualizer)",
+      "channel_title": "K391VEVO",
+      "current_key": "k",
+      "ytm_artists": [
+        "K-391",
+        "Hoaprox",
+        "Nick Strand"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "OlTE_58aJyA",
+      "title": "K-391 & Victor Crone - Lonely World",
+      "channel_title": "K-391",
+      "current_key": "k",
+      "ytm_artists": [
+        "Victor Crone",
+        "K-391"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "Az-mGR-CehY",
+      "title": "K-391 & Alan Walker - Ignite (feat. Julie Bergan & Seungri)",
+      "channel_title": "K-391",
+      "current_key": "k",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "f6Fq0HyzWNY",
+      "title": "Lighthouse",
+      "channel_title": "K-391 - Topic",
+      "current_key": "k-391",
+      "ytm_artists": [
+        "K-391",
+        "Julianne Aurora"
+      ],
+      "ytm_album": "Lighthouse",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "69QxaWhzYrw",
+      "title": "Last Song (feat. Faouzia)",
+      "channel_title": "Alan Walker - Topic",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": "Walkerworld 2.0",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_lxS-x7DACQ",
+      "title": "Unity",
+      "channel_title": "The Walkers - Topic",
+      "current_key": "the walkers",
+      "ytm_artists": [
+        "The Walkers",
+        "Alan Walker",
+        "SAPPHIRE"
+      ],
+      "ytm_album": "Unity",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "W4C-NEWrnSQ",
+      "title": "The Nights",
+      "channel_title": "Avicii - Topic",
+      "current_key": "avicii",
+      "ytm_artists": [
+        "Avicii"
+      ],
+      "ytm_album": "The Days / Nights (EP)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "06rgaTpTji0",
+      "title": "No Sleep (feat. Bonn)",
+      "channel_title": "Martin Garrix - Topic",
+      "current_key": "martin garrix",
+      "ytm_artists": [
+        "Martin Garrix",
+        "Bonn"
+      ],
+      "ytm_album": "No Sleep (feat. Bonn)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ouEl3qTLc0M",
+      "title": "Alan Walker, Dash Berlin & Vikkstar - Better Off (Alone, Pt. III) - Official Music Video",
+      "channel_title": "Alan Walker",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker",
+        "Dash Berlin",
+        "Vikkstar"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "ABDHXdKNEVM",
+      "title": "Arvy Nacht - Something Just Like This (Official Music Video)",
+      "channel_title": "Arvy Nacht",
+      "current_key": "arvy nacht",
+      "ytm_artists": [
+        "Archy Nacht"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "mxBeS4CUHBg",
+      "title": "Alan Walker Style , Albert Vishi ft. Ane Flem - Zombie (The Cranberries Cover)",
+      "channel_title": "Albert Vishi",
+      "current_key": "albert vishi",
+      "ytm_artists": [
+        "Albert Vishi"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "QYOZmeqoWsM",
+      "title": "Magsonics - Nothing At All Ft. Jonna Hjalmarsson (Remedeus Remix)",
+      "channel_title": "Remedeus",
+      "current_key": "magsonics",
+      "ytm_artists": [
+        "Remedeus"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "nSkDpIj0Y7w",
+      "title": "Alan Walker - Me, Myself and The Night (Official Music Video)",
+      "channel_title": "Alan Walker",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "cY1_o8yrILc",
+      "title": "Alan Walker Style , Adele - Set Fire To The Rain (Albert Vishi Remix)",
+      "channel_title": "Albert Vishi",
+      "current_key": "alan walker style , adele",
+      "ytm_artists": [
+        "Albert Vishi"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "WNeLUngb-Xg",
+      "title": "Linkin Park - In The End (Mellen Gi & Tommee Profitt Remix)",
+      "channel_title": "TrapMusicHDTV",
+      "current_key": "linkin park",
+      "ytm_artists": [
+        "TrapMusicHDTV"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "zWuX4jx_GL4",
+      "title": "Mind Of A Warrior",
+      "channel_title": "Alan Walker - Topic",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker",
+        "Sorana"
+      ],
+      "ytm_album": "Mind Of A Warrior",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ry3Qyc8aPZQ",
+      "title": "The Night",
+      "channel_title": "Ashlee Walker - Topic",
+      "current_key": "ashlee walker",
+      "ytm_artists": [
+        "Ashlee Walker"
+      ],
+      "ytm_album": "The Night",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "vjexVOf-s2Y",
+      "title": "Alan Walker x Emma Steinbakken - Not You (Live Performance)",
+      "channel_title": "Alan Walker",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker",
+        "Emma Steinbakken"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "KsxoJwX1w-E",
+      "title": "Alan Walker - Spectre / Force / Fade | House | NCS - Remake",
+      "channel_title": "luunar!",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "luunar!"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "2NiyrtYegso",
+      "title": "Wake Me Up",
+      "channel_title": "Avicii - Topic",
+      "current_key": "avicii",
+      "ytm_artists": [
+        "Avicii"
+      ],
+      "ytm_album": "True (Bonus Edition)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "BItYAkiu3fY",
+      "title": "My Heart",
+      "channel_title": "Different Heaven - Topic",
+      "current_key": "different heaven",
+      "ytm_artists": [
+        "Different Heaven",
+        "EH!DE"
+      ],
+      "ytm_album": "My Heart",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "CXU7Xlf8wTI",
+      "title": "Darkside",
+      "channel_title": "Alan Walker - Topic",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker",
+        "Au/Ra",
+        "Tomine Harket"
+      ],
+      "ytm_album": "Different World",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "iR1sAex__VA",
+      "title": "Waiting For Love",
+      "channel_title": "Avicii - Topic",
+      "current_key": "avicii",
+      "ytm_artists": [
+        "Avicii"
+      ],
+      "ytm_album": "Stories",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "lNM9HlEK4q4",
+      "title": "The Spectre",
+      "channel_title": "Alan Walker - Topic",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": "The Spectre",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "q43fb_kGL8U",
+      "title": "Viva La Vida",
+      "channel_title": "Archy Nacht - Topic",
+      "current_key": "archy nacht",
+      "ytm_artists": [
+        "Arvy Nacht"
+      ],
+      "ytm_album": "Viva La Vida",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "jwptCxZI6y4",
+      "title": "The Sound of Silence (CYRIL Remix)",
+      "channel_title": "Disturbed - Topic",
+      "current_key": "disturbed",
+      "ytm_artists": [
+        "Disturbed"
+      ],
+      "ytm_album": "The Sound of Silence (CYRIL Remix)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Oaw_Wy6XDFk",
+      "title": "Cyberpunk 2077 - The Rebel Path (Silverhand Nukes the Arasaka Building)",
+      "channel_title": "Mak lar",
+      "current_key": "cyberpunk 2077",
+      "ytm_artists": [
+        "Mak lar"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "ryzydqQuy2o",
+      "title": "Cyberpunk 2077 OST  - The Rebel Path: game+release version (link in comments)",
+      "channel_title": "Neither B.D.",
+      "current_key": "cyberpunk 2077 ost",
+      "ytm_artists": [
+        "Neither B.D."
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "p8mXiXztB-c",
+      "title": "Call of Silence（Remix）",
+      "channel_title": "Clear Sky - Topic",
+      "current_key": "clear sky",
+      "ytm_artists": [
+        "Clear Sky"
+      ],
+      "ytm_album": "Call of Silence（Remix）",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "MiAYpRxXgH0",
+      "title": "Alive",
+      "channel_title": "K-391 - Topic",
+      "current_key": "k-391",
+      "ytm_artists": [
+        "K-391"
+      ],
+      "ytm_album": "Alive",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "uNkTT5sM6lM",
+      "title": "Always Home",
+      "channel_title": "Axel Johansson - Topic",
+      "current_key": "axel johansson",
+      "ytm_artists": [
+        "Axel Johansson"
+      ],
+      "ytm_album": "Always Home",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "BDYkziFXGZU",
+      "title": "Time (Alan Walker Remix)",
+      "channel_title": "Hans Zimmer - Topic",
+      "current_key": "hans zimmer",
+      "ytm_artists": [
+        "Hans Zimmer",
+        "Alan Walker"
+      ],
+      "ytm_album": "World Of Walker",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "60ItHLz5WEA",
+      "title": "Alan Walker - Faded",
+      "channel_title": "Alan Walker",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "HJv3YLA4duY",
+      "title": "Alan Walker – World of Walker: Rise of the Drones (Official Music Video)",
+      "channel_title": "Alan Walker",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "6Nb-prB-4P0",
+      "title": "Aaron Smith - Dancin - Krono Remix (Official Video) ft. Luvli",
+      "channel_title": "AaronSmithVEVO",
+      "current_key": "aaron smith",
+      "ytm_artists": [
+        "Aaron Smith"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "sfJa87exLkI",
+      "title": "Arvy Nacht - Viva La Vida (Official Music Video)",
+      "channel_title": "Arvy Nacht",
+      "current_key": "arvy nacht",
+      "ytm_artists": [
+        "Archy Nacht"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Wrgp3Rp1kPY",
+      "title": "Steve Aoki & Alan Walker - Are You Lonely feat. ISÁK (Official Video) [Ultra Music]",
+      "channel_title": "Ultra Records",
+      "current_key": "steve aoki & alan walker",
+      "ytm_artists": [
+        "Alan Walker",
+        "Steve Aoki"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "tGel_oZFVmA",
+      "title": "God Is A Girl",
+      "channel_title": "W&W - Topic",
+      "current_key": "w&w",
+      "ytm_artists": [
+        "W&W",
+        "Groove Coverage"
+      ],
+      "ytm_album": "God Is A Girl",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Ni3CazygOh4",
+      "title": "Disposal Unit (Imperium Mix)",
+      "channel_title": "Jesper Kyd - Topic",
+      "current_key": "jesper kyd",
+      "ytm_artists": [
+        "Jesper Kyd"
+      ],
+      "ytm_album": "Warhammer 40,000: Darktide (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "sJlAqtyMsfY",
+      "title": "Kiss Forever",
+      "channel_title": "Ashlee Walker - Topic",
+      "current_key": "ashlee walker",
+      "ytm_artists": [
+        "Ashlee Walker"
+      ],
+      "ytm_album": "Kiss Forever",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "w3WfFkMoTSw",
+      "title": "Man On The Moon",
+      "channel_title": "Release - Topic",
+      "current_key": "release",
+      "ytm_artists": [
+        "Benjamin Ingrosso & Alan Walker"
+      ],
+      "ytm_album": "World Of Walker",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "M-S7aJ3xKbQ",
+      "title": "Don't Go (Cover Version)",
+      "channel_title": "Ashlee Walker - Topic",
+      "current_key": "ashlee walker",
+      "ytm_artists": [
+        "Ashlee Walker"
+      ],
+      "ytm_album": "Don't Go (Cover Version)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Xf5gL-n1S6k",
+      "title": "Lonely World",
+      "channel_title": "K-391 - Topic",
+      "current_key": "k-391",
+      "ytm_artists": [
+        "K-391",
+        "Victor Crone"
+      ],
+      "ytm_album": "Lonely World",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "V-KY9Z3WMi8",
+      "title": "End of Time",
+      "channel_title": "K-391 - Topic",
+      "current_key": "k-391",
+      "ytm_artists": [
+        "K-391",
+        "Alan Walker",
+        "Ahrix"
+      ],
+      "ytm_album": "End of Time",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "aZwklvDdaVw",
+      "title": "Alone",
+      "channel_title": "Alan Walker - Topic",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": "Alone",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "pIWaVJPl0-c",
+      "title": "Faded",
+      "channel_title": "Alan Walker - Topic",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": "Different World",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "mOivOlP9GRk",
+      "title": "Alan Walker vs Coldplay - Hymn For The Weekend [Remix]",
+      "channel_title": "Alan Walker",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "mlaxs1Ur-NU",
+      "title": "Alan Walker - 135",
+      "channel_title": "Alan Walker",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "AWoSH3357l8",
+      "title": "Call Me Up",
+      "channel_title": "K-391 - Topic",
+      "current_key": "k-391",
+      "ytm_artists": [
+        "K-391",
+        "JensJulius Tejlgaard",
+        "William Tejlgaard"
+      ],
+      "ytm_album": "Call Me Up",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "NHgyYjBQGB0",
+      "title": "Alan Walker Style, Arvy Nacht - Close Your Eyes (Official Music Video, Cover)",
+      "channel_title": "Arvy Nacht",
+      "current_key": "arvy nacht",
+      "ytm_artists": [
+        "Archy Nacht"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "-yJPm8kmdrk",
+      "title": "Hello World",
+      "channel_title": "Alan Walker - Topic",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker",
+        "Torine"
+      ],
+      "ytm_album": "Hello World",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "SpCzjCkOnPA",
+      "title": "Mozart (Hardstyle Remix)",
+      "channel_title": "CrazyDaniel - Topic",
+      "current_key": "crazydaniel",
+      "ytm_artists": [
+        "CrazyDaniel"
+      ],
+      "ytm_album": "Mozart (Hardstyle Remix)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "xX2Q14537Hk",
+      "title": "Mozart vs Beethoven (Turkish March vs Für Elise Hardstyle)",
+      "channel_title": "CrazyDaniel - Topic",
+      "current_key": "crazydaniel",
+      "ytm_artists": [
+        "CrazyDaniel"
+      ],
+      "ytm_album": "Mozart vs Beethoven (Turkish March vs Für Elise Hardstyle)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "2TBTJL46rg8",
+      "title": "OIIA OIIA (Spinning Cat)",
+      "channel_title": "W&W - Topic",
+      "current_key": "w&w",
+      "ytm_artists": [
+        "W&W"
+      ],
+      "ytm_album": "OIIA OIIA (Spinning Cat)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "sVD0EMsxoh4",
+      "title": "Astronomia (Coffin Dance)",
+      "channel_title": "DJ MO - Topic",
+      "current_key": "dj mo",
+      "ytm_artists": [
+        "DJ MO"
+      ],
+      "ytm_album": "Astronomia (Coffin Dance)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "PslNKOxAijQ",
+      "title": "Timmy Trumpet & Savage - Freaks 4K REMASTER (2024)",
+      "channel_title": "TMRW Music",
+      "current_key": "timmy trumpet & savage",
+      "ytm_artists": [
+        "Power Music Workout"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "w15oWDh02K4",
+      "title": "GIGI D'AGOSTINO - L'AMOUR TOUJOURS ( OFFICIAL VIDEO )",
+      "channel_title": "GIGI D'AGOSTINO",
+      "current_key": "gigi d'agostino",
+      "ytm_artists": [
+        "Gigi D'Agostino"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "yakOBIoyoik",
+      "title": "Alicia",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard",
+        "Alice Duport-Percier"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Rof660OEA3E",
+      "title": "Gustave",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "iqizXvvWnmM",
+      "title": "Lumière",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard",
+        "Alice Duport-Percier"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "QR4lVa_75DM",
+      "title": "Lumière - The Departure",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard",
+        "Alice Duport-Percier"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Yb9JXFA3xxE",
+      "title": "Spring Meadows - Éveil",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "anD2aeIrMOs",
+      "title": "Spring Meadows - Get Up! For Lumière!",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "czyNFmOW0ag",
+      "title": "Spring Meadows - Linen and Cotton",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard",
+        "Alice Duport-Percier"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Px4p4RQFbms",
+      "title": "Spring Meadows - Tomorrow is Here",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "g9f-r70v1TQ",
+      "title": "Spring Meadows - L'Aurore aux Doigts de Roses",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard",
+        "Alice Duport-Percier"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "NK5QXdkDw9c",
+      "title": "World Map - Taking Down the Paintress",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard",
+        "Alice Duport-Percier"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "X2OGJjp9eiU",
+      "title": "World Map - In Lumière's Name",
+      "channel_title": "Lorien Testard - Topic",
+      "current_key": "lorien testard",
+      "ytm_artists": [
+        "Lorien Testard"
+      ],
+      "ytm_album": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "TmwCl9wUrC8",
+      "title": "ONE OK ROCK - Delusion:All [OFFICIAL MUSIC VIDEO]",
+      "channel_title": "ONE OK ROCK",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "jBCc-hmVZho",
+      "title": "ONE OK ROCK - TROPICAL THERAPY ( STUDIO JAM SESSION VOL.6 ) \"DETOX\"",
+      "channel_title": "Takashi ronin",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "takashi ronin"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "xhwLgjMdHl8",
+      "title": "The Beginning",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Jinsei × Boku =",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "joUrtAAjy0E",
+      "title": "The Pilot ᐸ/3",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "DETOX",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "H8gJ38zcMV4",
+      "title": "ONE OK ROCK - 欠落オートメーション 高音質 320kbps",
+      "channel_title": "Listen Music ONE OK ROCK",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "Listen Music ONE OK ROCK"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "vxAJ4asBhTo",
+      "title": "Gravity (feat. Satoshi Fujihara) (OFFICIAL HIGE DANDISM)",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Luxury Disease (Japanese Version)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "CSv22KXWnhw",
+      "title": "Mad World",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Luxury Disease",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "GfvorRUyy_w",
+      "title": "Kimishidai Ressha",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Zankyo Reference",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "AIosHYpxw2Y",
+      "title": "Mad World (Japanese Version)",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Luxury Disease (Japanese Version)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "DowLEpo7A18",
+      "title": "Stand Out Fit In",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Eye of the Storm",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "g3kChT7B3Us",
+      "title": "Wasted Nights",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Eye of the Storm",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "UWfLFyxnM8M",
+      "title": "Dystopia",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "DETOX",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "PWuV_O5Mzgg",
+      "title": "Tropical Therapy",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "DETOX",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "3icLxxfLI5k",
+      "title": "Start Again",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Ambitions",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "NIioTc_Yz_0",
+      "title": "Make It Out Alive",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Make It Out Alive",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "YKh878q7H0I",
+      "title": "Renegades",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Luxury Disease",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "d7O9ifnnPiQ",
+      "title": "Giants",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "Eye of the Storm",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "aEnw4RSqpyQ",
+      "title": "Memories",
+      "channel_title": "ONE OK ROCK - Topic",
+      "current_key": "one ok rock",
+      "ytm_artists": [
+        "ONE OK ROCK"
+      ],
+      "ytm_album": "35xxxv (Deluxe Edition)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "nSkDpIj0Y7w",
+      "title": "Alan Walker - Me, Myself and The Night (Official Music Video)",
+      "channel_title": "Alan Walker",
+      "current_key": "alan walker",
+      "ytm_artists": [
+        "Alan Walker"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "V-KY9Z3WMi8",
+      "title": "End of Time",
+      "channel_title": "K-391 - Topic",
+      "current_key": "k-391",
+      "ytm_artists": [
+        "K-391",
+        "Alan Walker",
+        "Ahrix"
+      ],
+      "ytm_album": "End of Time",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "jfkr8V-Dnbg",
+      "title": "Die Alone",
+      "channel_title": "K-391 - Topic",
+      "current_key": "k-391",
+      "ytm_artists": [
+        "K-391",
+        "Hoaprox",
+        "Nick Strand"
+      ],
+      "ytm_album": "Die Alone",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "NgDSGE5Y_UQ",
+      "title": "COLORs",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "bLACKbLUE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "y4_R2OYZWUc",
+      "title": "FLAW(LESS)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "iv",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "455FZsfN4is",
+      "title": "VV-Alk",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "bLACKbLUE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "LtKbYccS-vo",
+      "title": "Mio Mare (2V-Alk Version)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "2V-ALK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "g7j0zz09aww",
+      "title": "Crystalise",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "2V-ALK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "XgyDLeIpVlo",
+      "title": "How Do You Love Somebody",
+      "channel_title": "Why Don't We - Topic",
+      "current_key": "why don't we",
+      "ytm_artists": [
+        "Why Don't We"
+      ],
+      "ytm_album": "How Do You Love Somebody",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_lxS-x7DACQ",
+      "title": "Unity",
+      "channel_title": "The Walkers - Topic",
+      "current_key": "the walkers",
+      "ytm_artists": [
+        "The Walkers",
+        "Alan Walker",
+        "SAPPHIRE"
+      ],
+      "ytm_album": "Unity",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "UVtxDwII9q4",
+      "title": "Carry You Home",
+      "channel_title": "Alex Warren - Topic",
+      "current_key": "alex warren",
+      "ytm_artists": [
+        "Alex Warren"
+      ],
+      "ytm_album": "You'll Be Alright, Kid",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "eRPF_MR6o4g",
+      "title": "Someday",
+      "channel_title": "OneRepublic - Topic",
+      "current_key": "onerepublic",
+      "ytm_artists": [
+        "OneRepublic"
+      ],
+      "ytm_album": "Human (Deluxe)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "W8c5MHTPMmA",
+      "title": "Nights Like This",
+      "channel_title": "St. Lundi - Topic",
+      "current_key": "st. lundi",
+      "ytm_artists": [
+        "St. Lundi"
+      ],
+      "ytm_album": "Nights Like This",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "5qZQEq_C3vc",
+      "title": "Numb",
+      "channel_title": "Linkin Park - Topic",
+      "current_key": "linkin park",
+      "ytm_artists": [
+        "Linkin Park"
+      ],
+      "ytm_album": "Meteora (Bonus Edition)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "BLZWkjBXfN8",
+      "title": "In the End",
+      "channel_title": "Linkin Park - Topic",
+      "current_key": "linkin park",
+      "ytm_artists": [
+        "Linkin Park"
+      ],
+      "ytm_album": "Hybrid Theory (Bonus Edition)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "wsKw_Astidg",
+      "title": "Otonoke",
+      "channel_title": "Creepy Nuts - Topic",
+      "current_key": "creepy nuts",
+      "ytm_artists": [
+        "Creepy Nuts"
+      ],
+      "ytm_album": "Otonoke",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "e0YcG7ofCYg",
+      "title": "Angel With a Shotgun",
+      "channel_title": "The Cab - Topic",
+      "current_key": "the cab",
+      "ytm_artists": [
+        "The Cab"
+      ],
+      "ytm_album": "Symphony Soldier",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "2NiyrtYegso",
+      "title": "Wake Me Up",
+      "channel_title": "Avicii - Topic",
+      "current_key": "avicii",
+      "ytm_artists": [
+        "Avicii"
+      ],
+      "ytm_album": "True (Bonus Edition)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "iXvyuBa9OLw",
+      "title": "Same as you are",
+      "channel_title": "Pay money To my Pain - Topic",
+      "current_key": "pay money to my pain",
+      "ytm_artists": [
+        "Pay money To my Pain"
+      ],
+      "ytm_album": "after you wake up",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "a62NeCzZmuU",
+      "title": "Voice",
+      "channel_title": "Pay money To my Pain - Topic",
+      "current_key": "pay money to my pain",
+      "ytm_artists": [
+        "Pay money To my Pain"
+      ],
+      "ytm_album": "gene",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "RgKAFK5djSk",
+      "title": "Wiz Khalifa - See You Again ft. Charlie Puth [Official Video] Furious 7 Soundtrack",
+      "channel_title": "Wiz Khalifa Music",
+      "current_key": "wiz khalifa",
+      "ytm_artists": [
+        "Wiz Khalifa"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "8PbGeKwEnK0",
+      "title": "Pop Virus",
+      "channel_title": "星野源 Gen Hoshino - Topic",
+      "current_key": "星野源 gen hoshino",
+      "ytm_artists": [
+        "Gen Hoshino"
+      ],
+      "ytm_album": "POP VIRUS",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "eCGip3br7yY",
+      "title": "Horizon Dreamer",
+      "channel_title": "Daichi Miura - Topic",
+      "current_key": "daichi miura",
+      "ytm_artists": [
+        "Daichi Miura"
+      ],
+      "ytm_album": "Horizon Dreamer",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "dJth8oW7CAQ",
+      "title": "spiral",
+      "channel_title": "LONGMAN - Topic",
+      "current_key": "longman",
+      "ytm_artists": [
+        "LONGMAN"
+      ],
+      "ytm_album": "spiral",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "-hd3xTneN2w",
+      "title": "One day",
+      "channel_title": "The ROOTLESS - Topic",
+      "current_key": "the rootless",
+      "ytm_artists": [
+        "THE ROOTLESS"
+      ],
+      "ytm_album": "One day",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "XoJLLFbWiBU",
+      "title": "傷心太平洋",
+      "channel_title": "Richie Jen - Topic",
+      "current_key": "richie jen",
+      "ytm_artists": [
+        "任賢齊"
+      ],
+      "ytm_album": "愛像太平洋",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "9usPfU-SG0k",
+      "title": "挪威的森林",
+      "channel_title": "Wu Bai & China Blue - Topic",
+      "current_key": "wu bai & china blue",
+      "ytm_artists": [
+        "伍佰&China Blue"
+      ],
+      "ytm_album": "搖滾滾石MY ROCK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "BfZ77lVOF4E",
+      "title": "光輝歲月",
+      "channel_title": "Beyond - Topic",
+      "current_key": "beyond",
+      "ytm_artists": [
+        "Beyond"
+      ],
+      "ytm_album": "命運派對",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "GDJLGf1wMq0",
+      "title": "我相信",
+      "channel_title": "杨培安 - Topic",
+      "current_key": "杨培安",
+      "ytm_artists": [
+        "楊培安"
+      ],
+      "ytm_album": "午夜兩點半的我",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "CyG7HCVupuE",
+      "title": "痴心絕對",
+      "channel_title": "李聖傑 - Topic",
+      "current_key": "李聖傑",
+      "ytm_artists": [
+        "李聖傑"
+      ],
+      "ytm_album": "痴心絕對",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "uyY39w4hUcE",
+      "title": "口是心非",
+      "channel_title": "Chang Yu-Shen - Topic",
+      "current_key": "chang yu-shen",
+      "ytm_artists": [
+        "張雨生"
+      ],
+      "ytm_album": "口是心非",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "WnE5AWR-mFw",
+      "title": "Dui Zhe",
+      "channel_title": "Richie Jen - Topic",
+      "current_key": "richie jen",
+      "ytm_artists": [
+        "Richie Jen"
+      ],
+      "ytm_album": "Bu Xin Xie",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "OSCuOsaOE48",
+      "title": "童話",
+      "channel_title": "Michael Wong - Topic",
+      "current_key": "michael wong",
+      "ytm_artists": [
+        "光良"
+      ],
+      "ytm_album": "童話",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "z1LONitsvQs",
+      "title": "Yue Liang Re De Huo",
+      "channel_title": "Yu Zhang - Topic",
+      "current_key": "yu zhang",
+      "ytm_artists": [
+        "Phil Chang"
+      ],
+      "ytm_album": "Yuch Liang, Tai Yang",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "_UBzStPLFVQ",
+      "title": "洋蔥",
+      "channel_title": "Aska Yang - Topic",
+      "current_key": "aska yang",
+      "ytm_artists": [
+        "楊宗緯"
+      ],
+      "ytm_album": "鴿子",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "M2AygY4l_IY",
+      "title": "當",
+      "channel_title": "Power Station - Topic",
+      "current_key": "power station",
+      "ytm_artists": [
+        "動力火車"
+      ],
+      "ytm_album": "就是紅光輝全紀錄",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "J0ZWmlafSBY",
+      "title": "外婆的澎湖灣 2015",
+      "channel_title": "Richie Jen - Topic",
+      "current_key": "richie jen",
+      "ytm_artists": [
+        "任賢齊"
+      ],
+      "ytm_album": "落跑吧 愛情原聲帶",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "qvXJo9kykp4",
+      "title": "過火",
+      "channel_title": "Jeff Chang - Topic",
+      "current_key": "jeff chang",
+      "ytm_artists": [
+        "張信哲"
+      ],
+      "ytm_album": "寬容",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "XDqW410a37I",
+      "title": "有沒有一首歌會讓你想起我",
+      "channel_title": "Wakin Chau - Topic",
+      "current_key": "wakin chau",
+      "ytm_artists": [
+        "周華健"
+      ],
+      "ytm_album": "忘憂草",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "ydBI014ehbI",
+      "title": "Wu Ding",
+      "channel_title": "Jacky Wu - Topic",
+      "current_key": "jacky wu",
+      "ytm_artists": [
+        "Jacky Wu",
+        "Landy Wen"
+      ],
+      "ytm_album": "Endless Love",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "77cj6mfO9D0",
+      "title": "大海",
+      "channel_title": "杨培安 - Topic",
+      "current_key": "杨培安",
+      "ytm_artists": [
+        "楊培安"
+      ],
+      "ytm_album": "楊培安, Vol. 3",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "15HE06a3L3Y",
+      "title": "刀劍如夢",
+      "channel_title": "Wakin Chau - Topic",
+      "current_key": "wakin chau",
+      "ytm_artists": [
+        "周華健"
+      ],
+      "ytm_album": "楊佩佩精裝大戲主題曲(二)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "bVv1KBvZ-lU",
+      "title": "忠孝東路走九遍",
+      "channel_title": "Power Station - Topic",
+      "current_key": "power station",
+      "ytm_artists": [
+        "動力火車"
+      ],
+      "ytm_album": "忠孝東路走九遍",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "5BQSF4pMuMs",
+      "title": "彩虹",
+      "channel_title": "Power Station - Topic",
+      "current_key": "power station",
+      "ytm_artists": [
+        "動力火車"
+      ],
+      "ytm_album": "就是紅光輝全紀錄",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "5Vro0byRlNM",
+      "title": "Shi Bu Shi Zhe Yang De Ye Wan Ni Cai Hui Zhe Yang De Xiang Qi Wo",
+      "channel_title": "Jacky Wu - Topic",
+      "current_key": "jacky wu",
+      "ytm_artists": [
+        "Jacky Wu"
+      ],
+      "ytm_album": "I Will Miss You",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "HK2hmEzmMJA",
+      "title": "把悲傷留給自己",
+      "channel_title": "Bobby Chen - Topic",
+      "current_key": "bobby chen",
+      "ytm_artists": [
+        "陳昇"
+      ],
+      "ytm_album": "私奔",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "KQTCO417h_M",
+      "title": "Huang Hun (Sunset)",
+      "channel_title": "Steve Chou - Topic",
+      "current_key": "steve chou",
+      "ytm_artists": [
+        "Steve Chou"
+      ],
+      "ytm_album": "Steve Chou Transfer",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "kqSfKJhNZ9c",
+      "title": "紅紅青春敲呀敲",
+      "channel_title": "東方快車 - Topic",
+      "current_key": "東方快車",
+      "ytm_artists": [
+        "東方快車"
+      ],
+      "ytm_album": "搖滾寓言",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "SriwxCDjDHs",
+      "title": "背叛",
+      "channel_title": "Gary Chaw - Topic",
+      "current_key": "gary chaw",
+      "ytm_artists": [
+        "曹格"
+      ],
+      "ytm_album": "超級星光PK寶典",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "XHhgvY0ZIx8",
+      "title": "揮著翅膀的女孩 (國)",
+      "channel_title": "Joey Yung - Topic",
+      "current_key": "joey yung",
+      "ytm_artists": [
+        "容祖兒"
+      ],
+      "ytm_album": "我的驕傲",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "tjr3SrCg3pc",
+      "title": "十年 (國)",
+      "channel_title": "Eason Chan - Topic",
+      "current_key": "eason chan",
+      "ytm_artists": [
+        "陳奕迅"
+      ],
+      "ytm_album": "七 (新歌+精選)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "eadGlKJCmg4",
+      "title": "我的未來不是夢",
+      "channel_title": "Chang Yu-Shen - Topic",
+      "current_key": "chang yu-shen",
+      "ytm_artists": [
+        "張雨生"
+      ],
+      "ytm_album": "六個朋友",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "bGRFDm7pW50",
+      "title": "Encounter",
+      "channel_title": "Yanzi Sun - Topic",
+      "current_key": "yanzi sun",
+      "ytm_artists": [
+        "Sun Yanzi"
+      ],
+      "ytm_album": "The Moment",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "CKG1AxTYW0c",
+      "title": "你是我的花朵",
+      "channel_title": "Wu Bai & China Blue - Topic",
+      "current_key": "wu bai & china blue",
+      "ytm_artists": [
+        "伍佰 & China Blue"
+      ],
+      "ytm_album": "純真年代",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Tkw8jT-9xZc",
+      "title": "Last Dance",
+      "channel_title": "Wu Bai & China Blue - Topic",
+      "current_key": "wu bai & china blue",
+      "ytm_artists": [
+        "伍佰 & China Blue"
+      ],
+      "ytm_album": "愛情的盡頭",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "jJuwD56M9h8",
+      "title": "漂向北方",
+      "channel_title": "Namewee - Topic",
+      "current_key": "namewee",
+      "ytm_artists": [
+        "黃明志"
+      ],
+      "ytm_album": "亞洲通車",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Th7XKEpWdaM",
+      "title": "追光者 (電視劇《夏至未至》插曲)",
+      "channel_title": "Yoyo Sham - Topic",
+      "current_key": "yoyo sham",
+      "ytm_artists": [
+        "Yoyo Sham"
+      ],
+      "ytm_album": "夏至未至 影視原聲帶",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "l6a5D6yxqEU",
+      "title": "稻香",
+      "channel_title": "Jay Chou - Topic",
+      "current_key": "jay chou",
+      "ytm_artists": [
+        "周杰倫"
+      ],
+      "ytm_album": "魔杰座",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "E_O9MikeO_Q",
+      "title": "The Sea",
+      "channel_title": "Chang Yu-Shen - Topic",
+      "current_key": "chang yu-shen",
+      "ytm_artists": [
+        "Chang Yu-Shen"
+      ],
+      "ytm_album": "The Sea",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "QsheIMDMPM4",
+      "title": "Chun Ni",
+      "channel_title": "Harlem Yu - Topic",
+      "current_key": "harlem yu",
+      "ytm_artists": [
+        "Harlem Yu"
+      ],
+      "ytm_album": "Harlem's Heaven",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "RQHNcjs8id0",
+      "title": "勢在必行",
+      "channel_title": "Andrew Tan - Topic",
+      "current_key": "andrew tan",
+      "ytm_artists": [
+        "陳勢安",
+        "畢書盡"
+      ],
+      "ytm_album": "勢在必行",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "JxRwBTb00ug",
+      "title": "Zai Jian Yan Huo",
+      "channel_title": "Apar Zhuo - Topic",
+      "current_key": "apar zhuo",
+      "ytm_artists": [
+        "Apar Zhuo"
+      ],
+      "ytm_album": "Ting Zhe",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "LseCJmK7lM4",
+      "title": "More Difficult Than It Seems",
+      "channel_title": "Tiger Huang - Topic",
+      "current_key": "tiger huang",
+      "ytm_artists": [
+        "Tiger Huang"
+      ],
+      "ytm_album": "Simple or Not",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "UZrjIF3pfg0",
+      "title": "朋友",
+      "channel_title": "Wakin Chau - Topic",
+      "current_key": "wakin chau",
+      "ytm_artists": [
+        "周華健"
+      ],
+      "ytm_album": "朋友",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "jkyHxX-Oaws",
+      "title": "隱形的翅膀",
+      "channel_title": "Angela Chang - Topic",
+      "current_key": "angela chang",
+      "ytm_artists": [
+        "張韶涵"
+      ],
+      "ytm_album": "潘朵拉",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "-gGdOR_u0Zk",
+      "title": "我很好騙",
+      "channel_title": "Power Station - Topic",
+      "current_key": "power station",
+      "ytm_artists": [
+        "動力火車"
+      ],
+      "ytm_album": "我很好騙",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Y23qtNzbY2A",
+      "title": "再見小時候",
+      "channel_title": "南拳媽媽 - Topic",
+      "current_key": "南拳媽媽",
+      "ytm_artists": [
+        "南拳媽媽 (Nan Quan Mama)"
+      ],
+      "ytm_album": "優的良曲南搞小孩",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "fYrBo8XEssE",
+      "title": "動力火車 Power Station [ 彩虹 Rainbow ] Official Music Video",
+      "channel_title": "華研國際",
+      "current_key": "華研國際",
+      "ytm_artists": [
+        "Power Station"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "ns_ju2JWyhw",
+      "title": "王識賢&孫淑媚《雲中月圓》官方MV",
+      "channel_title": "華特音樂",
+      "current_key": "華特音樂",
+      "ytm_artists": [
+        "孫淑媚 & 王識賢"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "8A2t_tAjMz8",
+      "title": "TWICE \"KNOCK KNOCK\" M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "TWICE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "1CTced9CMMk",
+      "title": "BIGBANG - LOSER M/V",
+      "channel_title": "BIGBANG",
+      "current_key": "bigbang",
+      "ytm_artists": [
+        "BIGBANG"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "0rtV5esQT6I",
+      "title": "TWICE \"Like OOH-AHH(OOH-AHH하게)\" M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "TWICE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "9bZkp7q19f0",
+      "title": "PSY - GANGNAM STYLE(강남스타일) M/V",
+      "channel_title": "officialpsy",
+      "current_key": "psy",
+      "ytm_artists": [
+        "Psy"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "2ips2mM7Zqw",
+      "title": "BIGBANG - 뱅뱅뱅 (BANG BANG BANG) M/V",
+      "channel_title": "BIGBANG",
+      "current_key": "bigbang",
+      "ytm_artists": [
+        "BIGBANG"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "6pA_Tou-DPI",
+      "title": "Girls' Generation 소녀시대 'The Boys' MV (KOR Ver.)",
+      "channel_title": "SMTOWN",
+      "current_key": "kor",
+      "ytm_artists": [
+        "Girls' Generation"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "4OrCA1OInoo",
+      "title": "TAEYEON 태연 'I (feat. Verbal Jint)' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "TAEYEON"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "1qnV55LUFVM",
+      "title": "BIGBANG - BAD BOY M/V",
+      "channel_title": "BIGBANG",
+      "current_key": "bigbang",
+      "ytm_artists": [
+        "BIGBANG"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "1ZRb1we80kM",
+      "title": "GD X TAEYANG - GOOD BOY M/V",
+      "channel_title": "BIGBANG",
+      "current_key": "bigbang",
+      "ytm_artists": [
+        "BIGBANG"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "9pdj4iJD08s",
+      "title": "BLACKPINK - '불장난 (PLAYING WITH FIRE)' M/V",
+      "channel_title": "BLACKPINK",
+      "current_key": "blackpink",
+      "ytm_artists": [
+        "BLACKPINK"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "AAbokV76tkU",
+      "title": "BIGBANG - FANTASTIC BABY M/V",
+      "channel_title": "BIGBANG",
+      "current_key": "bigbang",
+      "ytm_artists": [
+        "BIGBANG"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "ALj5MKjy2BU",
+      "title": "[MV] BTS(방탄소년단) _ FIRE (불타오르네)",
+      "channel_title": "1theK (원더케이)",
+      "current_key": "1thek (원더케이)",
+      "ytm_artists": [
+        "BTS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "bw9CALKOvAI",
+      "title": "HYUNA - 'Bubble Pop!' (Official Music Video)",
+      "channel_title": "4Minute 포미닛(Official YouTube Channel)",
+      "current_key": "hyuna",
+      "ytm_artists": [
+        "4Minute 포미닛(Official YouTube Channel)"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "fhseD2tRLUY",
+      "title": "少女時代 / ＭＲ．ＴＡＸＩ　（DANCE VER.）",
+      "channel_title": "UNIVERSAL MUSIC JAPAN",
+      "current_key": "universal music japan",
+      "ytm_artists": [
+        "Girls' Generation"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "BVwAVbKYYeM",
+      "title": "[MV] BTS(방탄소년단) _ DOPE(쩔어)",
+      "channel_title": "1theK (원더케이)",
+      "current_key": "1thek (원더케이)",
+      "ytm_artists": [
+        "BTS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "c7rCyll5AeY",
+      "title": "TWICE \"CHEER UP\" M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "TWICE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "bwmSjveL3Lc",
+      "title": "BLACKPINK - '붐바야 (BOOMBAYAH)' M/V",
+      "channel_title": "BLACKPINK",
+      "current_key": "blackpink",
+      "ytm_artists": [
+        "BLACKPINK"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "dISNgvVpWlo",
+      "title": "BLACKPINK - '휘파람 (WHISTLE)' M/V",
+      "channel_title": "BLACKPINK",
+      "current_key": "blackpink",
+      "ytm_artists": [
+        "BLACKPINK"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "ePpPVE-GGJw",
+      "title": "TWICE \"TT\" M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "TWICE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "HkMNOlYcpHg",
+      "title": "PSY - HANGOVER (feat. Snoop Dogg) M/V",
+      "channel_title": "officialpsy",
+      "current_key": "psy",
+      "ytm_artists": [
+        "Psy"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "j7_lSP8Vc3o",
+      "title": "2NE1 - 내가 제일 잘 나가(I AM THE BEST) M/V",
+      "channel_title": "2NE1",
+      "current_key": "2ne1",
+      "ytm_artists": [
+        "2NE1"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "FrG4TEcSuRg",
+      "title": "PSY - DADDY(feat. CL of 2NE1) M/V",
+      "channel_title": "officialpsy",
+      "current_key": "psy",
+      "ytm_artists": [
+        "Psy"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "hmE9f-TEutc",
+      "title": "BTS (방탄소년단) '피 땀 눈물 (Blood Sweat & Tears)' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "BTS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "I3dezFzsNss",
+      "title": "EXO 엑소 '으르렁 (Growl)' MV (Korean Ver.)",
+      "channel_title": "SMTOWN",
+      "current_key": "korean",
+      "ytm_artists": [
+        "EXO"
+      ],
+      "ytm_album": null,
+      "video_type": null,
+      "agrees": false
+    },
+    {
+      "video_id": "KSH-FVVtTf0",
+      "title": "EXO 엑소 'Monster' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "EXO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "m8MfJg68oCs",
+      "title": "[MV] BTS(방탄소년단) _ Boy In Luv(상남자)",
+      "channel_title": "1theK (원더케이)",
+      "current_key": "1thek (원더케이)",
+      "ytm_artists": [
+        "BTS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "n8I8QGFA1oM",
+      "title": "f(x) 에프엑스 'Electric Shock' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "f(x)"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "RKhsHGfrFmY",
+      "title": "G-DRAGON - 삐딱하게(CROOKED) M/V",
+      "channel_title": "BIGBANG",
+      "current_key": "bigbang",
+      "ytm_artists": [
+        "G-DRAGON"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "r6TwzSGYycM",
+      "title": "SUPER JUNIOR 슈퍼주니어 'Mr. Simple' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "SUPER JUNIOR"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "TI0DGvqKZTI",
+      "title": "EXO-K 엑소케이 '중독(Overdose)' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "exo",
+      "ytm_artists": [
+        "EXO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "TGbwL8kSpEk",
+      "title": "Girls' Generation 소녀시대 'Oh!' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "Girls' Generation"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "yWfsla_Uh80",
+      "title": "EXO 엑소 'CALL ME BABY' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "EXO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "U7mPqycQ0tQ",
+      "title": "Girls' Generation 소녀시대 'Gee' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "Girls' Generation"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "vrdk3IGcau8",
+      "title": "GOT7 \"Just right(딱 좋아)\" M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "GOT7"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "wq7ftOZBy0E",
+      "title": "Girls' Generation 소녀시대 'I GOT A BOY' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "Girls' Generation"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "wcLNteez3c4",
+      "title": "PSY (ft. HYUNA) - 오빤 딱 내 스타일 M/V",
+      "channel_title": "officialpsy",
+      "current_key": "psy",
+      "ytm_artists": [
+        "Psy"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    }
+  ],
+  "colon_credit_ratio": 0.0,
+  "group_count_ratio": 1.08
+}

@@ -1,0 +1,362 @@
+{
+  "playlist_id": "PLHx-DNmuIJZjNh76_85SPjlOq7jsFi5ek",
+  "ytm_track_count": 32,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_ATV": 29,
+    "MUSIC_VIDEO_TYPE_OMV": 3
+  },
+  "album_coverage": 29,
+  "album_distinct": 21,
+  "artist_entity_coverage": 31,
+  "api_item_count": 32,
+  "invisible_to_ytm": [
+    {
+      "video_id": "B7kN93q1LuQ",
+      "title": "Broly Vs. Gogeta (Cover Ver.)",
+      "channel_title": "Friedrich Habetler - Topic"
+    },
+    {
+      "video_id": "A__TSENPKvg",
+      "title": "Kakarot Vs Broly",
+      "channel_title": "Friedrich Habetler - Topic"
+    },
+    {
+      "video_id": "_Kxj98olMNw",
+      "title": "Ultra Instinct Mastered",
+      "channel_title": "Friedrich Habetler - Topic"
+    },
+    {
+      "video_id": "2F_ZLI3jOmI",
+      "title": "Separatist Droid Army March",
+      "channel_title": "Samuel Kim, Lorien - Topic"
+    },
+    {
+      "video_id": "Jd9sDkS42kg",
+      "title": "U Got That",
+      "channel_title": "Little V. - Topic"
+    },
+    {
+      "video_id": "GEtZIG2uLGo",
+      "title": "One Winged Angel",
+      "channel_title": "FamilyJules - Topic"
+    }
+  ],
+  "rows": [
+    {
+      "video_id": "QtxeJ703w18",
+      "title": "The Avengers",
+      "channel_title": "Alan Silvestri - Topic",
+      "current_key": "alan silvestri",
+      "ytm_artists": [
+        "Alan Silvestri"
+      ],
+      "ytm_album": "The Avengers (Original Motion Picture Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "jOUG5ZicixQ",
+      "title": "FFVII REMAKE: 闘う者達 -元ソルジャー-",
+      "channel_title": "Nobuo Uematsu - Topic",
+      "current_key": "nobuo uematsu",
+      "ytm_artists": [
+        "Nobuo Uematsu"
+      ],
+      "ytm_album": "FINAL FANTASY VII REMAKE Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "hfm8ov24-mE",
+      "title": "FFVII REMAKE: マッスルな者達",
+      "channel_title": "Nobuo Uematsu - Topic",
+      "current_key": "nobuo uematsu",
+      "ytm_artists": [
+        "Nobuo Uematsu"
+      ],
+      "ytm_album": "FINAL FANTASY VII REMAKE Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "pKB7Z2cV75g",
+      "title": "Battle Theme Medley (from Final Fantasy XIV)",
+      "channel_title": "Geoffplaysguitar - Topic",
+      "current_key": "geoffplaysguitar",
+      "ytm_artists": [
+        "Geoffplaysguitar"
+      ],
+      "ytm_album": "Battle Theme Medley (from Final Fantasy XIV)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "6ugtWT_iNqw",
+      "title": "Shadowbringers",
+      "channel_title": "Masayoshi Soken - Topic",
+      "current_key": "masayoshi soken",
+      "ytm_artists": [
+        "Masayoshi Soken"
+      ],
+      "ytm_album": "SHADOWBRINGERS: FINAL FANTASY XIV Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "6DyHx3YlYbo",
+      "title": "Force Your Way ～漆黒～",
+      "channel_title": "Masayoshi Soken - Topic",
+      "current_key": "masayoshi soken",
+      "ytm_artists": [
+        "Masayoshi Soken"
+      ],
+      "ytm_album": "SHADOWBRINGERS: FINAL FANTASY XIV Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "zRHiTjce9s0",
+      "title": "FFVII REMAKE: 闘う者達 -なんでも屋の仕事-",
+      "channel_title": "Nobuo Uematsu - Topic",
+      "current_key": "nobuo uematsu",
+      "ytm_artists": [
+        "Nobuo Uematsu"
+      ],
+      "ytm_album": "FINAL FANTASY VII REMAKE Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "b3oYF2wnSmg",
+      "title": "FFVII REMAKE: ルーファウス神羅",
+      "channel_title": "Nobuo Uematsu - Topic",
+      "current_key": "nobuo uematsu",
+      "ytm_artists": [
+        "Nobuo Uematsu",
+        "Shotaro Shima"
+      ],
+      "ytm_album": "FINAL FANTASY VII REMAKE Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "p1Q_595qu_A",
+      "title": "FFVII REMAKE: エアバスター",
+      "channel_title": "Nobuo Uematsu - Topic",
+      "current_key": "nobuo uematsu",
+      "ytm_artists": [
+        "Nobuo Uematsu",
+        "Tadayoshi Makino"
+      ],
+      "ytm_album": "FINAL FANTASY VII REMAKE Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "CeqyEzK87z4",
+      "title": "Find the Flame",
+      "channel_title": "Masayoshi Soken - Topic",
+      "current_key": "masayoshi soken",
+      "ytm_artists": [
+        "Masayoshi Soken"
+      ],
+      "ytm_album": "Find the Flame from FINAL FANTASY XVI Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "YZNpJufF4ho",
+      "title": "Those Who Fight (From \"Final Fantasy VII\")",
+      "channel_title": "FamilyJules - Topic",
+      "current_key": "familyjules",
+      "ytm_artists": [
+        "FamilyJules"
+      ],
+      "ytm_album": "Video Game Guitar Covers, Vol. 6",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "x7chLvmhHwU",
+      "title": "Those Who Fight Further (From \"Final Fantasy VII\")",
+      "channel_title": "FamilyJules - Topic",
+      "current_key": "familyjules",
+      "ytm_artists": [
+        "FamilyJules"
+      ],
+      "ytm_album": "Video Game Guitar Covers, Vol. 6",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "szNmLDeFZdI",
+      "title": "FFVIIメインテーマ Battle Edit (FF7 Rebirth OST Ver.)",
+      "channel_title": "Nobuo Uematsu - Topic",
+      "current_key": "nobuo uematsu",
+      "ytm_artists": [
+        "Nobuo Uematsu"
+      ],
+      "ytm_album": "FINAL FANTASY VII REBIRTH Original Soundtrack (Preview Version)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ZDEan-oADPo",
+      "title": "The Only Thing They Fear is You (From \"Doom: Eternal\")",
+      "channel_title": "FamilyJules - Topic",
+      "current_key": "familyjules",
+      "ytm_artists": [
+        "FamilyJules"
+      ],
+      "ytm_album": "Video Game Guitar Covers, Vol. 6",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "4yki0DOUKi0",
+      "title": "Battle Theme (From \"Final Fantasy X\")",
+      "channel_title": "FamilyJules - Topic",
+      "current_key": "familyjules",
+      "ytm_artists": [
+        "FamilyJules"
+      ],
+      "ytm_album": "Video Game Guitar Covers, Vol. 5",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "P5_zzXmKG-4",
+      "title": "想いが動かす力",
+      "channel_title": "Masayoshi Soken - Topic",
+      "current_key": "masayoshi soken",
+      "ytm_artists": [
+        "Masayoshi Soken"
+      ],
+      "ytm_album": "ENDWALKER: FINAL FANTASY XIV Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "--drZa0zQis",
+      "title": "Bloody Tears (From \"Castlevania II: Simon's Quest\")",
+      "channel_title": "FamilyJules - Topic",
+      "current_key": "familyjules",
+      "ytm_artists": [
+        "FamilyJules"
+      ],
+      "ytm_album": "Video Game Guitar Covers, Vol. 5",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "nbOfSQcNLN0",
+      "title": "FF9 Hunter's Chance Orchestral Metal Music Remake",
+      "channel_title": "Enrico Deiana",
+      "current_key": "enrico deiana",
+      "ytm_artists": [
+        "Enrico Deiana"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "eICijnr1k_I",
+      "title": "Devil Trigger - Nero's battle theme from Devil May Cry 5 [OFFICIAL AUDIO]",
+      "channel_title": "Casey Edwards",
+      "current_key": "devil trigger",
+      "ytm_artists": [
+        "Casey Edwards"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "lrO1TomWQTw",
+      "title": "LET'S JUST CRASH",
+      "channel_title": "Mori Calliope - Topic",
+      "current_key": "mori calliope",
+      "ytm_artists": [
+        "Mori Calliope"
+      ],
+      "ytm_album": "LET'S JUST CRASH",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "TYhgzYM2yqk",
+      "title": "Surrøunded",
+      "channel_title": "Mehdibh - Topic",
+      "current_key": "mehdibh",
+      "ytm_artists": [
+        "Mehdibh"
+      ],
+      "ytm_album": "Surrøunded",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "EJucWA9NxOY",
+      "title": "Overtaken - Epic Version (from \"One Piece\")",
+      "channel_title": "Samuel Kim, Lorien - Topic",
+      "current_key": "samuel kim, lorien",
+      "ytm_artists": [
+        "Samuel Kim"
+      ],
+      "ytm_album": "Overtaken - Epic Version (from \"One Piece\")",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "fA3DkzsIBsk",
+      "title": "Zenitsu Theme (from \"Demon Slayer\")",
+      "channel_title": "Samuel Kim, Lorien - Topic",
+      "current_key": "samuel kim, lorien",
+      "ytm_artists": [
+        "Samuel Kim"
+      ],
+      "ytm_album": "Zenitsu Theme (from \"Demon Slayer\")",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "7t_Xb-bFi8U",
+      "title": "The Very Very Very Strongest - Epic Version (from \"One Piece\")",
+      "channel_title": "Samuel Kim, Lorien - Topic",
+      "current_key": "samuel kim, lorien",
+      "ytm_artists": [
+        "Samuel Kim"
+      ],
+      "ytm_album": "The Very Very Very Strongest - Epic Version (from \"One Piece\")",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "jKE-3dkuA0E",
+      "title": "Inosuke Theme",
+      "channel_title": "Samuel Kim, Lorien - Topic",
+      "current_key": "samuel kim, lorien",
+      "ytm_artists": [
+        "Samuel Kim"
+      ],
+      "ytm_album": "Demon Slayer: Epic Collection",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "40e4tkV8yMI",
+      "title": "Armored All Might (Epic Orchestral Rock Cover) | All Might vs All For One | MHA S7–S8",
+      "channel_title": "Kenjioshi",
+      "current_key": "armored all might (epic orchestral rock ) | all might vs all for one | mha s7",
+      "ytm_artists": [
+        "Kenjioshi"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    }
+  ],
+  "colon_credit_ratio": 0.0,
+  "group_count_ratio": 1.0
+}

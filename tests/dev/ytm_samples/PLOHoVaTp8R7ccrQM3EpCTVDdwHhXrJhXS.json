@@ -1,0 +1,1241 @@
+{
+  "playlist_id": "PLOHoVaTp8R7ccrQM3EpCTVDdwHhXrJhXS",
+  "ytm_track_count": 100,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_OMV": 97,
+    "null": 2,
+    "MUSIC_VIDEO_TYPE_UGC": 1
+  },
+  "album_coverage": 0,
+  "album_distinct": 0,
+  "artist_entity_coverage": 100,
+  "api_item_count": 100,
+  "invisible_to_ytm": [],
+  "rows": [
+    {
+      "video_id": "naoGk-Zjc1s",
+      "title": "BABYMONSTER - 'SUGAR HONEY ICE TEA' M/V",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "83C3TZ4Zm_o",
+      "title": "aespa 에스파 'LEMONADE' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "aespa"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "x3eqqoZPV_E",
+      "title": "BABYMONSTER - '춤 (CHOOM)' M/V",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "bMhDJ0S0OBA",
+      "title": "ILLIT (아일릿) ‘It’s Me’ Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "ILLIT"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "a2grcJdfXmY",
+      "title": "LE SSERAFIM (르세라핌) 'CELEBRATION' OFFICIAL MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "LE SSERAFIM"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "yd_uG3TtREs",
+      "title": "BABYMONSTER - ‘PSYCHO’ M/V",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "ItSKahBISg0",
+      "title": "YENA(최예나) - '캐치 캐치' M/V",
+      "channel_title": "YENA(최예나)",
+      "current_key": "yena",
+      "ytm_artists": [
+        "YENA"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "x_RYZsOfpKY",
+      "title": "ILLIT (아일릿) 'NOT CUTE ANYMORE’ Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "ILLIT"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "sHRSiPhOT28",
+      "title": "Billlie | 'WORK' Performance Video",
+      "channel_title": "Billlie",
+      "current_key": "billlie",
+      "ytm_artists": [
+        "Billlie"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "2fyFx2u5fbU",
+      "title": "izna 'Mamma Mia' MV",
+      "channel_title": "izna (이즈나)",
+      "current_key": "izna (이즈나)",
+      "ytm_artists": [
+        "izna"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "y2os26sMjOg",
+      "title": "Apink (에이핑크) 'Love Me More' M/V",
+      "channel_title": "Apink (에이핑크)",
+      "current_key": "apink (에이핑크)",
+      "ytm_artists": [
+        "Apink"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "5oQVTnq-UKk",
+      "title": "aespa 에스파 'Rich Man' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "aespa"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "eHHQaoEW30Q",
+      "title": "TWICE \"THIS IS FOR\" M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "TWICE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "V1Lr-_AxeR8",
+      "title": "LE SSERAFIM (르세라핌) 'BOOMPALA' OFFICIAL MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "LE SSERAFIM"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "_gyultVTesk",
+      "title": "BTS (방탄소년단) '2.0' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "BTS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "9nOrPNxjvck",
+      "title": "ALLDAY PROJECT - ‘LOOK AT ME’ M/V",
+      "channel_title": "THEBLACKLABEL",
+      "current_key": "allday project",
+      "ytm_artists": [
+        "ALLDAY PROJECT"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "U6BDbXIah-Y",
+      "title": "CORTIS (코르티스) 'REDRED' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "HYBE LABELS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "SbdOIdg2McI",
+      "title": "BABYMONSTER - ‘SUPA DUPA LUV’ M/V",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "e-bwzm8-xnU",
+      "title": "ifeye (이프아이) 'Hazy (Daisy)' MV",
+      "channel_title": "ifeye 이프아이",
+      "current_key": "ifeye 이프아이",
+      "ytm_artists": [
+        "ifeye"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "bUMLC9lCgHo",
+      "title": "i-dle (아이들) 'Crow' Official Music Video",
+      "channel_title": "i-dle (아이들)",
+      "current_key": "i",
+      "ytm_artists": [
+        "i-dle"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "is8UDe2PhKQ",
+      "title": "KATSEYE (캣츠아이) 'Hootie Frutti' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "KATSEYE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "EN1tMeXQii0",
+      "title": "JISOO X ZAYN - EYES CLOSED (OFFICIAL MV)",
+      "channel_title": "JISOO",
+      "current_key": "jisoo",
+      "ytm_artists": [
+        "JISOO",
+        "ZAYN"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "ND5FhEsjVUk",
+      "title": "CNBLUE (씨엔블루) 'Killer Joy' MV",
+      "channel_title": "CNBLUE (씨엔블루)",
+      "current_key": "cnblue (씨엔블루)",
+      "ytm_artists": [
+        "CNBLUE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "diBO0gMuTXo",
+      "title": "BTS (방탄소년단) 'Hooligan' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "BTS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "F4qFzuCA9Po",
+      "title": "Stray Kids 『Hollow』 Music Video",
+      "channel_title": "Stray Kids Japan Official YouTube",
+      "current_key": "stray kids japan official youtube",
+      "ytm_artists": [
+        "Stray Kids"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "27C4pfRsf9g",
+      "title": "LE SSERAFIM (르세라핌) x ILLIT (아일릿) x KATSEYE (캣츠아이) 'ICONIC BY MISTAKE' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "LE SSERAFIM",
+        "ILLIT",
+        "KATSEYE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "b4iVv91Z6lY",
+      "title": "BTS (방탄소년단) ‘SWIM’ Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "BTS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "HDGCTtuW-Yo",
+      "title": "RIIZE 라이즈 'Do your dance' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "RIIZE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "sssoyDLFPWE",
+      "title": "ZICO (지코), Lilas (YOASOBI’s ikura) ‘DUET’ Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "ZICO",
+        "Lilas Ikuta"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "CgCVZdcKcqY",
+      "title": "BLACKPINK - ‘뛰어(JUMP)’ M/V",
+      "channel_title": "BLACKPINK",
+      "current_key": "blackpink",
+      "ytm_artists": [
+        "BLACKPINK"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "7F1ET2XHQfk",
+      "title": "KATSEYE (캣츠아이) \"PINKY UP\" Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "KATSEYE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "QGsevnbItdU",
+      "title": "\"How It's Done\" Official Lyric Video | KPop Demon Hunters | Sony Animation",
+      "channel_title": "Sony Pictures Animation",
+      "current_key": "sony pictures animation",
+      "ytm_artists": [
+        "HUNTR/X",
+        "EJAE",
+        "AUDREY NUNA",
+        "REI AMI"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "cWppAbqm9I8",
+      "title": "\"Your Idol\" | Official Song Clip | KPop Demon Hunters | Sony Animation",
+      "channel_title": "Sony Pictures Animation",
+      "current_key": "sony pictures animation",
+      "ytm_artists": [
+        "Saja Boys",
+        "Andrew Choi",
+        "Neckwav",
+        "Danny Chung"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "D54StAZFUrc",
+      "title": "AKMU - '소문의 낙원 (Paradise of Rumors)' M/V",
+      "channel_title": "AKMU",
+      "current_key": "akmu",
+      "ytm_artists": [
+        "AKMU"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "nZFH-gZa9R4",
+      "title": "우기 (YUQI) 'M.O.' Official Music Video",
+      "channel_title": "i-dle (아이들)",
+      "current_key": "i-dle (아이들)",
+      "ytm_artists": [
+        "i-dle"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "RblIsNFR1j4",
+      "title": "NMIXX(엔믹스) Blue Valentine Core: “SPINNIN’ ON IT”",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "NMIXX"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "kRpaqR5sbf0",
+      "title": "CORTIS (코르티스) 'TNT' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "CORTIS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "wlHwjkYpSr0",
+      "title": "BABYMONSTER - ‘WE GO UP’ M/V",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "fjOeJssZX_Q",
+      "title": "\"Free\" | Official Lyric Video | Sony Animation",
+      "channel_title": "Sony Pictures Animation",
+      "current_key": "sony pictures animation",
+      "ytm_artists": [
+        "Rumi",
+        "Jinu",
+        "EJAE",
+        "Andrew Choi"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "jWQx2f-CErU",
+      "title": "aespa 에스파 'Whiplash' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "aespa"
+      ],
+      "ytm_album": null,
+      "video_type": null,
+      "agrees": false
+    },
+    {
+      "video_id": "9qkpcLK422o",
+      "title": "IVE 아이브 'BANG BANG' MV",
+      "channel_title": "STARSHIP",
+      "current_key": "starship",
+      "ytm_artists": [
+        "IVE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "2GJfWMYCWY0",
+      "title": "BLACKPINK - ‘GO’ M/V",
+      "channel_title": "BLACKPINK",
+      "current_key": "blackpink",
+      "ytm_artists": [
+        "BLACKPINK"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "vqkfEUqjl6Y",
+      "title": "ATEEZ(에이티즈) - 'Adrenaline' Official MV",
+      "channel_title": "KQ ENTERTAINMENT",
+      "current_key": "ateez",
+      "ytm_artists": [
+        "ATEEZ"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "DYgE3SGPEqk",
+      "title": "i-dle (아이들) 'Mono (Feat. skaiwater)' Official Music Video",
+      "channel_title": "i-dle (아이들)",
+      "current_key": "i",
+      "ytm_artists": [
+        "i-dle"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "Vk5-c_v4gMU",
+      "title": "ILLIT (아일릿) ‘Magnetic’ Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "ILLIT"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "xLNmyB1iCig",
+      "title": "GIRLSET \"Tweak\" Music Video",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "GIRLSET"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "baaNwRAhHBo",
+      "title": "(여자)아이들((G)I-DLE) - 'Wife' Official Music Video",
+      "channel_title": "i-dle (아이들)",
+      "current_key": "(여자)아이들((g)i",
+      "ytm_artists": [
+        "i-dle"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "1Lmy7qwmSMc",
+      "title": "IVE 아이브 'BLACKHOLE' MV",
+      "channel_title": "STARSHIP",
+      "current_key": "starship",
+      "ytm_artists": [
+        "IVE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "sL0pCS6K9bc",
+      "title": "MEOVV(미야오) - ‘HANDS UP’ M/V",
+      "channel_title": "THEBLACKLABEL",
+      "current_key": "meovv",
+      "ytm_artists": [
+        "MEOVV"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "ejbFkYmX7kg",
+      "title": "Baby DONT Cry - 'Shapeshifter' MV",
+      "channel_title": "Baby DONT Cry",
+      "current_key": "baby dont cry",
+      "ytm_artists": [
+        "Baby DONT Cry"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "1ZX1vEDTfY4",
+      "title": "FIFTY FIFTY (피프티피프티) 'Pookie' Official MV",
+      "channel_title": "FIFTY FIFTY Official",
+      "current_key": "fifty fifty",
+      "ytm_artists": [
+        "FIFTY FIFTY"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "m18dRRu9-V4",
+      "title": "P1Harmony (피원하모니) - ‘UNIQUE’ MV",
+      "channel_title": "P1Harmony",
+      "current_key": "p1harmony",
+      "ytm_artists": [
+        "P1Harmony"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "rhFJhijAfII",
+      "title": "idntt 아이덴티티 'Pretty Boy Swag' Official MV",
+      "channel_title": "idntt",
+      "current_key": "idntt",
+      "ytm_artists": [
+        "idntt"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "yebNIHKAC4A",
+      "title": "“Golden” Official Lyric Video | KPop Demon Hunters | Sony Animation",
+      "channel_title": "Sony Pictures Animation",
+      "current_key": "sony pictures animation",
+      "ytm_artists": [
+        "HUNTR/X",
+        "EJAE",
+        "AUDREY NUNA",
+        "REI AMI"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "xn8mQqz2xmM",
+      "title": "BABYMONSTER - ‘HOT SAUCE’ M/V",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "M2WTUoy4y6E",
+      "title": "aespa 에스파 'Dirty Work' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "aespa"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "5qGHUPfF3tM",
+      "title": "B1A4(비원에이포) '가위바위보(Rock Paper Scissors)' Official MV",
+      "channel_title": "B1A4 OFFICIAL +",
+      "current_key": "b1a4 official +",
+      "ytm_artists": [
+        "B1A4"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "F7sGJVUrkjQ",
+      "title": "Hearts2Hearts 하츠투하츠 'RUDE!' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "Hearts2Hearts"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "negtrQu5mTA",
+      "title": "ILLIT (아일릿) '빌려온 고양이 (Do the Dance)' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "ILLIT"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "n7kFRxFIPrI",
+      "title": "Hearts2Hearts 하츠투하츠 'STYLE' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "Hearts2Hearts"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "CjnB56tSCQI",
+      "title": "KATSEYE (캣츠아이) \"Gabriela\" Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "KATSEYE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "VjvzYjU1mY0",
+      "title": "ALLDAY PROJECT - ‘FAMOUS’ M/V",
+      "channel_title": "THEBLACKLABEL",
+      "current_key": "allday project",
+      "ytm_artists": [
+        "ALLDAY PROJECT"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "-bC4iak3kxg",
+      "title": "KATSEYE (캣츠아이) \"Gameboy” Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "JULiA LEWiS",
+        "KATSEYE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "-01oDwXKSuE",
+      "title": "ILLIT (아일릿) 'Sunday Morning’ Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "ILLIT"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "yAtew9dZX_E",
+      "title": "BOYNEXTDOOR (보이넥스트도어) 'Hollywood Action' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "BOYNEXTDOOR"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "EmeW6li6bbo",
+      "title": "NMIXX(엔믹스) “Blue Valentine” M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "NMIXX"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "983bBbJx0Mk",
+      "title": "\"Soda Pop\" Official Lyric Video | KPop Demon Hunters | Sony Animation",
+      "channel_title": "Sony Pictures Animation",
+      "current_key": "sony pictures animation",
+      "ytm_artists": [
+        "Saja Boys",
+        "Andrew Choi",
+        "Neckwav",
+        "Danny Chung"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "D2-G60fuW_4",
+      "title": "AHOF(아홉) ‘그곳에서 다시 만나기로 해 (Rendezvous)’ Official MV",
+      "channel_title": "AHOF",
+      "current_key": "ahof",
+      "ytm_artists": [
+        "AHOF"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "wLKpQpC3-Sw",
+      "title": "izna 'BEEP' MV",
+      "channel_title": "izna (이즈나)",
+      "current_key": "izna (이즈나)",
+      "ytm_artists": [
+        "izna"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "ECqGCH1TfLY",
+      "title": "j-hope ‘MONA LISA’ Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "j",
+      "ytm_artists": [
+        "j-hope"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "Mt9SBZam4X4",
+      "title": "부석순 (SEVENTEEN) '청바지' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "BSS(SEVENTEEN)"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Gz_yRl6703c",
+      "title": "BABYMONSTER - 'BILLIONAIRE' EXCLUSIVE PERFORMANCE VIDEO",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "7ytGFxD-FcI",
+      "title": "Stray Kids \"JJAM\" M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "Stray Kids"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Qe8fa4b5xNU",
+      "title": "화사 (HWASA) - 'Good Goodbye' MV",
+      "channel_title": "HWASA",
+      "current_key": "화사",
+      "ytm_artists": [
+        "HWASA"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "JSFG-IE8n_c",
+      "title": "JENNIE - like JENNIE (Official Video)",
+      "channel_title": "JennieRubyJaneVEVO",
+      "current_key": "jennie",
+      "ytm_artists": [
+        "JENNIE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "Av9DvtlJ9_M",
+      "title": "지민 (Jimin) 'Who' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "Jimin"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "rTKqSmX9XhQ",
+      "title": "(여자)아이들((G)I-DLE) - '클락션 (Klaxon)' Official Music Video",
+      "channel_title": "i-dle (아이들)",
+      "current_key": "(여자)아이들((g)i",
+      "ytm_artists": [
+        "(G)I-DLE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "l9CZykYZkOQ",
+      "title": "KATSEYE (캣츠아이) \"Touch\" Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "HYBE LABELS"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "ekr2nIex040",
+      "title": "ROSÉ & Bruno Mars - APT. (Official Music Video)",
+      "channel_title": "ROSÉ",
+      "current_key": "ros",
+      "ytm_artists": [
+        "ROSÉ",
+        "Bruno Mars"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "bB3-CUMERIU",
+      "title": "JENNIE - Mantra (Official Video)",
+      "channel_title": "JennieRubyJaneVEVO",
+      "current_key": "jennie",
+      "ytm_artists": [
+        "JENNIE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "o0oW3lPoOXM",
+      "title": "BABYMONSTER - 'CLIK CLAK' M/V",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "0P0aQreFs8w",
+      "title": "Stray Kids \"Chk Chk Boom\" M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "Stray Kids"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Sz_wWzgh-vQ",
+      "title": "TWICE “Strategy (feat. Megan Thee Stallion)” M/V",
+      "channel_title": "JYP Entertainment",
+      "current_key": "jyp",
+      "ytm_artists": [
+        "TWICE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "r9AEGPB6qIU",
+      "title": "LE SSERAFIM (르세라핌) 'HOT' OFFICIAL MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "LE SSERAFIM"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "2hwiRN8t8Ok",
+      "title": "ZEROBASEONE (제로베이스원) 'BLUE' MV",
+      "channel_title": "ZEROBASEONE",
+      "current_key": "zerobaseone",
+      "ytm_artists": [
+        "ZEROBASEONE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "Zp-Jhuhq0bQ",
+      "title": "BABYMONSTER - 'DRIP' M/V",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "M8r3x4Re8-I",
+      "title": "BABYMONSTER - 'LIKE THAT' EXCLUSIVE PERFORMANCE VIDEO",
+      "channel_title": "BABYMONSTER",
+      "current_key": "babymonster",
+      "ytm_artists": [
+        "BABYMONSTER"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "ZncbtRo7RXs",
+      "title": "NewJeans (뉴진스) ‘Supernatural’ Official MV (Part.1)",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "NewJeans"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "phuiiNCxRMg",
+      "title": "aespa 에스파 'Supernova' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "aespa"
+      ],
+      "ytm_album": null,
+      "video_type": null,
+      "agrees": false
+    },
+    {
+      "video_id": "QU9c0053UAU",
+      "title": "정국 (Jung Kook) 'Seven (feat. Latto)' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "Jung Kook"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "UNo0TG9LwwI",
+      "title": "정국 (Jung Kook) 'Standing Next to You' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "Jung Kook"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "e42AhJzYpVE",
+      "title": "TXT (투모로우바이투게더), Anitta ‘Back for More’ Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "TOMORROW X TOGETHER",
+        "Anitta"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "eQNHDV7lKgE",
+      "title": "JENNIE - ‘You & Me’ DANCE PERFORMANCE VIDEO",
+      "channel_title": "BLACKPINK",
+      "current_key": "blackpink",
+      "ytm_artists": [
+        "JENNIE"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "wXFLzODIdUI",
+      "title": "ENHYPEN (엔하이픈) 'Bite Me' Official MV",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "ENHYPEN"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Os_heh8vPfs",
+      "title": "aespa 에스파 'Spicy' MV",
+      "channel_title": "SMTOWN",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "aespa"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "YudHcBIxlYw",
+      "title": "JISOO - ‘꽃(FLOWER)’ M/V",
+      "channel_title": "BLACKPINK",
+      "current_key": "blackpink",
+      "ytm_artists": [
+        "JISOO",
+        "BLACKPINK"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "UBURTj20HXI",
+      "title": "LE SSERAFIM (르세라핌) 'UNFORGIVEN (feat. Nile Rodgers)' OFFICIAL M/V",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "LE SSERAFIM"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "NFnAuiklEug",
+      "title": "TAEYANG - ‘Shoong! (feat. LISA of BLACKPINK)’ PERFORMANCE VIDEO",
+      "channel_title": "THEBLACKLABEL",
+      "current_key": "taeyang",
+      "ytm_artists": [
+        "TAEYANG"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "pyf8cbqyfPs",
+      "title": "LE SSERAFIM (르세라핌) 'ANTIFRAGILE' OFFICIAL M/V",
+      "channel_title": "HYBE LABELS",
+      "current_key": "unknown",
+      "ytm_artists": [
+        "LE SSERAFIM"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "rGAufcIfNtY",
+      "title": "eaJ - Feel Myself (Official Music Video)",
+      "channel_title": "eaJ",
+      "current_key": "eaj",
+      "ytm_artists": [
+        "eaJ"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    }
+  ],
+  "colon_credit_ratio": 0.0,
+  "group_count_ratio": 1.59
+}

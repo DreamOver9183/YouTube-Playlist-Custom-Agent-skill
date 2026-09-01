@@ -1,0 +1,712 @@
+{
+  "playlist_id": "PLtskdo8cFkvnghsg3czSpDRLsjsfRU9nh",
+  "ytm_track_count": 58,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_ATV": 27,
+    "MUSIC_VIDEO_TYPE_OMV": 19,
+    "MUSIC_VIDEO_TYPE_UGC": 11,
+    "null": 1
+  },
+  "album_coverage": 28,
+  "album_distinct": 23,
+  "artist_entity_coverage": 57,
+  "api_item_count": 58,
+  "invisible_to_ytm": [
+    {
+      "video_id": "fAr618-q9-4",
+      "title": "The Ancient Truth",
+      "channel_title": "Celtic Space - Topic"
+    }
+  ],
+  "rows": [
+    {
+      "video_id": "jUuknk81n2w",
+      "title": "Swordland",
+      "channel_title": "Yuki Kajiura - Topic",
+      "current_key": "yuki kajiura",
+      "ytm_artists": [
+        "Yuki Kajiura"
+      ],
+      "ytm_album": "SWORD ART ONLINE MUSIC COLLECTION",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "kvRCVbS81eg",
+      "title": "Sword Art Online Progressive: Swordland | EPIC VERSION",
+      "channel_title": "Kensei Music",
+      "current_key": "kensei",
+      "ytm_artists": [
+        "Kensei Music"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "o5ZsMir0VLI",
+      "title": "Sword Art Online Progressive: Luminous Sword | EPIC VERSION",
+      "channel_title": "Kensei Music",
+      "current_key": "kensei",
+      "ytm_artists": [
+        "Kensei Music"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "8-wpYnNsfjU",
+      "title": "Sword Art Online Progressive: Survive the Swordland | EPIC VERSION",
+      "channel_title": "Kensei Music",
+      "current_key": "kensei",
+      "ytm_artists": [
+        "Kensei Music"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "AFVFHqJkNRg",
+      "title": "Light Your Sword/Luminous Sword 『ソードアートオンライン』",
+      "channel_title": "renge camp",
+      "current_key": "renge camp",
+      "ytm_artists": [
+        "renge camp"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "LGqp-uktNzc",
+      "title": "Sword Art Online Alicization: Find Your Sword In This Land OST",
+      "channel_title": "Walry 374",
+      "current_key": "walry 374",
+      "ytm_artists": [
+        "Walry 374"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "Y5A_c50-Kpc",
+      "title": "Sword Art Online Alicization: The Human Empire Army OST",
+      "channel_title": "Walry 374",
+      "current_key": "walry 374",
+      "ytm_artists": [
+        "Walry 374"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "pICAha0nsb0",
+      "title": "Two Steps From Hell - Star Sky",
+      "channel_title": "Two Steps From Hell",
+      "current_key": "two steps from hell",
+      "ytm_artists": [
+        "Two Steps from Hell",
+        "Thomas Bergersen"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "hKRUPYrAQoE",
+      "title": "Two Steps From Hell - Victory",
+      "channel_title": "Two Steps From Hell",
+      "current_key": "two steps from hell",
+      "ytm_artists": [
+        "Two Steps from Hell",
+        "Thomas Bergersen"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "9k1F3PjY948",
+      "title": "【Emotional】Licht | by Hiroyuki Sawano",
+      "channel_title": "My Soul Your Beats",
+      "current_key": "emotional",
+      "ytm_artists": [
+        "My Soul Your Beats"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "pwUbtbLJ84U",
+      "title": "《Garena 傳說對決》716新背景音樂主題曲2（自錄高音效版）",
+      "channel_title": "仰ぎのぞみます慶太",
+      "current_key": "仰ぎのぞみます慶太",
+      "ytm_artists": [
+        "仰ぎのぞみます慶太"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "G2w7h0Ye-b8",
+      "title": "Marcus Warner - Octavia (feat. Brione Jackson)",
+      "channel_title": "Marcus Warner",
+      "current_key": "marcus warner",
+      "ytm_artists": [
+        "Marcus Warner"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "EW1kt5kOJQ8",
+      "title": "A UNIVERSE REBORN | Beethoven: Ode to Joy - Most Epic Trailer Masterpiece",
+      "channel_title": "Epic Music VN",
+      "current_key": "a universe reborn | beethoven: ode to joy",
+      "ytm_artists": [
+        "Epic Music VN"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "hYgcFeNtZIg",
+      "title": "Into the Sky",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "scene",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "5t5zJPB7GL0",
+      "title": "Release My Soul",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano"
+      ],
+      "ytm_album": "GUILTY CROWN ORIGINAL SOUNDTRACK",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "LbQvd99RSiY",
+      "title": "River Flows in You",
+      "channel_title": "Yiruma - Topic",
+      "current_key": "yiruma",
+      "ytm_artists": [
+        "Yiruma"
+      ],
+      "ytm_album": "The Best - Reminiscent 10th Anniversary",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "RCMXO9sBIcU",
+      "title": "Most Beautiful Music Ever: \"Everdream\" by Epic Soul Factory",
+      "channel_title": "HDSounDI",
+      "current_key": "hdsoundi",
+      "ytm_artists": [
+        "HDSounDI"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "zTNC6Y_z15Y",
+      "title": "澤野弘之 『scene』Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "gUFKssA3t3g",
+      "title": "Counting Stars",
+      "channel_title": "Simply Three - Topic",
+      "current_key": "simply three",
+      "ytm_artists": [
+        "Simply Three"
+      ],
+      "ytm_album": "Volume 2",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "BF3JGIvK71I",
+      "title": "Joe Hisaishi - My Neighbour TOTORO",
+      "channel_title": "JoeHisaishiVEVO",
+      "current_key": "joe hisaishi",
+      "ytm_artists": [
+        "Joe Hisaishi"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "oy2zDJPIgwc",
+      "title": "Eine Kleine Nachtmusik - Mozart",
+      "channel_title": "AllClassicalMusic",
+      "current_key": "eine kleine nachtmusik",
+      "ytm_artists": [
+        "AllClassicalMusic"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "FtMhJH_rui4",
+      "title": "Date",
+      "channel_title": "Radwimps - Topic",
+      "current_key": "radwimps",
+      "ytm_artists": [
+        "RADWIMPS"
+      ],
+      "ytm_album": "Your Name.",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Z2IUOVSl1rU",
+      "title": "Flower Dance (Piano Version)",
+      "channel_title": "Riyandi Kusuma - Topic",
+      "current_key": "riyandi kusuma",
+      "ytm_artists": [
+        "Riyandi Kusuma"
+      ],
+      "ytm_album": "Piano Collection, Vol. 1",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "JjZrMrcYHws",
+      "title": "Time To Love",
+      "channel_title": "OCTOBER - Topic",
+      "current_key": "october",
+      "ytm_artists": [
+        "OCTOBER"
+      ],
+      "ytm_album": "Vain",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "55V9Kmb13Iw",
+      "title": "Like Fate Again",
+      "channel_title": "Flow Music - Topic",
+      "current_key": "flow",
+      "ytm_artists": [
+        "Flow Music"
+      ],
+      "ytm_album": "Night Sky Train",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "tCl1q0GLTUE",
+      "title": "The Name Of Life (From \"Spirited Away\")",
+      "channel_title": "Geek Music - Topic",
+      "current_key": "geek",
+      "ytm_artists": [
+        "Geek Music"
+      ],
+      "ytm_album": "Studio Ghibli",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "CiXt2agvAso",
+      "title": "Faded (Piano Version)",
+      "channel_title": "Riyandi Kusuma - Topic",
+      "current_key": "riyandi kusuma",
+      "ytm_artists": [
+        "Riyandi Kusuma"
+      ],
+      "ytm_album": "Piano Collection, Vol. 1",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "faf98cNY8A8",
+      "title": "Joe Hisaishi - Ashitaka and San",
+      "channel_title": "JoeHisaishiVEVO",
+      "current_key": "joe hisaishi",
+      "ytm_artists": [
+        "Joe Hisaishi"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "7_zickTYQOM",
+      "title": "언제나 몇 번이라도 [피아노] (센과 치히로의 행방불명)",
+      "channel_title": "Flow Music - Topic",
+      "current_key": "flow",
+      "ytm_artists": [
+        "Flow Music"
+      ],
+      "ytm_album": "애니메이션 피아노",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "zNOIZPG5e0E",
+      "title": "澤野弘之『Call your name』Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "NyFDZp4sbWo",
+      "title": "Interstellar (Main Theme Piano)",
+      "channel_title": "Gacabe & Jecabe - Topic",
+      "current_key": "gacabe & jecabe",
+      "ytm_artists": [
+        "Gacabe & Jecabe"
+      ],
+      "ytm_album": "Interstellar (Main Theme Piano) (Cover)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "T8w3L1rS3o4",
+      "title": "澤野弘之『EARth』Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "bECtZ4TeLQE",
+      "title": "澤野弘之『eye-water』Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "eLCRJq4etUE",
+      "title": "Binary Star (Instrumental)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "Binary Star/Cage",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "--JPSBwUAQc",
+      "title": "Cage (Instrumental)",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]"
+      ],
+      "ytm_album": "Binary Star/Cage",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "y63WJVXw_Ek",
+      "title": "Taiwan National Flag Anthem - 中華民國國旗歌 (Orchestral Version)",
+      "channel_title": "96c - Topic",
+      "current_key": "taiwan national flag anthem",
+      "ytm_artists": [
+        "96c"
+      ],
+      "ytm_album": "Taiwan National Flag Anthem - 中華民國國旗歌 (Orchestral Version)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "wBT8pkmnpSs",
+      "title": "Night Sky Train",
+      "channel_title": "Flow Music - Topic",
+      "current_key": "flow",
+      "ytm_artists": [
+        "Flow Music"
+      ],
+      "ytm_album": "Night Sky Train",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "WaUkb5n94SI",
+      "title": "A-Sin",
+      "channel_title": "OCTOBER - Topic",
+      "current_key": "a",
+      "ytm_artists": [
+        "OCTOBER"
+      ],
+      "ytm_album": "Vain",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "SCWsn7HZjnU",
+      "title": "SawanoHiroyuki[nZk]:Tielle - On Your Mark",
+      "channel_title": "Riki Febrian",
+      "current_key": "sawanohiroyuki[nzk]:tielle",
+      "ytm_artists": [
+        "Riki Febrian"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "d5nLYNTeze0",
+      "title": "ON YOUR MARK",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "澤野弘之"
+      ],
+      "ytm_album": "機動戦士ガンダムUC オリジナルサウンドトラック 1",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "rXgZOCiIMrE",
+      "title": "ON YOUR MARK - Hiroyuki Sawano Ft. Tielle",
+      "channel_title": "SocialRoom",
+      "current_key": "on your mark",
+      "ytm_artists": [
+        "SocialRoom"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": false
+    },
+    {
+      "video_id": "TYZjs-RRUbA",
+      "title": "Canon in D Epic Orchestral",
+      "channel_title": "Epic Raf Projects - Topic",
+      "current_key": "epic raf projects",
+      "ytm_artists": [
+        "Epic Raf Projects"
+      ],
+      "ytm_album": "Canon in D Epic Orchestral",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "YE41MxioO1s",
+      "title": "Viva La Vida",
+      "channel_title": "Kāru - Topic",
+      "current_key": "kāru",
+      "ytm_artists": [
+        "Kāru"
+      ],
+      "ytm_album": "Viva La Vida",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "YsOIVb2BW8A",
+      "title": "Hiroyuki SAWANO / Project【emU】 “GUILTY CROWN” suite",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "H76_uW1Fnso",
+      "title": "Vogel im Käfig",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "Hiroyuki Sawano",
+        "Cyua"
+      ],
+      "ytm_album": "TV Anime \"Attack on Titan\" Original Soundtrack",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "7XECQVDOVG4",
+      "title": "Wake Me Up",
+      "channel_title": "Simply Three - Topic",
+      "current_key": "simply three",
+      "ytm_artists": [
+        "Simply Three"
+      ],
+      "ytm_album": "Volume 2",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "8qNEhVIItCE",
+      "title": "Ninelie ᐸcry-vᐳ instrumental",
+      "channel_title": "Hiroyuki SAWANO - Topic",
+      "current_key": "hiroyuki sawano",
+      "ytm_artists": [
+        "SawanoHiroyuki[nZk]:Aimer"
+      ],
+      "ytm_album": "e of s EP",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "xA3px-brPWo",
+      "title": "交响组曲·刀剑神域 | ソードアート・オンライン | Sword Art Online",
+      "channel_title": "Imperial 9 Symphony Orchestra · 帝玖管弦乐团",
+      "current_key": "imperial 9 symphony orchestra · 帝玖管弦乐团",
+      "ytm_artists": [
+        "Imperial 9 Symphony Orchestra · 帝玖管弦乐团"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_UGC",
+      "agrees": true
+    },
+    {
+      "video_id": "9z7N2QbHkMg",
+      "title": "we will finish this game",
+      "channel_title": "Yuki Kajiura - Topic",
+      "current_key": "yuki kajiura",
+      "ytm_artists": [
+        "Yuki Kajiura"
+      ],
+      "ytm_album": "Sword Art Online the Movie -Progressive- Aria of a Starless Night Original Sound Track",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "MY_q3BRwF1M",
+      "title": "澤野弘之『EGO』Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "MYcI1A6rBjg",
+      "title": "澤野弘之『Vogel im Käfig』Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "i8X2I1u7QSc",
+      "title": "澤野弘之『46-:ri9』Music Video",
+      "channel_title": "澤野弘之 / SawanoHiroyuki[nZk]",
+      "current_key": "澤野弘之 / sawanohiroyuki[nzk]",
+      "ytm_artists": [
+        "Hiroyuki SAWANO"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "Ouua04eqcMM",
+      "title": "Canon In D - River Flows In You (Orchestral Arr.)",
+      "channel_title": "Eternity Roze - Topic",
+      "current_key": "canon in d",
+      "ytm_artists": [
+        "Eternity Roze"
+      ],
+      "ytm_album": "Canon In D - River Flows In You (Orchestral Arr.)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "CsMfc5o_hT8",
+      "title": "Attack on Titan S4 ED: Akuma no Ko | EMOTIONAL ORCHESTRAL VERSION",
+      "channel_title": "Samuel Kim Music",
+      "current_key": "samuel kim",
+      "ytm_artists": [
+        "Samuel Kim"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": true
+    },
+    {
+      "video_id": "k7s5i5QjeNM",
+      "title": "『4N x T-KT』(Attack on Titan x Eighty-Six 86 OST) | EPIC COVER",
+      "channel_title": "Jaden-Core Music",
+      "current_key": "『4n x t",
+      "ytm_artists": [
+        "Jaden-Core"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "JBbEXxMdn2E",
+      "title": "See You Again - EPIC ORCHESTRAL REMIX (F9 Official Trailer Music)",
+      "channel_title": "Samuel Kim Music",
+      "current_key": "see you again",
+      "ytm_artists": [
+        "Samuel Kim, Lorien"
+      ],
+      "ytm_album": null,
+      "video_type": "MUSIC_VIDEO_TYPE_OMV",
+      "agrees": false
+    },
+    {
+      "video_id": "K892qn3U524",
+      "title": "Ezio's Family",
+      "channel_title": "Jesper Kyd - Topic",
+      "current_key": "jesper kyd",
+      "ytm_artists": [
+        "Jesper Kyd"
+      ],
+      "ytm_album": "Assassin's Creed 2 (Original Game Soundtrack)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    }
+  ],
+  "colon_credit_ratio": 0.017241379310344827,
+  "group_count_ratio": 1.0
+}

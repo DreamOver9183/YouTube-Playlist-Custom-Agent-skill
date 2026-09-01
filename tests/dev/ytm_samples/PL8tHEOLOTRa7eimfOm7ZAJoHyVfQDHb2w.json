@@ -1,0 +1,386 @@
+{
+  "playlist_id": "PL8tHEOLOTRa7eimfOm7ZAJoHyVfQDHb2w",
+  "ytm_track_count": 31,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_ATV": 30,
+    "null": 1
+  },
+  "album_coverage": 31,
+  "album_distinct": 31,
+  "artist_entity_coverage": 29,
+  "api_item_count": 31,
+  "invisible_to_ytm": [
+    {
+      "video_id": "0ucIKsAT5bc",
+      "title": "辞九门回忆 DJ 【误闯天家 新抖音Dj歌曲】",
+      "channel_title": "DJ Vibe-好听音乐 - Topic"
+    }
+  ],
+  "rows": [
+    {
+      "video_id": "B1HFLN7J3CI",
+      "title": "What Time Is It There Now?",
+      "channel_title": "Tiger Huang - Topic",
+      "current_key": "tiger huang",
+      "ytm_artists": [
+        "Tiger Huang"
+      ],
+      "ytm_album": "One More Time, One More Chance",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "w7dPnO9by4U",
+      "title": "讲真的",
+      "channel_title": "曾惜 - Topic",
+      "current_key": "曾惜",
+      "ytm_artists": [
+        "曾惜"
+      ],
+      "ytm_album": "讲真的",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "CVFOSXRT1R4",
+      "title": "Love Is Not Easy",
+      "channel_title": "Jinny Ng - Topic",
+      "current_key": "jinny ng",
+      "ytm_artists": [
+        "Jinny Ng"
+      ],
+      "ytm_album": "Love Is Not Easy",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "KXBMh4KRVpE",
+      "title": "猜不透 (说唱版)",
+      "channel_title": "刘思达LOFTHESTAR - Topic",
+      "current_key": "刘思达lofthestar",
+      "ytm_artists": [
+        "刘思达LOFTHESTAR",
+        "卢卢快闭嘴"
+      ],
+      "ytm_album": "猜不透 (说唱版)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "7BT-baZHhF8",
+      "title": "最后一页 (Remix)",
+      "channel_title": "相思落无声 - Topic",
+      "current_key": "相思落无声",
+      "ytm_artists": [
+        "相思落无声",
+        "藤柒吖"
+      ],
+      "ytm_album": "最后一页 (Remix)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "YkgPxwOiLCc",
+      "title": "我想要佔據你",
+      "channel_title": "告五人 - Topic",
+      "current_key": "告五人",
+      "ytm_artists": [
+        "告五人"
+      ],
+      "ytm_album": "帶你飛",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "E52qnW59iEE",
+      "title": "愛人錯過",
+      "channel_title": "告五人 - Topic",
+      "current_key": "告五人",
+      "ytm_artists": [
+        "告五人"
+      ],
+      "ytm_album": "我肯定在幾百年前就說過愛你",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "CPONUbyJ3YM",
+      "title": "You are my magic",
+      "channel_title": "Release - Topic",
+      "current_key": "release",
+      "ytm_artists": [
+        "Accusefive"
+      ],
+      "ytm_album": "Rose Says",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "8lgxLB-x4OI",
+      "title": "把回忆拼好给你",
+      "channel_title": "王贰浪 - Topic",
+      "current_key": "王贰浪",
+      "ytm_artists": [
+        "王貳浪"
+      ],
+      "ytm_album": "把回忆拼好给你",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "Ii46Q7i4uuk",
+      "title": "夜曲",
+      "channel_title": "Jay Chou - Topic",
+      "current_key": "jay chou",
+      "ytm_artists": [
+        "周杰倫"
+      ],
+      "ytm_album": "11月的蕭邦",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "PYbwES_ISUc",
+      "title": "起风了（The Wind）",
+      "channel_title": "馮沁苑LaJiao - Topic",
+      "current_key": "馮沁苑lajiao",
+      "ytm_artists": [
+        "馮沁苑LaJiao"
+      ],
+      "ytm_album": "起风了（The Wind）",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "M-qe0q1EOZk",
+      "title": "Lies Between Us",
+      "channel_title": "Jason Chan - Topic",
+      "current_key": "jason chan",
+      "ytm_artists": [
+        "Jason Chan"
+      ],
+      "ytm_album": "Can't Be Half",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Xw8zuUKauxs",
+      "title": "小半",
+      "channel_title": "Chen Li - Topic",
+      "current_key": "chen li",
+      "ytm_artists": [
+        "陳粒"
+      ],
+      "ytm_album": "小梦大半",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "EDLanl2PC_I",
+      "title": "错位时空",
+      "channel_title": "艾辰 - Topic",
+      "current_key": "艾辰",
+      "ytm_artists": [
+        "艾辰"
+      ],
+      "ytm_album": "错位时空",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "NurDeVJOA1I",
+      "title": "心跳的证明",
+      "channel_title": "不是花火呀 - Topic",
+      "current_key": "不是花火呀",
+      "ytm_artists": [
+        "不是花火呀"
+      ],
+      "ytm_album": "心跳的证明",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "RZ7-YyBLphs",
+      "title": "盗墓笔记·十年人间（八一七稻米节主题推广曲）",
+      "channel_title": "李常超 (Lao乾妈) - Topic",
+      "current_key": "李常超 (lao乾妈)",
+      "ytm_artists": [
+        "李常超"
+      ],
+      "ytm_album": "盗墓笔记·十年人间（八一七稻米节主题推广曲）",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_OhErmVm1Ao",
+      "title": "越來越不懂",
+      "channel_title": "Tanya Chua - Topic",
+      "current_key": "tanya chua",
+      "ytm_artists": [
+        "蔡健雅"
+      ],
+      "ytm_album": "Goodbye & Hello",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "TOC78RUj8pg",
+      "title": "Jumping Machine (跳楼机)",
+      "channel_title": "LBI - Topic",
+      "current_key": "lbi",
+      "ytm_artists": [
+        "LBI"
+      ],
+      "ytm_album": "Jumping Machine (跳楼机)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "6PUIjE3vGVY",
+      "title": "春庭雪",
+      "channel_title": "等什么君(邓寓君) - Topic",
+      "current_key": "等什么君(邓寓君)",
+      "ytm_artists": [
+        "等什么君"
+      ],
+      "ytm_album": "春庭雪",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Y1VKKboWu-8",
+      "title": "半生雪",
+      "channel_title": "Silk Ye - Topic",
+      "current_key": "silk ye",
+      "ytm_artists": [
+        "Silk Ye"
+      ],
+      "ytm_album": "半生雪",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "yM1PkF6uEX8",
+      "title": "土坡上的狗尾草",
+      "channel_title": "卢润泽 - Topic",
+      "current_key": "卢润泽",
+      "ytm_artists": [
+        "卢润泽"
+      ],
+      "ytm_album": "土坡上的狗尾草",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "A0rLnILLc-U",
+      "title": "Do You Ever Shine? Life Live",
+      "channel_title": "Mayday - Topic",
+      "current_key": "mayday",
+      "ytm_artists": [
+        "五月天"
+      ],
+      "ytm_album": "五月天 人生無限公司 Life Live 完整收錄篇",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "AfSOdGrbAmc",
+      "title": "时光大耳窿",
+      "channel_title": "3P - Topic",
+      "current_key": "3p",
+      "ytm_artists": [
+        "3P"
+      ],
+      "ytm_album": "时光大耳窿",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "yYAu2xz64Fs",
+      "title": "鑫",
+      "channel_title": "3P - Topic",
+      "current_key": "3p",
+      "ytm_artists": [
+        "3P"
+      ],
+      "ytm_album": "鑫",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "4T6x1vGc9qM",
+      "title": "莫问归期 (2024)",
+      "channel_title": " 蒋雪儿Snow.J - Topic",
+      "current_key": "蒋雪儿snow.j",
+      "ytm_artists": [
+        "蒋雪儿Snow.J"
+      ],
+      "ytm_album": "莫问归期 (2024)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "tc4k170HmCY",
+      "title": "海屿你",
+      "channel_title": "马也Crabbit - Topic",
+      "current_key": "马也crabbit",
+      "ytm_artists": [
+        "马也Crabbit"
+      ],
+      "ytm_album": "海屿你",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "gHk8MIx6nfY",
+      "title": "第57次取消发送",
+      "channel_title": "菲菲公主_Feyfey - Topic",
+      "current_key": "菲菲公主_feyfey",
+      "ytm_artists": [
+        "菲菲公主"
+      ],
+      "ytm_album": "第57次取消发送",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Ke-xD5_3tGY",
+      "title": "一点点 (DJ版)",
+      "channel_title": "董唧唧 - Topic",
+      "current_key": "董唧唧",
+      "ytm_artists": [
+        "董唧唧",
+        "芊芊龍"
+      ],
+      "ytm_album": "一点点 (DJ版)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "hMjeasOrI0M",
+      "title": "九张机 (《双世宠妃》网剧主题曲)",
+      "channel_title": "叶炫清 - Topic",
+      "current_key": "叶炫清",
+      "ytm_artists": [
+        "叶炫清"
+      ],
+      "ytm_album": "九张机 (《双世宠妃》网剧主题曲)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "y_Jbo70WQes",
+      "title": "童话镇",
+      "channel_title": "陈雪凝 - Topic",
+      "current_key": "陈雪凝",
+      "ytm_artists": [
+        "陈雪凝"
+      ],
+      "ytm_album": "童话镇",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    }
+  ],
+  "colon_credit_ratio": 0.0,
+  "group_count_ratio": 1.0
+}

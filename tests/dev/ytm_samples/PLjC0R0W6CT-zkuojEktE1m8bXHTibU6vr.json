@@ -1,0 +1,539 @@
+{
+  "playlist_id": "PLjC0R0W6CT-zkuojEktE1m8bXHTibU6vr",
+  "ytm_track_count": 44,
+  "video_types": {
+    "MUSIC_VIDEO_TYPE_ATV": 43,
+    "null": 1
+  },
+  "album_coverage": 44,
+  "album_distinct": 43,
+  "artist_entity_coverage": 43,
+  "api_item_count": 44,
+  "invisible_to_ytm": [
+    {
+      "video_id": "pS1zkKpI_g0",
+      "title": "Sign",
+      "channel_title": "Mr.Children - Topic"
+    }
+  ],
+  "rows": [
+    {
+      "video_id": "Vc3vuOaiejU",
+      "title": "Shunrai",
+      "channel_title": "Kenshi Yonezu - Topic",
+      "current_key": "kenshi yonezu",
+      "ytm_artists": [
+        "Kenshi Yonezu"
+      ],
+      "ytm_album": "BOOTLEG",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "pttAqZ82uEc",
+      "title": "一目惚れ",
+      "channel_title": "Manato Funatsu - Topic",
+      "current_key": "manato funatsu",
+      "ytm_artists": [
+        "舟津真翔"
+      ],
+      "ytm_album": "一目惚れ",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "l-k70gZmFqU",
+      "title": "Moshimo Unmeinohitoga Irunonara",
+      "channel_title": "Kana Nishino - Topic",
+      "current_key": "kana nishino",
+      "ytm_artists": [
+        "Kana Nishino"
+      ],
+      "ytm_album": "Just Love",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "tab57F-IctY",
+      "title": "A Song to the Sun",
+      "channel_title": "Kaoru Amane - Topic",
+      "current_key": "kaoru amane",
+      "ytm_artists": [
+        "Kaoru Amane"
+      ],
+      "ytm_album": "A Song to the Sun",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "-lL34hvzZZA",
+      "title": "君のパレード",
+      "channel_title": "the shes gone - Topic",
+      "current_key": "the shes gone",
+      "ytm_artists": [
+        "the shes gone"
+      ],
+      "ytm_album": "MORE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "7Ze7MDQjXS0",
+      "title": "Soranji",
+      "channel_title": "Mrs. GREEN APPLE - Topic",
+      "current_key": "mrs. green apple",
+      "ytm_artists": [
+        "Mrs. GREEN APPLE"
+      ],
+      "ytm_album": "Soranji",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "FkxGM6PxQ0A",
+      "title": "あの子",
+      "channel_title": "Soala - Topic",
+      "current_key": "soala",
+      "ytm_artists": [
+        "Soala"
+      ],
+      "ytm_album": "ANOKO",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "JHzVz5eEF4Y",
+      "title": "Koiiro",
+      "channel_title": "Mosawo - Topic",
+      "current_key": "mosawo",
+      "ytm_artists": [
+        "Mosawo"
+      ],
+      "ytm_album": "Koiiro",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "IlADA7xOByU",
+      "title": "君がくれた夏",
+      "channel_title": "Leo Ieiri - Topic",
+      "current_key": "leo ieiri",
+      "ytm_artists": [
+        "Leo Ieiri"
+      ],
+      "ytm_album": "WE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Dk6H4vFF8sw",
+      "title": "恋のつぼみ",
+      "channel_title": "Kumi Koda - Topic",
+      "current_key": "kumi koda",
+      "ytm_artists": [
+        "倖田來未"
+      ],
+      "ytm_album": "Black Cherry",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "W7LYVXMZQ1g",
+      "title": "NAKAMA",
+      "channel_title": "Ryo - Topic",
+      "current_key": "ryo",
+      "ytm_artists": [
+        "RYO"
+      ],
+      "ytm_album": "ONE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ZYZp78E4JxA",
+      "title": "スパークル",
+      "channel_title": "Lilas - Topic",
+      "current_key": "lilas",
+      "ytm_artists": [
+        "幾田りら"
+      ],
+      "ytm_album": "Sketch",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "eEsvKzLyijo",
+      "title": "Arigatou",
+      "channel_title": "Takuya Ohashi - Topic",
+      "current_key": "takuya ohashi",
+      "ytm_artists": [
+        "Takuya Ohashi"
+      ],
+      "ytm_album": "Drunk Monkeys",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "m4wzdyntaXM",
+      "title": "Missing",
+      "channel_title": "DEEP - Topic",
+      "current_key": "deep",
+      "ytm_artists": [
+        "DEEP"
+      ],
+      "ytm_album": "DEEP BEST",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "0z5suNhEU-0",
+      "title": "僕の横で眠るキミが",
+      "channel_title": "RYUKI - Topic",
+      "current_key": "ryuki",
+      "ytm_artists": [
+        "Ryuki"
+      ],
+      "ytm_album": "bokunoyokodenemukimiga",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "wG9hQlb-N9c",
+      "title": "Mitsunotsuki -For The Film-",
+      "channel_title": "SEKAI NO OWARI - Topic",
+      "current_key": "mitsunotsuki",
+      "ytm_artists": [
+        "SEKAI NO OWARI"
+      ],
+      "ytm_album": "Mitsunotsuki -For The Film-",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "TFOsMThg2Yk",
+      "title": "Ready to Run",
+      "channel_title": "One Direction - Topic",
+      "current_key": "one direction",
+      "ytm_artists": [
+        "One Direction"
+      ],
+      "ytm_album": "FOUR (Deluxe)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Fef5tqhxB5M",
+      "title": "Ryuseigun (This Armor Version)",
+      "channel_title": "Chihiro Onitsuka - Topic",
+      "current_key": "chihiro onitsuka",
+      "ytm_artists": [
+        "Chihiro Onitsuka"
+      ],
+      "ytm_album": "This Armor",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Cob1sgCqA8E",
+      "title": "On a Cherry Blossom Night",
+      "channel_title": "aimyon - Topic",
+      "current_key": "aimyon",
+      "ytm_artists": [
+        "aimyon"
+      ],
+      "ytm_album": "Till I Know What Love Is (I'm Never Gonna Die) / On a Cherry Blossom Night",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "NcQMTQR68zg",
+      "title": "Kiss of Life",
+      "channel_title": "Ken Hirai - Topic",
+      "current_key": "ken hirai",
+      "ytm_artists": [
+        "Ken Hirai"
+      ],
+      "ytm_album": "gaining through losing",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "BU8po0VB9dw",
+      "title": "Peter Pan",
+      "channel_title": "Yuuri - Topic",
+      "current_key": "yuuri",
+      "ytm_artists": [
+        "Yuuri"
+      ],
+      "ytm_album": "Ichi",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "2g3uMK3ew6k",
+      "title": "甘い記憶",
+      "channel_title": "the shes gone - Topic",
+      "current_key": "the shes gone",
+      "ytm_artists": [
+        "the shes gone"
+      ],
+      "ytm_album": "DAYS",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "k6mId1PZt5o",
+      "title": "Omokage",
+      "channel_title": "Kana Adachi - Topic",
+      "current_key": "kana adachi",
+      "ytm_artists": [
+        "Kana Adachi"
+      ],
+      "ytm_album": "I",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "NO287KIgiMY",
+      "title": "Time",
+      "channel_title": "Utada - Topic",
+      "current_key": "utada",
+      "ytm_artists": [
+        "Hikaru Utada"
+      ],
+      "ytm_album": "SCIENCE FICTION",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Sk9a9Df935s",
+      "title": "Easy Game",
+      "channel_title": "natsumi - Topic",
+      "current_key": "natsumi",
+      "ytm_artists": [
+        "natsumi"
+      ],
+      "ytm_album": "Easy Game",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "Oai5w45bZ-E",
+      "title": "Akan",
+      "channel_title": "Tiina Kariina - Topic",
+      "current_key": "tiina kariina",
+      "ytm_artists": [
+        "Tiina Kariina"
+      ],
+      "ytm_album": "Akan",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "jTfszcZqLvE",
+      "title": "Happyendhenokitaiha",
+      "channel_title": "macaroni enpitsu - Topic",
+      "current_key": "macaroni enpitsu",
+      "ytm_artists": [
+        "Macaroni Empitsu"
+      ],
+      "ytm_album": "Happyendhenokitaiha",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "v02o48-5O3s",
+      "title": "Aitakute Shikatanai",
+      "channel_title": "Hiromi Go - Topic",
+      "current_key": "hiromi go",
+      "ytm_artists": [
+        "Hiromi Go"
+      ],
+      "ytm_album": "I miss you -Aitakute Shikatanai",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "5PTy6H_k73Y",
+      "title": "今すぐＫｉｓｓ　Ｍｅ",
+      "channel_title": "LINDBERG - Topic",
+      "current_key": "lindberg",
+      "ytm_artists": [
+        "LINDBERG"
+      ],
+      "ytm_album": "LINDBERG III",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "VVOvv3YRElU",
+      "title": "碧いうさぎ",
+      "channel_title": "Noriko Sakai - Topic",
+      "current_key": "noriko sakai",
+      "ytm_artists": [
+        "Noriko Sakai"
+      ],
+      "ytm_album": "NO MAKE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "pUa3zI7mRZ8",
+      "title": "Tookutemo",
+      "channel_title": "Kana Nishino - Topic",
+      "current_key": "kana nishino",
+      "ytm_artists": [
+        "Kana Nishino"
+      ],
+      "ytm_album": "Love One.",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "pF9DN9dlJIs",
+      "title": "君のうた",
+      "channel_title": "ARASHI - Topic",
+      "current_key": "arashi",
+      "ytm_artists": [
+        "ARASHI"
+      ],
+      "ytm_album": "君のうた",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "ujm8xAxhVoc",
+      "title": "Yozora",
+      "channel_title": "Miwa - Topic",
+      "current_key": "miwa",
+      "ytm_artists": [
+        "miwa"
+      ],
+      "ytm_album": "SPLASH WORLD",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "z8WaWyJDVjo",
+      "title": "Tabiji",
+      "channel_title": "Fujii Kaze - Topic",
+      "current_key": "fujii kaze",
+      "ytm_artists": [
+        "Fujii Kaze"
+      ],
+      "ytm_album": "LOVE ALL SERVE ALL",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "xV7F5GoWcf4",
+      "title": "Overflows -Kotobani Dekinakute-",
+      "channel_title": "Naoto - Topic",
+      "current_key": "overflows",
+      "ytm_artists": [
+        "Naoto"
+      ],
+      "ytm_album": "Sixth Sense",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": false
+    },
+    {
+      "video_id": "A-4dlnKyduY",
+      "title": "Dear",
+      "channel_title": "Kana Nishino - Topic",
+      "current_key": "kana nishino",
+      "ytm_artists": [
+        "Kana Nishino"
+      ],
+      "ytm_album": "to LOVE",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_bWN1LYQHvI",
+      "title": "Give Love",
+      "channel_title": "AKMU - Topic",
+      "current_key": "akmu",
+      "ytm_artists": [
+        "AKMU"
+      ],
+      "ytm_album": "PLAY",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "_N8Zkfpfcig",
+      "title": "Flavor Of Life (Ballad Version / 2024 Mix)",
+      "channel_title": "Utada - Topic",
+      "current_key": "utada",
+      "ytm_artists": [
+        "Hikaru Utada"
+      ],
+      "ytm_album": "SCIENCE FICTION",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "shfwWdwir1M",
+      "title": "糸",
+      "channel_title": "EXILE ATSUSHI - Topic",
+      "current_key": "exile atsushi",
+      "ytm_artists": [
+        "EXILE ATSUSHI"
+      ],
+      "ytm_album": "Beautiful Gorgeous Love / First Liners",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "duuGxLQVOOQ",
+      "title": "君色",
+      "channel_title": "Kazuto Araki - Topic",
+      "current_key": "kazuto araki",
+      "ytm_artists": [
+        "Kazuto Araki"
+      ],
+      "ytm_album": "君色",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "g4gfc0yd3uU",
+      "title": "Cinderella Girl",
+      "channel_title": "King & Prince - Topic",
+      "current_key": "king & prince",
+      "ytm_artists": [
+        "King & Prince"
+      ],
+      "ytm_album": "Mr.5 (Special Edition)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "faJYoiFTrvo",
+      "title": "Ima Suguni...",
+      "channel_title": "AZU - Topic",
+      "current_key": "azu",
+      "ytm_artists": [
+        "AZU"
+      ],
+      "ytm_album": "Two of Us",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    },
+    {
+      "video_id": "L4fSKUL2uuk",
+      "title": "Piece Of My Wish (Live)",
+      "channel_title": "Miki Imai - Topic",
+      "current_key": "miki imai",
+      "ytm_artists": [
+        "Miki Imai"
+      ],
+      "ytm_album": "20051211 Ivory (Live)",
+      "video_type": "MUSIC_VIDEO_TYPE_ATV",
+      "agrees": true
+    }
+  ],
+  "colon_credit_ratio": 0.0,
+  "group_count_ratio": 1.0
+}
