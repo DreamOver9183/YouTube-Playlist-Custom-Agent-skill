@@ -32,6 +32,8 @@ from scripts.optimizer import (
     _fuzzy_match_artist,
     compute_lis_anchors,
     build_move_plan,
+    evaluate_grouping_benefit,
+    find_duplicate_videos,
     group_by_artist,
     plan_reorder,
     resolve_artist,
@@ -620,6 +622,258 @@ def test_position_drift_simulation():
 # ─── Main ────────────────────────────────────────
 
 
+def _write_aliases(mapping):
+    """Write an alias table to a temp file and return its path."""
+    import tempfile
+
+    handle = tempfile.NamedTemporaryFile(
+        "w", suffix=".json", delete=False, encoding="utf-8"
+    )
+    json.dump(mapping, handle, ensure_ascii=False)
+    handle.close()
+    return Path(handle.name)
+
+
+# --- Topic channels are the richest artist signal; keep them out of the blacklist ---
+
+
+def test_topic_channel_is_not_a_distributor():
+    """"<Artist> - Topic" must resolve through the channel layer, not be blacklisted.
+
+    _is_distributor_channel once carried an ``endswith(" - topic")`` branch that
+    could never fire, because _normalize_name strips the suffix first.  Deleting
+    dead code is harmless; "repairing" it against the raw title would not be.
+    Topic channels are auto-generated per artist, they carry 67% of the items in
+    the collected samples, and 96.6% of those resolve correctly this way.  Send
+    them to title parsing instead and you get song titles as artist names.
+    """
+    assert not _is_distributor_channel("tuki. - Topic")
+    assert not _is_distributor_channel("Hiroyuki SAWANO - Topic")
+
+    resolved = _resolve_channel("tuki. - Topic")
+    assert resolved is not None
+    assert resolved.artist_key == "tuki."
+    assert resolved.method == "channel"
+    assert resolved.confidence == 0.75
+
+    # Real label channels must still be rejected.
+    assert _is_distributor_channel("HYBE LABELS")
+    print("  ✓ Topic channels resolve to the artist and are not distributors")
+
+
+def test_song_title_can_still_hijack_a_topic_channel_without_aliases():
+    """A known, measured limitation — and the reason --aliases exists.
+
+    "<Song> - <Romanisation>" is a dash_separator match at 0.80, which is enough
+    to beat the channel's 0.75.  That lands it in the gray zone, where
+    _apply_channel_majority_override would normally put it back — but the
+    override needs >=2 *other* items on the same channel that resolved through
+    the channel layer, and when every track on the channel is titled this way
+    there are none.  Measured on the collected samples this hits 21 of 623
+    Topic-channel items (3.4%); the other 602 resolve to the channel correctly.
+
+    The remedy is the alias table, not a looser threshold: dropping the
+    corroboration requirement would let a single label-channel video override a
+    correctly named artist.  data/artist_aliases.json therefore lists these song
+    titles under their artist, and the canonicalisation pass in group_by_artist
+    folds them back together.
+    """
+    items = [
+        make_item("p1", "v1", "晚餐歌 - Bansanka", "tuki. - Topic", 0),
+        make_item("p2", "v2", "一輪花 - Ichirinka", "tuki. - Topic", 1),
+        make_item("p3", "v3", "地獄恋文 - Inferno Love Letter", "tuki. - Topic", 2),
+    ]
+
+    _, groups_without, _, _ = group_by_artist(items)
+    assert len(groups_without) == 3, (
+        f"documented limitation changed: {list(groups_without)}"
+    )
+
+    aliases = _write_aliases(
+        {"tuki.": ["晚餐歌", "一輪花", "地獄恋文"]}
+    )
+    _, groups_with, _, _ = group_by_artist(items, aliases)
+    assert len(groups_with) == 1, f"aliases should rescue them: {list(groups_with)}"
+    assert sum(len(v) for v in groups_with.values()) == 3
+    print("  ✓ title-hijacked Topic tracks split without aliases, merge with them")
+
+
+# --- Alias canonicalisation ---
+
+
+def test_aliases_merge_recognised_but_differently_spelled_keys():
+    """The alias table must merge groups that were recognised, just spelled apart."""
+    items = [
+        make_item("p1", "v1", "Lemon", "Kenshi Yonezu - Topic", 0),
+        make_item("p2", "v2", "パプリカ", "米津玄師 - Topic", 1),
+        make_item("p3", "v3", "KICK BACK", "kenshi yonezu - Topic", 2),
+    ]
+
+    tmp_aliases = _write_aliases(
+        {"米津玄師": ["Kenshi Yonezu", "kenshi yonezu"]}
+    )
+
+    _, groups_without, _, _ = group_by_artist(items)
+    assert len(groups_without) == 2, (
+        f"cross-language split should survive without aliases: {list(groups_without)}"
+    )
+
+    _, groups_with, _, _ = group_by_artist(items, tmp_aliases)
+    assert len(groups_with) == 1, f"aliases should merge them: {list(groups_with)}"
+    assert sum(len(v) for v in groups_with.values()) == 3
+    print("  ✓ --aliases merges kenshi yonezu / 米津玄師 into one group")
+
+
+def test_alias_canonical_is_normalised_not_verbatim():
+    """Group keys stay _normalize_name output whatever case the alias file uses.
+
+    Adopting the alias file's own capitalisation would make the display name
+    depend on item order: an alias-matched "Aurora" and a channel-derived
+    "aurora" share a _loose bucket where display_of breaks ties by
+    (spaces, length) — identical for both.
+    """
+    items = [
+        make_item("p1", "v1", "Song A", "Aurora Borealis Project", 0),
+        make_item("p2", "v2", "Song B", "aurora", 1),
+    ]
+    tmp_aliases = _write_aliases({"Aurora": ["Aurora Borealis Project"]})
+    _, groups, _, _ = group_by_artist(items, tmp_aliases)
+    assert len(groups) == 1, f"expected one merged group: {list(groups)}"
+    key = next(iter(groups))
+    assert key == key.lower(), f"group key should be normalised, got {key!r}"
+    print("  ✓ alias canonical name is normalised, not copied verbatim")
+
+
+# --- Grouping benefit gate ---
+
+
+def _benefit_for(keys, methods=None, pinned=0):
+    """Build groups/resolutions straight from a list of artist keys."""
+    from scripts.schemas import ArtistResolution
+
+    resolutions = []
+    groups = {}
+    for idx, key in enumerate(keys):
+        method = (methods or {}).get(idx, "channel" if key != "unknown" else "unknown")
+        resolutions.append(
+            ArtistResolution(
+                artist_key=key, confidence=0.75, method=method, raw_candidate=key
+            )
+        )
+        groups.setdefault(key, []).append(idx)
+    # Pinned items are outside `groups` entirely, exactly as group_by_artist
+    # leaves them.
+    for extra in range(pinned):
+        resolutions.append(
+            ArtistResolution(
+                artist_key="__pinned__",
+                confidence=0.0,
+                method="unavailable",
+                raw_candidate=f"pinned{extra}",
+            )
+        )
+    return evaluate_grouping_benefit(groups, resolutions)
+
+
+def test_gate_flags_a_playlist_that_is_all_singletons():
+    """40 groups holding 44 songs is a wasted run; the gate must say so."""
+    benefit = _benefit_for([f"artist{i}" for i in range(10)])
+    assert benefit.verdict == "low"
+    assert benefit.effective_grouping_ratio == 0.0
+    assert benefit.orphan_group_count == 10
+    assert any("聚在一起" in w for w in benefit.warnings)
+    print("  ✓ all-singleton playlist is flagged low benefit")
+
+
+def test_gate_flags_high_unknown_share():
+    """Label channels (HYBE, SMTOWN) resolve to nothing; that is not grouping."""
+    keys = ["unknown"] * 4 + ["aespa"] * 3 + ["illit"] * 3
+    benefit = _benefit_for(keys)
+    assert benefit.verdict == "low"
+    assert benefit.unknown_ratio == 0.4
+    assert any("unknown" in w for w in benefit.warnings)
+    print("  ✓ high unknown share is flagged low benefit")
+
+
+def test_gate_does_not_count_unknown_as_a_group():
+    """The unknown bucket is a bin, not a cluster — it must not inflate the ratio."""
+    keys = ["unknown"] * 5 + ["aespa"] * 5
+    benefit = _benefit_for(keys)
+    # Counting unknown as a group would give 1.0 here.
+    assert benefit.effective_grouping_ratio == 0.5, benefit.effective_grouping_ratio
+    print("  ✓ unknown bucket excluded from effective grouping ratio")
+
+
+def test_gate_ignores_pinned_items_in_the_denominator():
+    """Unavailable videos never take part in grouping, so they cannot dilute it."""
+    keys = ["aespa"] * 5 + ["illit"] * 5
+    without_pinned = _benefit_for(keys)
+    with_pinned = _benefit_for(keys, pinned=10)
+    assert without_pinned.effective_grouping_ratio == 1.0
+    assert with_pinned.effective_grouping_ratio == 1.0
+    assert with_pinned.verdict == "ok"
+    print("  ✓ pinned items stay out of the grouping-benefit denominator")
+
+
+def test_gate_passes_a_genuinely_groupable_playlist():
+    """A playlist that really does cluster must not be warned about."""
+    keys = ["aespa"] * 6 + ["illit"] * 5 + ["bts"] * 4 + ["solo"]
+    benefit = _benefit_for(keys)
+    assert benefit.verdict == "ok"
+    assert benefit.warnings == []
+    assert benefit.orphan_group_count == 1
+    print("  ✓ a genuinely groupable playlist passes the gate")
+
+
+# --- Duplicate detection (exact video_id only) ---
+
+
+def test_duplicates_found_in_the_real_192_item_playlist():
+    """The Task3 baseline is 192 items over 188 videos — four known repeats."""
+    cache = PROJECT_ROOT / "scripts" / "cache" / "playlist_PLLpKeZeMXlNY.json"
+    if not cache.is_file():
+        print("  - skipped: cache fixture not present")
+        return
+    raw = json.loads(cache.read_text(encoding="utf-8"))["items"]
+    items = [EnrichedPlaylistItem.model_validate(r) for r in raw]
+
+    groups = find_duplicate_videos(items)
+    assert len(items) == 192, len(items)
+    assert len(groups) == 4, f"expected 4 duplicate videos, got {len(groups)}"
+    assert sum(len(g["removable"]) for g in groups) == 4
+
+    found = {g["video_id"] for g in groups}
+    assert found == {"_lxS-x7DACQ", "nSkDpIj0Y7w", "2NiyrtYegso", "V-KY9Z3WMi8"}, found
+
+    for group in groups:
+        keep_pos = group["keep"]["position"]
+        assert all(r["position"] > keep_pos for r in group["removable"]), (
+            "the earliest occurrence must be the one kept"
+        )
+    print("  ✓ 4 duplicate videos found in the 192-item playlist")
+
+
+def test_no_duplicates_reports_nothing():
+    """A clean playlist must produce an empty report, not a near-miss."""
+    items = [make_item(f"p{i}", f"v{i}", f"Song {i}", "Artist - Topic", i) for i in range(6)]
+    assert find_duplicate_videos(items) == []
+    print("  ✓ clean playlist reports no duplicates")
+
+
+def test_different_versions_are_not_duplicates():
+    """aLIEz vs aLIEz (Remastered): different videos, deliberately collected."""
+    items = [
+        make_item("p1", "v1", "aLIEz", "Hiroyuki SAWANO - Topic", 0),
+        make_item("p2", "v2", "aLIEz (Remastered)", "Hiroyuki SAWANO - Topic", 1),
+        make_item("p3", "v3", "sh0ut", "Hiroyuki SAWANO - Topic", 2),
+        make_item("p4", "v4", "sh0ut (Remastered)", "Hiroyuki SAWANO - Topic", 3),
+    ]
+    assert find_duplicate_videos(items) == [], (
+        "title-similarity matching was removed on purpose; these are 4 distinct videos"
+    )
+    print("  ✓ remastered versions are not reported as duplicates")
+
+
 def run_all_tests():
     """Run all tests and report results."""
     tests = [
@@ -685,6 +939,26 @@ def run_all_tests():
         ]),
         ("Position Drift Simulation", [
             test_position_drift_simulation,
+        ]),
+        ("Topic Channels", [
+            test_topic_channel_is_not_a_distributor,
+            test_song_title_can_still_hijack_a_topic_channel_without_aliases,
+        ]),
+        ("Alias Canonicalisation", [
+            test_aliases_merge_recognised_but_differently_spelled_keys,
+            test_alias_canonical_is_normalised_not_verbatim,
+        ]),
+        ("Duplicate Detection", [
+            test_duplicates_found_in_the_real_192_item_playlist,
+            test_no_duplicates_reports_nothing,
+            test_different_versions_are_not_duplicates,
+        ]),
+        ("Grouping Benefit Gate", [
+            test_gate_flags_a_playlist_that_is_all_singletons,
+            test_gate_flags_high_unknown_share,
+            test_gate_does_not_count_unknown_as_a_group,
+            test_gate_ignores_pinned_items_in_the_denominator,
+            test_gate_passes_a_genuinely_groupable_playlist,
         ]),
     ]
 

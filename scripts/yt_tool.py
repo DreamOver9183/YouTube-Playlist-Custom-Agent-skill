@@ -39,7 +39,7 @@ from typing import TYPE_CHECKING, Any
 
 from scripts.cache_manager import PlaylistCache
 from scripts.executor import estimate_quota
-from scripts.optimizer import plan_reorder, run_full_optimization
+from scripts.optimizer import find_duplicate_videos, plan_reorder, run_full_optimization
 
 # Ensure UTF-8 output on all platforms (especially Windows PowerShell/cmd)
 if hasattr(sys.stdout, "reconfigure"):
@@ -543,6 +543,11 @@ def cmd_optimize(args: argparse.Namespace) -> None:
             "group_details": report.group_details,
             "unresolved_count": report.unresolved_count,
             "metadata_missing_count": report.metadata_missing_count,
+            "unknown_ratio": report.unknown_ratio,
+            "effective_grouping_ratio": report.effective_grouping_ratio,
+            "orphan_group_count": report.orphan_group_count,
+            "grouping_benefit": report.grouping_benefit,
+            "grouping_warnings": report.grouping_warnings,
             "channel_majority_overrides": [
                 o.model_dump(mode="json") for o in report.channel_majority_overrides
             ],
@@ -604,6 +609,47 @@ def _verify_snapshot(
                 [_IdOnly(i) for i in remote_head]
             ),
         )
+
+
+def cmd_duplicates(args: argparse.Namespace) -> None:
+    """List items that point at the exact same video (0 API units, read-only).
+
+    Deliberately one layer deep: same ``video_id`` and nothing else.  A second
+    "probably the same song" tier keyed on title similarity was specified and
+    then dropped, because the only time it was measured it was wrong — it
+    flagged ``aLIEz`` / ``aLIEz (Remastered)`` and ``sh0ut`` / ``sh0ut
+    (Remastered)`` as duplicates by stripping parenthesised text, and those are
+    different versions the owner collected on purpose.  Identical ``video_id``
+    cannot produce that class of false positive.
+
+    Reports only; nothing is removed.  ``YouTubeAPIClient.delete_item`` stays
+    unwired on purpose — deletion is irreversible and costs 50 units a call, so
+    it belongs behind the same explicit-consent step as ``update``, if it is
+    ever wanted at all.
+    """
+    emit({"status": "started", "command": "duplicates", "message": "掃描重複影片（0 API units）..."})
+
+    items = _load_items(Path(args.current), "目前清單")
+    if not items:
+        fail("EMPTY_PLAYLIST", "播放清單是空的。")
+
+    groups = find_duplicate_videos(items)
+    redundant = sum(len(g["removable"]) for g in groups)
+
+    emit(
+        {
+            "status": "success",
+            "total_items": len(items),
+            "distinct_videos": len({item.video_id for item in items}),
+            "duplicate_groups": len(groups),
+            "redundant_items": redundant,
+            "groups": groups,
+            "note": (
+                "只比對 video_id 完全相同的項目，不會誤判 Remastered／Live／"
+                "Acoustic 等刻意收藏的不同版本。本指令只列出，不會刪除任何東西。"
+            ),
+        }
+    )
 
 
 def cmd_update(args: argparse.Namespace) -> None:
@@ -833,6 +879,10 @@ def main():
     p_diff.add_argument("new", help="New playlist JSON file")
     p_diff.add_argument("--out", required=True, help="Changes JSON output path")
     p_diff.set_defaults(func=cmd_diff)
+
+    p_dupes = subparsers.add_parser("duplicates")
+    p_dupes.add_argument("current", help="Current playlist JSON file (from fetch)")
+    p_dupes.set_defaults(func=cmd_duplicates)
 
     p_update = subparsers.add_parser("update")
     p_update.add_argument("playlist", help="Playlist ID or URL")

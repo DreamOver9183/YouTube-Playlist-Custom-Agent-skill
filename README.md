@@ -160,10 +160,16 @@ python -m scripts.yt_tool setup_credentials <path_to_client_secret.json>
 # 2. 獲取播放清單資料（帶 30 分鐘快取；--refresh 可強制重抓）
 python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json [--refresh]
 
-# 3. (選項 A) 歌手分組 + 群內排序 + LIS 錨點最佳化（0 API 配額）
+# 2b. (選用) 找出重複收錄的影片（0 API 配額，只列出不刪除）
+python -m scripts.yt_tool duplicates data/current.json
+
+# 3. (選項 A) 歌手分組 + LIS 錨點最佳化（0 API 配額）
 python -m scripts.yt_tool optimize data/current.json \
     --target-out data/new.json --out data/changes.json \
-    --group-order first_appearance --within-group-sort viewCount:desc
+    --group-order first_appearance --aliases data/artist_aliases.json
+#   ⚠ 只有在使用者「明確要求」群內順序時才加上 --within-group-sort viewCount:desc。
+#     它不是預設值：已經聚在一起的群組會為了群內排序額外移動，每筆 50 units，
+#     使用者會視之為「無意義搬動」。實測多花 27 筆／1,350 units（+42%）。
 
 # 4. (選項 B) 計算自訂順序 (data/new.json) 與原清單差異；同樣套用 LIS 錨點
 python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json
