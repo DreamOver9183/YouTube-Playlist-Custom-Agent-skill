@@ -1,6 +1,6 @@
 # 測試樣本格式（`yt-playlist-sample/v1`）
 
-`User Testing/` 底下的樣本檔一律使用這個格式。
+`tests/fixtures/` 底下的樣本檔一律使用這個格式。
 
 定這個格式的原因很簡單：樣本的 `items` **就是** `EnrichedPlaylistItem`，與
 `yt_tool fetch --out` 的產物同一種東西。任何工具要吃樣本都不需要轉接層。
@@ -118,16 +118,9 @@ items = [EnrichedPlaylistItem(**raw) for raw in json.load(f)["items"]]
 
 ## 建立與驗證
 
-```bash
-# 由舊格式重建 Task 3 的五份樣本（唯讀；要寫檔需 YT_DEV_SAMPLE=1）
-YT_DEV_SAMPLE=1 python tests/dev/build_task3_samples.py
-
-# 驗證樣本符合本文件的所有規則
-python tests/dev/build_task3_samples.py --validate
-
-# Task 3 專屬的統計驗證（Jaccard / Kendall / 種子可重現）
-python tests/verify_task3_randomization.py
-```
+Task 3 的四份隨機重排樣本與它們的產生／驗證工具已在 v4.0 瘦身時移除（可由種子
+42／108／256／777 重新產生，git 歷史可取回）；保留的基準樣本是
+`tests/fixtures/UserTest_Task3-1.json`。
 
 新的公開清單樣本直接用 `fetch` 產生即可，它輸出的就是 `items` 的內容：
 

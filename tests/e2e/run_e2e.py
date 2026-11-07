@@ -2,7 +2,7 @@
 run_e2e.py — Full end-to-end suite for the YouTube Playlist Agent-Skill.
 
 Black box by design: every step is a real OS process running a real entry point
-(``python -m scripts.yt_tool ...`` and ``node dist/cli.js ...``), exactly the
+(``python -m scripts.yt_tool ...``), exactly the
 commands ``docs/agent/AGENT_SOP.md`` tells an Agent to run.  Nothing from
 ``scripts/`` is imported here, so the assertions below never validate the
 implementation against itself — the expected orderings, quota figures and
@@ -274,7 +274,6 @@ class Harness:
         self.creds_source = workspace / "downloads" / "client_secret.json"
         self.creds_source.parent.mkdir(parents=True, exist_ok=True)
         self.creds_source.write_text(json.dumps(VALID_OAUTH_JSON), encoding="utf-8")
-        self.node_ready = False
 
     # -- state --------------------------------------------------
 
@@ -337,27 +336,6 @@ class Harness:
             text=True, encoding="utf-8", errors="replace", timeout=300,
         )
         return Run(argv, proc.returncode, proc.stdout, proc.stderr)
-
-    def node(self, *args: str) -> Run:
-        argv = ["node", str(REPO / "dist" / "cli.js"), *args]
-        proc = subprocess.run(
-            argv, cwd=str(REPO), env=self.env(), capture_output=True,
-            text=True, encoding="utf-8", errors="replace", timeout=300,
-        )
-        return Run(argv, proc.returncode, proc.stdout, proc.stderr)
-
-    def ensure_node_build(self) -> None:
-        if self.node_ready:
-            return
-        npm = shutil.which("npm") or shutil.which("npm.cmd")
-        check(npm is not None, "npm not found on PATH — the TypeScript path cannot be tested")
-        proc = subprocess.run(
-            [npm, "run", "build"], cwd=str(REPO), capture_output=True, text=True,
-            encoding="utf-8", errors="replace", shell=(os.name == "nt"), timeout=600,
-        )
-        check(proc.returncode == 0, f"npm run build failed:\n{proc.stdout}\n{proc.stderr}")
-        check((REPO / "dist" / "cli.js").is_file(), "dist/cli.js missing after build")
-        self.node_ready = True
 
     # -- convenience --------------------------------------------
 
@@ -848,38 +826,26 @@ def s11_retry_abort_resume(h: Harness) -> list[str]:
             f"resume paid only for the remaining {remaining} moves and hit the target order"]
 
 
-def s12_typescript_engine(h: Harness) -> list[str]:
-    """Phase 2 path C: the cognitive engine plans, `diff` costs it out, `update` lands it."""
-    h.ensure_node_build()
+def s12_custom_target(h: Harness) -> list[str]:
+    """Phase 2 path B: the Agent writes the target order, `diff` costs it out, `update` lands it."""
     fetched = h.fetch(PL_CLEAN, "clean_current.json")
     check(fetched.code == 0, f"fetch failed: {fetched.last}")
     current = read_json(h.path("clean_current.json"))
 
-    intent = h.node("-i", str(h.path("clean_current.json")), "-o", str(h.path("clean_new.json")),
-                    "--intent", "把同一個頻道的影片放在一起，觀看次數由高到低")
-    check(intent.code == 0, f"the engine failed on the documented intent: {intent.last}")
-    plan = intent.last
-    check(plan["status"] == "success", f"engine error: {plan}")
-    check("channel_title" in plan["group_dimensions"],
-          f"the intent 「同一個頻道」 did not produce a channel_title grouping: {plan['group_dimensions']}")
-    check("view_count:desc" in plan["sort_criteria"],
-          f"the intent 「觀看次數由高到低」 did not produce view_count:desc: {plan['sort_criteria']}")
-    check(plan["is_continuous"] is True, f"the engine reports {plan['gap_count']} unrepaired gaps")
-    check(plan["item_count"] == len(current), "the engine changed the item count")
-
-    nl_target = read_json(h.path("clean_new.json"))
-    assert_permutation(current, nl_target)
-    assert_grouped_and_sorted(nl_target, current, "channel_title", "view_count")
-
-    explicit = h.node("-i", str(h.path("clean_current.json")), "-o", str(h.path("clean_new2.json")),
-                      "--group-by", "channel_title", "--sort-by", "view_count:desc")
-    check(explicit.code == 0, f"explicit flags failed: {explicit.last}")
-    check(read_json(h.path("clean_new2.json")) == nl_target,
-          "--group-by/--sort-by disagrees with the equivalent natural-language intent")
-
-    bad = h.node("-i", str(h.path("clean_current.json")), "-o", str(h.path("nope.json")), "--wat")
-    check(bad.code != 0 and bad.last.get("code") == "UNKNOWN_FLAG",
-          f"an unknown flag should fail with UNKNOWN_FLAG, got {bad.last}")
+    # What an Agent's throwaway script would do for "same channel together,
+    # most-viewed first": first-appearance group order, view_count desc inside.
+    first_seen: dict[str, int] = {}
+    for record in current:
+        first_seen.setdefault(record.get("channel_title") or "", len(first_seen))
+    agent_target = sorted(
+        current,
+        key=lambda r: (first_seen[r.get("channel_title") or ""], -r["view_count"]),
+    )
+    h.path("clean_new.json").write_text(
+        json.dumps(agent_target, ensure_ascii=False), encoding="utf-8"
+    )
+    assert_permutation(current, agent_target)
+    assert_grouped_and_sorted(agent_target, current, "channel_title", "view_count")
 
     before = h.quota()
     diffed = h.tool("diff", str(h.path("clean_current.json")), str(h.path("clean_new.json")),
@@ -891,20 +857,19 @@ def s12_typescript_engine(h: Harness) -> list[str]:
     changes = change_set["changes"]
     check(diffed.last["changes_count"] == len(changes), "diff reported a different move count")
     check(diffed.last["estimated_quota"] == QUOTA_UPDATE * len(changes), "diff quota estimate is wrong")
-    check(replay(ids_of(current), changes) == ids_of(nl_target),
-          "replaying the diff plan does not reproduce the engine's ordering")
+    check(replay(ids_of(current), changes) == ids_of(agent_target),
+          "replaying the diff plan does not reproduce the Agent's ordering")
 
     # No pinned items here, so the plan must hit the theoretical minimum exactly.
-    lower_bound = len(current) - lis_length(ids_of(current), ids_of(nl_target))
+    lower_bound = len(current) - lis_length(ids_of(current), ids_of(agent_target))
     check(len(changes) == lower_bound,
           f"plan uses {len(changes)} moves, the N-LIS minimum is {lower_bound}")
 
     applied = h.tool("update", PL_CLEAN, str(h.path("clean_changes.json")))
     check(applied.code == 0, f"update failed: {applied.last}")
-    check(h.remote_ids(PL_CLEAN) == ids_of(nl_target),
-          "the remote playlist does not match what the cognitive engine planned")
-    return ["Chinese intent → channel_title grouping + view_count:desc",
-            "explicit flags produce a byte-identical ordering",
+    check(h.remote_ids(PL_CLEAN) == ids_of(agent_target),
+          "the remote playlist does not match the Agent-written target")
+    return ["Agent-written target: channel groups + view_count desc",
             f"diff plan is exactly N-LIS minimal ({len(changes)} moves) and lands on target"]
 
 
@@ -1051,7 +1016,7 @@ SCENARIOS: list[Scenario] = [
     Scenario("double_apply", "Phase 4", "A spent change set cannot be replayed", s09_double_apply_is_refused),
     Scenario("stale", "Phase 4", "Remote drift is caught before any write", s10_stale_remote),
     Scenario("resume", "Phase 4", "Retry, fatal abort, and exact resume", s11_retry_abort_resume),
-    Scenario("engine", "Phase 2C", "TypeScript cognitive engine → diff → update", s12_typescript_engine),
+    Scenario("custom", "Phase 2B", "Agent-written target → diff → update", s12_custom_target),
     Scenario("mismatch", "Phase 2B", "Invalid target orderings are refused", s13_target_mismatch),
     Scenario("guards", "Phase 4", "Change-set integrity guards", s14_change_set_guards),
     Scenario("noop", "Phase 2A", "Already-sorted playlist is a true no-op", s15_no_op_playlist),

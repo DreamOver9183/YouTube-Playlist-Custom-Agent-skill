@@ -44,7 +44,7 @@
 只有 2 份超過 45%（#5 主題清單 54.9%、#7 電影音樂2 46.2%），2 份是 0%。
 一般播放清單是單曲收藏，每首來自不同專輯，聚集後跟沒聚一樣。
 
-### 已建成並保留的資產
+### 曾建成的資產（v4.0 已移除，git 歷史可取回）
 
 `tests/dev/album_bench.py` —— 評測台。以 `tests/dev/ytm_samples/` 的 ytmusicapi
 專輯標註當真值，量測任一抽取器的精確率與召回率。`PRECISION_GATE = 0.90`，
@@ -301,6 +301,39 @@ AGENT_SOP.md 的 `unresolved_count` 說明裡**已經寫了正確的知識**（�
 `scripts/convert_and_verify_task3.py` 把它轉成 `UserTest_Task3-1.json`、
 `tests/verify_json_task3.py` 再拿 JSON 回頭比對 `.md`。`.md` 在轉換後被移除，
 這兩支腳本因此**無法再重跑**（不是程式壞了，是輸入被消化掉了）。
+（v4.0 已移除這兩支腳本與 Task 3 的衍生樣本，只保留 `tests/fixtures/UserTest_Task3-1.json`。）
 
 修法：每次執行落一個帶時間戳的目錄，**原始格式、變更檔、快照與報告放在一起**，
 報告的統計數字由變更檔計算而非另行填寫。轉換型腳本的來源檔案應保留而非刪除。
+
+---
+
+## 6. v4.0 重構（2026-11-07 起）
+
+**狀態**：計畫已核可，**M0 瘦身已完成**，M1–M4 尚未動工。
+
+使用者提出五件事：專案偏離「最輕量達成目的」、藝人辨識全靠 regex 而放棄了 LLM 的
+優勢、要支援 Spotify、要一套可驗證的辨識公式、聊天室的預覽表「完全不想看」。
+里程碑與優先序（使用者指定 Spotify 優先）：
+
+| 里程碑 | 內容 | 狀態 |
+|---|---|---|
+| M0 | 移除 TypeScript 認知引擎（Python 主流程從未呼叫，「同歌手」實際退化成依頻道分組）、一次性腳本、死碼；修好從 2026-08-21 起一直失敗的 CI | **完成** |
+| M1 | 平台中立 schema、Spotify 轉接器（`/items` 端點、PKCE、區段搬移 `S − LIS(段)`）、Spotify 依專輯分組 | 未動工 |
+| M2 | HTML 拖拉檢查頁（保存後聊天室只問一句）＋每次執行的帶時間戳目錄（同時解決第 5 條） | 未動工 |
+| M3 | Agent 優先辨識＋多特徵加權公式（B³-F1 對近似真值與人工真值驗證，打不過現行 resolver 就不替換） | 未動工 |
+| M4 | 雙平台 SOP 與文件收尾 | 未動工 |
+
+已和使用者確認的決定：
+
+- 寫回前的同意改為「HTML 保存＋聊天室一句確認」，規則 1 與規則 3 在 M2 改寫。
+- 真值同時用 ytmusicapi 近似真值與人工校正真值。ytmusicapi **仍不進執行期**（第 1 條）。
+- Spotify 支援依專輯分組（`album.id` 是結構化欄位，成本幾乎為零）；YouTube 專輯聚集維持不做。
+- 使用者有 Spotify Premium 但不會用 Developer Dashboard，M1 要附逐步建 app 的引導。
+
+M0 查到但留給後續里程碑的事：
+
+- `videos.list` 已抓回 `description`，`EnrichedPlaylistItem` 卻把它丟掉。Art Track 的
+  「Provided to YouTube by …」描述含結構化的藝人行，樣本中 ATV 佔 66%（M1 補回欄位，M3 當特徵）。
+- `_DISTRIBUTOR_CHANNELS` 有 8 個項目永遠比不中（先去掉後綴才查表），
+  「JYP Entertainment」會被當成藝人 `jyp`（M3 的正規化函式一併修掉）。

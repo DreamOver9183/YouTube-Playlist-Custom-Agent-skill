@@ -1299,7 +1299,6 @@ def evaluate_grouping_benefit(
 
 
 #: Backwards-compatible alias (the pipeline is no longer just "optimization").
-optimize_reorder = plan_reorder
 
 
 def run_full_optimization(

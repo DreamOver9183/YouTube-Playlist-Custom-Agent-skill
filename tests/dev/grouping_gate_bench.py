@@ -1,8 +1,8 @@
 """
 grouping_gate_bench.py — 分群效益閘門的校準台
 
-**這是開發者工具，不是 skill 的一部分。** 擋門與 ``ytm_probe.py`` /
-``album_bench.py`` 相同：程式放在 ``tests/dev/``（不在任何 skill 載入路徑）、
+**這是開發者工具，不是 skill 的一部分。** 擋門與 ``ytm_probe.py``
+相同：程式放在 ``tests/dev/``（不在任何 skill 載入路徑）、
 需要專用進入點、且完全不寫檔。
 
 它在做什麼
@@ -64,7 +64,7 @@ from scripts.schemas import EnrichedPlaylistItem  # noqa: E402
 
 CACHE_DIR = ROOT / "scripts" / "cache"
 
-#: 樣本代號，與 album_bench.py / BACKLOG.md 的表格對齊。
+#: 樣本代號，與 BACKLOG.md 的表格對齊。
 LABELS = {
     "PLtskdo8cFkvn4yfJLBqg68ClUGVSDPfsA": "#0 舊日文",
     "PLLpKeZeMXlNY": "#1 Task3",

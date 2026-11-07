@@ -2,7 +2,7 @@
 schemas.py — Pydantic Schema 定義
 
 所有資料模型的單一來源。分為兩類：
-1. LLM 結構化輸出 Schema（PlaylistCommand 及其子模型）
+1. 排序設定（SortField / SortOrder / SortConfig，供 --within-group-sort 使用）
 2. 內部資料模型（PlaylistItem, VideoMetadata, PositionChange 等）
 """
 
@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field
 
 
 # ─────────────────────────────────────────────
-# 1. LLM 結構化輸出 Schema
+# 1. 排序設定
 # ─────────────────────────────────────────────
 
 
@@ -38,42 +38,10 @@ class SortOrder(str, Enum):
     DESC = "desc"
 
 
-class ActionType(str, Enum):
-    """支援的操作類型。"""
-    SORT = "sort"
-    FILTER = "filter"
-    FILTER_THEN_SORT = "filter_then_sort"
-    DELETE_ITEMS = "delete_items"
-
-
 class SortConfig(BaseModel):
     """排序設定。"""
     field: SortField = Field(description="要排序的欄位")
     order: SortOrder = Field(default=SortOrder.DESC, description="排序方向：asc 升序 / desc 降序")
-
-
-class FilterConfig(BaseModel):
-    """篩選條件。所有欄位皆為可選，未填則不套用該條件。"""
-    channel: Optional[str] = Field(default=None, description="頻道名稱篩選（包含比對）")
-    duration_min_seconds: Optional[int] = Field(default=None, description="最短時長（秒）")
-    duration_max_seconds: Optional[int] = Field(default=None, description="最長時長（秒）")
-    published_after: Optional[str] = Field(default=None, description="發布日期下限（YYYY-MM-DD）")
-    published_before: Optional[str] = Field(default=None, description="發布日期上限（YYYY-MM-DD）")
-    title_contains: Optional[str] = Field(default=None, description="標題包含關鍵字")
-    title_excludes: Optional[str] = Field(default=None, description="標題排除關鍵字")
-
-
-class PlaylistCommand(BaseModel):
-    """LLM 解析使用者自然語言後的結構化指令。"""
-    action: ActionType = Field(description="操作類型")
-    sort: Optional[SortConfig] = Field(default=None, description="排序設定（action 為 sort 或 filter_then_sort 時必填）")
-    filter: Optional[FilterConfig] = Field(default=None, description="篩選條件（action 為 filter 或 filter_then_sort 時必填）")
-    confidence: float = Field(
-        default=1.0,
-        ge=0.0,
-        le=1.0,
-        description="LLM 對解析結果的信心分數，0.0-1.0"
-    )
 
 
 # ─────────────────────────────────────────────

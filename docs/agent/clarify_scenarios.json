@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Agent 反問使用者時的問題模板庫。由 tests/dev/learn_scenarios.py --promote 產生，每一筆都經過人工核可。遇到需求不完整時先依 gap 查表，有對應情境就照模板發問，不要每次重新想問法與選項。",
+  "note": "Agent 反問使用者時的問題模板庫。人工維護（原本的產生工具已隨 TypeScript 引擎於 v4.0 移除），每一筆都經過人工核可。遇到需求不完整時先依 gap 查表，有對應情境就照模板發問，不要每次重新想問法與選項。",
   "scenarios": [
     {
       "key": "missing_sort_field/which-date",

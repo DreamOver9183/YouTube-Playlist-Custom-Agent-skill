@@ -46,10 +46,9 @@
    移動次數最少、配額最省」，多數「我只是想找同一個歌手時不用滑來滑去」的需求選這個
    就夠了。
 
-   **這道閘門對三條路徑（A／B／C）一律適用**，不是只有路徑 C 才要查表。特別注意：
-   不要先把自己補的維度寫進 intent 字串再丟給認知引擎 —— 那樣斷層在進引擎前就被填掉，
-   引擎不會回報 `sort_criteria` 為空，閘門就永遠不會開。**判斷依據永遠是使用者的原話，
-   不是你組出來的參數。**
+   **這道閘門對兩條路徑（A／B）一律適用。** 特別注意：不要先把自己補的維度寫進
+   `--within-group-sort` 參數或路徑 B 的排序腳本 —— 那樣斷層在你組參數時就被填掉，
+   之後沒有任何一步會再提醒你。**判斷依據永遠是使用者的原話，不是你組出來的參數。**
 
 2. **確認 Playlist ID**：若使用者未提供 ID 或網址，主動追問。你不需要自己用 Regex 解析，直接把整串 URL 或 ID 傳給 `yt_tool.py`，它有內建解析器。
 3. **執行 Fetch 測試**：
@@ -111,7 +110,7 @@ python -m scripts.yt_tool duplicates data/current.json
 
 ### Phase 2: 本地計算 (Local Computation)
 
-根據使用者的需求類型，選擇以下其中一種路徑。三條路徑都會產出同樣格式的變更檔，也都套用 LIS 錨點最佳化。
+根據使用者的需求類型，選擇以下其中一種路徑。兩條路徑都會產出同樣格式的變更檔，也都套用 LIS 錨點最佳化。
 
 #### 路徑 A：分組聚集排序（推薦）
 
@@ -179,7 +178,7 @@ python -m scripts.yt_tool duplicates data/current.json
    - `grouping_benefit`：**分群效益判定，先看這個**。為 `"low"` 時代表這份清單重排完
      使用者大概感受不到差別，`grouping_warnings` 會逐條說明原因並帶好數字。
      這時**不要直接往下做**：把警告轉述給使用者，說明預估配額，問他還要不要繼續，
-     或改用其他維度（路徑 B/C）。這是警告不是拒絕——使用者說要做就照做。
+     或改用其他維度（路徑 B）。這是警告不是拒絕——使用者說要做就照做。
      判定發生在 `optimize`，本來就是 0 API units，所以一定在花配額之前。
    - `unknown_ratio` / `effective_grouping_ratio` / `orphan_group_count`：
      上面那個判定的三個依據。有效聚集率是「和別人聚在一起的影片 ÷ 可移動影片」，
@@ -204,7 +203,7 @@ python -m scripts.yt_tool duplicates data/current.json
 
 #### 路徑 B：自訂排序邏輯
 
-適用於路徑 A 涵蓋不到的需求（多重條件、關鍵字篩選後重排等）：
+適用於路徑 A 涵蓋不到的需求（依頻道或其他欄位分群、多重條件、關鍵字篩選後重排等）。需求由你直接從使用者原話解讀，不需要任何中介引擎；缺維度時照 Phase 0 查表發問：
 
 1. 讀取 `data/current.json` 了解清單目前的狀態與資料結構（它是一個包含 `EnrichedPlaylistItem` 的 JSON 陣列，含 `view_count`、`duration_seconds`、`title`、`channel_title`、`published_at`、`is_available` 等欄位）。
 2. **撰寫並執行一段 Python 腳本**：
@@ -215,37 +214,9 @@ python -m scripts.yt_tool duplicates data/current.json
 3. 執行差異計算：
    `python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json`
 
-#### 路徑 C：認知排序引擎（自然語言直接規劃）
-
-當需求是「同某某放一起、群內再依某欄位排序」這類分群 + 排序的組合，且不想自己寫腳本時：
-
-```
-npm run build          # 首次使用需先建置
-npm run plan -- --input data/current.json --output data/new.json \
-    --intent "把同一個頻道的影片放在一起，觀看次數由高到低"
-# 或明確指定欄位：
-npm run plan -- -i data/current.json -o data/new.json \
-    --group-by channel_title --sort-by view_count:desc
-```
-
-回傳值中的 `warnings` **必須**轉達給使用者。引擎只會採用它真正辨識得出來的欄位，
-若使用者說了「由新到舊」卻沒指名欄位，`sort_criteria` 會是空的並附上警告——
-此時請追問使用者要依哪個欄位排序，或改用 `--sort-by` 明確指定後重跑，
-不要把「沒有排序」的結果當成完成。
-
-**追問方式見 Phase 0 的「需求維度盤點」**，一律查 `docs/agent/clarify_scenarios.json`
-的模板發問，不要每次重新想問法與選項。
-
-⚠️ **引擎的 `warnings` 是第二道防線，不是第一道。** 主閘門在 Phase 0，判斷依據是
-**使用者的原話**。如果你在組 `--intent` 字串時就自行補上了使用者沒說的維度，引擎會
-正常解析出 `sort_criteria`、不會發出任何警告，這道防線就形同虛設。順序永遠是
-「先照原話盤點 → 缺就問 → 才組 intent」。
-
-接著同路徑 B 的第 3 步執行 `diff`。
-
 ### Phase 3: 差異計算與強制預覽 (Checkpoint)
 
-1. 變更檔案：路徑 A 為 `data/changes_optimized.json`；路徑 B / C 為 `data/changes.json`。
+1. 變更檔案：路徑 A 為 `data/changes_optimized.json`；路徑 B 為 `data/changes.json`。
 2. 若 `changes_count` / `need_to_move` 為 0，告知使用者不需變更並結束。
 3. **強制預覽 (Preview)**：讀取變更檔中 `changes` 陣列的前 15-20 筆，在聊天室中繪製 **Markdown 表格**：
 
@@ -311,7 +282,7 @@ npm run plan -- -i data/current.json -o data/new.json \
 
 1. 收到確認後，執行寫回指令：
    `python -m scripts.yt_tool update <playlist_id> data/changes_optimized.json`
-   *（路徑 B / C 使用 `data/changes.json`）*
+   *（路徑 B 使用 `data/changes.json`）*
 2. 工具會先花 **1 unit** 讀取清單頭部，確認遠端順序仍與變更檔所依據的快照一致，再逐筆寫回，並把進度寫入 `scripts/logs/progress_{playlist_id}.json`。
 3. 依回傳結果應對：
 

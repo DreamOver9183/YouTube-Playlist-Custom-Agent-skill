@@ -8,7 +8,7 @@ description: |
 
 # YouTube Playlist Agent-Skill
 
-你的角色是「大腦與協調者」，API 讀寫與演算法細節已封裝在 `scripts/yt_tool.py` 與 `src/`（TypeScript 認知排序引擎）中。
+你的角色是「大腦與協調者」：需求解讀與自訂順序由你負責，API 讀寫與最小移動演算法已封裝在 `scripts/yt_tool.py`。
 
 **完整流程請讀 `docs/agent/AGENT_SOP.md`**（五個 Phase、所有指令參數、回傳欄位與錯誤碼對照）。開始任何操作前先讀它。
 
@@ -44,9 +44,6 @@ python -m scripts.yt_tool optimize data/current.json \
 
 # 2B. 自訂順序：自己寫腳本產生 data/new.json（必須是 current 的重排），再算差異
 python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json
-
-# 2C. 自然語言規劃（TypeScript 認知引擎）
-npm run build && npm run plan -- -i data/current.json -o data/new.json --intent "..."
 
 # 3. 預覽並取得同意（見 AGENT_SOP.md Phase 3）
 
