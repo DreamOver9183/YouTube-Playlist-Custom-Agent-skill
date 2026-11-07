@@ -432,4 +432,6 @@ def run_all_tests() -> bool:
 
 
 if __name__ == "__main__":
+    # Windows consoles default to cp950/cp1252 and cannot print ✓/✗.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.exit(0 if run_all_tests() else 1)

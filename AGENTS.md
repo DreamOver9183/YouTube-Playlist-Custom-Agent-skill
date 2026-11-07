@@ -9,7 +9,7 @@ Claude Code 會另外自動載入 `.claude/skills/yt-playlist-manager/SKILL.md`�
 
 ## 這個專案是什麼
 
-一個 YouTube 播放清單管理 Agent-Skill：Agent 當大腦，`scripts/`（Python）負責 API 與配額最佳化，`src/`（TypeScript）提供通用的認知分群排序引擎。
+一個 YouTube 播放清單管理 Agent-Skill：Agent 當大腦（解讀需求、決定順序），`scripts/`（Python）負責 API 讀寫與配額最小的重排計算。
 
 ## 使用者要求整理播放清單時
 
@@ -28,11 +28,7 @@ pip install -r requirements.txt
 python tests/test_optimizer.py          # 演算法與辨識單元測試
 python tests/test_reorder_property.py   # 重排正確性窮舉驗證（必跑）
 python tests/test_update_flow.py        # 寫回安全性
-
-# TypeScript
-npm install
-npm run typecheck                       # 含 tests
-npm test                                # 認知引擎測試（會先 build）
+python tests/e2e/run_e2e.py             # 離線端對端（假 YouTube API，0 配額）
 ```
 
 改動 `scripts/optimizer.py` 的重排邏輯後，`tests/test_reorder_property.py` 是唯一能證明「變更集重播後等於目標順序」的把關測試，**必須通過**。它會窮舉 n=2..7 的全排列（5912 組）並驗證移動次數等於理論下界 `N − LIS`。

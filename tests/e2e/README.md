@@ -5,7 +5,7 @@ Phase 0 憑證握手 → Phase 1 fetch → Phase 2 本地計算（optimize / dif
 Phase 3 預覽資料 → Phase 4 寫回、重試、中斷續傳。
 
 ```bash
-python tests/e2e/run_e2e.py                      # 全部 16 個情境
+python tests/e2e/run_e2e.py                      # 全部 17 個情境
 python tests/e2e/run_e2e.py -k update,resume     # 只跑指定情境（逗號分隔、子字串比對）
 python tests/e2e/run_e2e.py --keep               # 保留暫存工作區以便檢查產出檔案
 ```
@@ -42,7 +42,7 @@ python tests/e2e/dryrun.py data/current.json data/changes.json \
 
 | 設計決策 | 原因 |
 |:---|:---|
-| 每一步都是**真實子行程**（`python -m scripts.yt_tool …`、`node dist/cli.js …`） | 測到的是使用者／Agent 真正會打的指令，包含 argparse、stdout JSON 協定、離開碼 |
+| 每一步都是**真實子行程**（`python -m scripts.yt_tool …`） | 測到的是使用者／Agent 真正會打的指令，包含 argparse、stdout JSON 協定、離開碼 |
 | 測試檔案**完全不 import `scripts/`** | 預期順序、配額、replay 結果全部在 `run_e2e.py` 內獨立算出，實作有 bug 時不會「自己驗自己」而漏掉 |
 | 只假造**網路邊界**（`fake_youtube.py`） | `youtube_api.py` 的分頁、批次、錯誤分類、重試與續傳邏輯全部照跑 |
 | `sitecustomize.py` 在直譯器啟動時注入 | 這是唯一早於 `from googleapiclient.discovery import build` 的時機 |
@@ -61,7 +61,7 @@ python tests/e2e/dryrun.py data/current.json data/changes.json \
 
 ## 通過條件
 
-全部 16 個情境必須通過，離開碼為 0。核心判準：
+全部 17 個情境必須通過，離開碼為 0。核心判準：
 
 **正確性（最重要）**
 
@@ -104,13 +104,14 @@ python tests/e2e/dryrun.py data/current.json data/changes.json \
 | 3 | Phase 1 | fetch：120 筆／3 頁分頁、3 批 metadata、私人影片保留 |
 | 4 | Phase 1 | 快取命中 vs `--refresh`、token 重用不再要求授權 |
 | 5 | Phase 2A | optimize：分群、群內排序、最小變更集、0 配額 |
+| 5b | Phase 1 | 重複項目報告：本地計算、只認 `video_id`、唯讀 |
 | 6 | Phase 2A | optimize 在無 Google 套件、無憑證環境下仍可執行且結果一致 |
 | 7 | Phase 3 | 預覽表資料與真實索引相符 |
 | 8 | Phase 4 | 寫回抵達目標順序、快取失效、續傳檔清除 |
 | 9 | Phase 4 | 已用完的變更集不可重複套用 |
 | 10 | Phase 4 | 遠端漂移在寫入前被擋下 |
 | 11 | Phase 4 | 503 重試、配額耗盡中止、續傳補完 |
-| 12 | Phase 2C | TypeScript 認知引擎 → diff → update 全鏈路 |
+| 12 | Phase 2B | Agent 自行寫出目標順序 → diff → update 全鏈路 |
 | 13 | Phase 2B | 非排列的目標順序被拒絕 |
 | 14 | Phase 4 | 變更集完整性防護 |
 | 15 | Phase 2A | 已排序清單為真正的 no-op |
@@ -122,4 +123,4 @@ python tests/e2e/dryrun.py data/current.json data/changes.json \
 
 `tests/test_optimizer.py`、`test_reorder_property.py`、`test_update_flow.py` 是**行程內單元／屬性測試**
 （窮舉排列的最小性證明、寫回安全性）。本套件不取代它們，而是補上它們涵蓋不到的部分：
-CLI 契約、跨行程狀態（快取／續傳檔）、OAuth 與憑證安裝、TypeScript 與 Python 兩個子系統的接合。
+CLI 契約、跨行程狀態（快取／續傳檔）、OAuth 與憑證安裝。

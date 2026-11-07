@@ -2,7 +2,7 @@
 ytm_probe.py — ytmusicapi 取樣：用真實清單比對「標題猜藝人」與「音樂目錄實體」
 
 **這是開發者工具，不是 skill 的一部分。** 一般使用 skill 時不會、也不該執行它。
-擋門與 ``learn_scenarios.py`` 相同：程式放在 ``tests/dev/``（不在任何 skill 載入
+擋門與其他 ``tests/dev/`` 工具相同：程式放在 ``tests/dev/``（不在任何 skill 載入
 路徑）、需要專用進入點、且沒有設 ``YT_DEV_YTM=1`` 就完全不寫檔。
 
 它在做什麼
@@ -78,7 +78,7 @@ from scripts.youtube_api import extract_playlist_id  # noqa: E402
 CACHE_DIR = ROOT / "scripts" / "cache"
 SAMPLE_DIR = Path(__file__).resolve().parent / "ytm_samples"
 
-#: 沒設這個就完全不寫檔。與 learn_scenarios.py 的 YT_DEV_LEARN 同一種擋門。
+#: 沒設這個就完全不寫檔。
 WRITE_ENABLED = os.environ.get("YT_DEV_YTM") == "1"
 
 
