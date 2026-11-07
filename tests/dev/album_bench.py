@@ -214,7 +214,9 @@ def extract_positional(items: list[dict]) -> dict[str, str | None]:
 def extract_combined(items: list[dict]) -> dict[str, str | None]:
     """基準線 3：定位曲名 tag，排除藝人 tag，取剩下的最後一個。
 
-    實測精確率 67%、召回率 54% —— 目前最好的規則，但仍低於 90% 門檻。
+    實測精確率 60.1%、召回率 55.2%。研究階段量到的是 67%／54%，那個數字偏高：
+    當時沒有把「真值沒有專輯」的曲目算進精確率的分母，所以在那些曲目上憑空抽出
+    的東西不算假陽性。納入之後才是這裡的 60.1%。
     剩餘的失敗集中在「合作藝人 vs 專輯」：兩者都緊鄰曲名 tag 之前。
     """
     out: dict[str, str | None] = {}

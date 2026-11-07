@@ -24,7 +24,7 @@ import unicodedata
 from bisect import bisect_left
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Optional
+from typing import NamedTuple, Optional
 
 from scripts.executor import apply_sort
 from scripts.schemas import (
@@ -125,6 +125,27 @@ _GRAY_ZONE_CONFIDENCE: tuple[float, float] = (0.80, 0.90)
 #: Version)") does. No case in that data needed a threshold of 1 to be rescued,
 #: so 2 is the smallest threshold the evidence supports.
 _MAJORITY_MIN_CORROBORATION: int = 2
+
+#: Share of unresolved items above which grouping is reported as low-benefit.
+#: Calibrated on the 11 collected playlist samples (tests/dev/ytm_samples/):
+#: exactly one list — a K-pop list whose videos sit on multi-artist label
+#: channels (HYBE LABELS, SMTOWN, JYP) — is above it, at 39%.  The other ten
+#: range from 0% to 4.7%, so 20% separates the one genuinely broken case with
+#: 15.3pp of clearance below it and 19pp above, and no borderline call.
+_UNKNOWN_RATIO_GATE: float = 0.20
+
+#: Share of movable items that actually end up grouped with at least one other
+#: item, below which grouping is reported as low-benefit.  Same 11 samples:
+#: this catches the three lists where reordering is close to pointless — 12.9%
+#: (one Chinese list, most of it singletons), 15.9% (a Japanese list where 40
+#: groups hold 44 songs, so only 4 items move for 201 units — a wasted run) and
+#: 23.2% (a film-score list).  The nearest list *not* caught sits at 45.5%, so
+#: the threshold has 6.8pp of clearance below it and 15.5pp above.
+#:
+#: Re-run tests/dev/grouping_gate_bench.py --check after changing either gate:
+#: the unit tests use synthetic fixtures and can only prove the arithmetic, not
+#: that the threshold sits in the right place.
+_EFFECTIVE_GROUPING_GATE: float = 0.30
 
 
 # ─────────────────────────────────────────────
@@ -276,15 +297,27 @@ def _normalize_name(name: str) -> str:
 
 
 def _is_distributor_channel(channel_title: str) -> bool:
-    """Check if a channel is a known distributor/label (not a direct artist)."""
+    """Check if a channel is a known distributor/label (not a direct artist).
+
+    **"<Artist> - Topic" channels are deliberately NOT treated as distributors.**
+    This function used to carry a second branch checking
+    ``normalized.endswith(" - topic")``, which could never fire: _normalize_name
+    strips the ``topic`` suffix and the trailing separator before this runs, so
+    the string it inspects is already ``"alan walker"``.  Removing the dead
+    branch is not the point — the point is that "fixing" it to test the raw
+    title instead would be a serious regression.  Topic channels are generated
+    by YouTube Music per *artist*, so the channel name is the artist name, and
+    they are the single richest signal available: 67% of the items across the
+    collected samples sit on one, and 96.6% of those (602/623) resolve correctly
+    through the channel layer today.  Blacklisting them would send every one of
+    those items to title parsing, which produces song titles as artist names
+    ("晩餐歌 - Bansanka" on tuki.'s channel → artist ``晩餐歌``).
+
+    A regression test in tests/test_optimizer.py locks the current behaviour in.
+    """
     normalized = _normalize_name(channel_title)
     # Exact match or ends with a blacklisted term
-    if normalized in _DISTRIBUTOR_CHANNELS:
-        return True
-    # Also check if the channel name ends with " - topic" (auto-generated)
-    if normalized.endswith(" - topic"):
-        return True
-    return False
+    return normalized in _DISTRIBUTOR_CHANNELS
 
 
 def _resolve_channel(channel_title: str) -> ArtistResolution | None:
@@ -488,12 +521,13 @@ def resolve_artist(
             return fuzzy_result
         return title_result
 
-    # Layer 3: Fuzzy matching on channel_title as last resort
-    if item.channel_title and not _is_distributor_channel(item.channel_title):
-        fuzzy_result = _fuzzy_match_artist(item.channel_title, alias_lookup)
-        if fuzzy_result:
-            return fuzzy_result
-
+    # There is deliberately no channel-side fuzzy fallback here.  It would need
+    # `channel_title and not _is_distributor_channel(channel_title)` — which is
+    # exactly the condition under which _resolve_channel() returns a result, so
+    # control already returned above.  The only channels that reach this point
+    # are empty ones and distributor/label channels, and an alias table cannot
+    # rescue either: there is no artist name in "HYBE LABELS" to match against.
+    #
     # All layers failed
     return ArtistResolution(
         artist_key="unknown",
@@ -671,6 +705,48 @@ def group_by_artist(
         resolutions.append(resolve_artist(item, alias_lookup))
 
     channel_majority_overrides = _apply_channel_majority_override(items, resolutions)
+
+    # Fold recognised-but-differently-spelled keys onto their canonical name.
+    #
+    # This is where an alias table has to be applied to be worth anything.  Its
+    # only other consumer is _fuzzy_match_artist, which resolve_artist reaches
+    # in one narrow case (a low-confidence title match on an item whose channel
+    # is empty or a distributor) — i.e. only on recognition *failure*.  The
+    # splits that actually show up on real playlists are recognition
+    # *successes* that disagree on spelling: "kenshi yonezu" vs "米津玄師",
+    # "優里 official youtube" vs "yuuri", every tuki. song whose title got
+    # parsed as the artist.  Nothing downstream could merge those — _loose()
+    # only folds punctuation and spacing, and alias_of only folds a non-ASCII
+    # prefix onto its ASCII tail.  Applying the lookup here, before the
+    # display_of buckets are chosen, is what makes them one group.
+    #
+    # Exact normalised match only, never fuzzy: this runs on every item rather
+    # than on a single failing one, so a near-miss that merges two real artists
+    # would be silent and playlist-wide.  Keys are re-normalised before lookup
+    # because a title-derived key has not been through _normalize_name.
+    #
+    # No alias file, no change — `--aliases` stays opt-in and defaults to None,
+    # so the default grouping behaviour is untouched.
+    if alias_lookup:
+        for idx, resolution in enumerate(resolutions):
+            if resolution.method in ("unavailable", "unknown"):
+                continue
+            canonical = alias_lookup.get(_normalize_name(resolution.artist_key))
+            if canonical is None:
+                continue
+            # Normalise the canonical name too, rather than adopting the alias
+            # file's own capitalisation.  Every other artist_key in the system
+            # is _normalize_name output, and mixing the two makes the group's
+            # display name depend on item order: an alias-matched "Aurora" and
+            # a channel-derived "aurora" land in the same _loose bucket, where
+            # display_of breaks the tie by (spaces, length) — equal for both,
+            # so whichever appeared first would win.  Merging is the point
+            # here; the spelling is display_of's job.
+            canonical_key = _normalize_name(canonical)
+            if canonical_key and canonical_key != resolution.artist_key:
+                resolutions[idx] = resolution.model_copy(
+                    update={"artist_key": canonical_key}
+                )
 
     # Keys that differ only in spacing or punctuation are the same artist
     # ("imaginedragons" from a VEVO channel vs "imagine dragons" from a title).
@@ -1071,6 +1147,157 @@ def plan_reorder(
     return changes, report
 
 
+def find_duplicate_videos(
+    items: list[EnrichedPlaylistItem],
+) -> list[dict]:
+    """Group items that point at the exact same video (0 API units).
+
+    One layer only: identical ``video_id``.  A second "probably the same song"
+    tier keyed on title similarity was specified and dropped — the one time it
+    was measured it flagged ``aLIEz`` against ``aLIEz (Remastered)`` and
+    ``sh0ut`` against ``sh0ut (Remastered)``, because normalisation stripped the
+    parenthesised part.  Those are different versions someone collected on
+    purpose.  Identical ``video_id`` cannot produce that class of false
+    positive, and a duplicate report the user has to second-guess is worth less
+    than a short one they can trust.
+
+    ``video_id`` legitimately repeats in a playlist, which is exactly what this
+    finds; ``playlist_item_id`` stays the primary key throughout.
+
+    Returns:
+        One entry per repeated video, ordered by the position of the copy being
+        kept.  ``keep`` is the earliest occurrence in playlist order and
+        ``removable`` the rest.  Nothing is deleted — see cmd_duplicates.
+    """
+    by_video: dict[str, list[EnrichedPlaylistItem]] = defaultdict(list)
+    for item in items:
+        by_video[item.video_id].append(item)
+
+    groups: list[dict] = []
+    for video_id, occurrences in by_video.items():
+        if len(occurrences) < 2:
+            continue
+        ordered = sorted(occurrences, key=lambda i: i.position)
+        keep, extras = ordered[0], ordered[1:]
+        groups.append(
+            {
+                "video_id": video_id,
+                "title": keep.title,
+                "occurrences": len(ordered),
+                "keep": {
+                    "playlist_item_id": keep.playlist_item_id,
+                    "position": keep.position,
+                },
+                "removable": [
+                    {
+                        "playlist_item_id": extra.playlist_item_id,
+                        "position": extra.position,
+                    }
+                    for extra in extras
+                ],
+            }
+        )
+
+    groups.sort(key=lambda g: g["keep"]["position"])
+    return groups
+
+
+class GroupingBenefit(NamedTuple):
+    """How much a caller actually gains by grouping this particular playlist."""
+
+    unknown_ratio: float
+    effective_grouping_ratio: float
+    orphan_group_count: int
+    verdict: str
+    warnings: list[str]
+
+
+def evaluate_grouping_benefit(
+    groups: dict[str, list[int]],
+    resolutions: list[ArtistResolution],
+) -> GroupingBenefit:
+    """Judge whether grouping this playlist is worth the quota.
+
+    Many real playlists simply do not group: every song is by a different
+    artist, or the videos sit on label channels that name no artist at all.
+    Reordering them costs 50 units per move and the user sees no difference —
+    one sampled list spent 201 units to move 4 of 44 items.  AGENT_SOP.md
+    already carried the right knowledge ("group count close to item count means
+    this list is not suitable for automatic grouping") but hung it on
+    ``unresolved_count``, which is **0** on exactly that list.  So the gate
+    could never open.  This computes the numbers instead of asking the agent to
+    eyeball ``groups_found``.
+
+    Two deliberate choices in the arithmetic:
+
+    - Pinned (unavailable) items are outside ``groups`` already and stay out of
+      the denominator.  They never take part in grouping, so counting them
+      would penalise a playlist for videos nobody can reorder anyway.
+    - The ``unknown`` group does **not** count towards
+      ``effective_grouping_ratio``.  Dumping every unrecognised video into one
+      bucket is not grouping, it is a bin — and counting it inverts the verdict
+      on the worst case: the K-pop sample scores 77% with ``unknown`` included
+      and 38% without.  This is the same bias that retired
+      ``group_count_ratio`` as a metric.
+
+    Returns:
+        A :class:`GroupingBenefit`.  ``verdict`` is ``"low"`` when either gate
+        trips, and ``warnings`` then carries one human-readable line per reason
+        with the real numbers already substituted.  It is advisory: callers
+        warn and confirm, they do not refuse to run.
+    """
+    movable = sum(len(indices) for indices in groups.values())
+    if not movable:
+        return GroupingBenefit(0.0, 0.0, 0, "ok", [])
+
+    # Count unresolved items by resolution method rather than by group key, so
+    # a channel that happens to be called "Unknown" cannot be mistaken for the
+    # failure bucket.
+    unknown_indices = {
+        idx
+        for idx, resolution in enumerate(resolutions)
+        if resolution.method == "unknown"
+    }
+    unknown_count = sum(
+        1 for indices in groups.values() for idx in indices if idx in unknown_indices
+    )
+
+    grouped = 0
+    orphan_group_count = 0
+    for indices in groups.values():
+        if len(indices) == 1:
+            orphan_group_count += 1
+            continue
+        if any(idx in unknown_indices for idx in indices):
+            continue
+        grouped += len(indices)
+
+    unknown_ratio = unknown_count / movable
+    effective_grouping_ratio = grouped / movable
+
+    warnings: list[str] = []
+    if unknown_ratio >= _UNKNOWN_RATIO_GATE:
+        warnings.append(
+            f"{unknown_count}/{movable} 部影片（{unknown_ratio:.0%}）辨識不出藝人，"
+            "會被歸進同一個 unknown 群。這通常代表影片掛在多藝人的廠牌頻道下，"
+            "分群結果對使用者沒有意義。"
+        )
+    if effective_grouping_ratio < _EFFECTIVE_GROUPING_GATE:
+        warnings.append(
+            f"只有 {grouped}/{movable} 部影片（{effective_grouping_ratio:.0%}）真的和別的"
+            f"影片聚在一起，其餘 {orphan_group_count} 群都只有一首。重排後畫面幾乎不會改變，"
+            "但仍會照筆數消耗配額。"
+        )
+
+    return GroupingBenefit(
+        unknown_ratio=round(unknown_ratio, 4),
+        effective_grouping_ratio=round(effective_grouping_ratio, 4),
+        orphan_group_count=orphan_group_count,
+        verdict="low" if warnings else "ok",
+        warnings=warnings,
+    )
+
+
 #: Backwards-compatible alias (the pipeline is no longer just "optimization").
 optimize_reorder = plan_reorder
 
@@ -1107,5 +1334,12 @@ def run_full_optimization(
         1 for item in items if not item.metadata_available
     )
     report.channel_majority_overrides = channel_majority_overrides
+
+    benefit = evaluate_grouping_benefit(groups, resolutions)
+    report.unknown_ratio = benefit.unknown_ratio
+    report.effective_grouping_ratio = benefit.effective_grouping_ratio
+    report.orphan_group_count = benefit.orphan_group_count
+    report.grouping_benefit = benefit.verdict
+    report.grouping_warnings = benefit.warnings
 
     return target, changes, report, resolutions

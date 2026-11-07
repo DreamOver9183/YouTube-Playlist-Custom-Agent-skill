@@ -12,7 +12,7 @@ import hashlib
 import re
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -315,6 +315,39 @@ class OptimizationReport(BaseModel):
             "unknown 群組——`unresolved_count` 不會告訴你原因是「辨識失敗」"
             "還是「根本沒有資料可辨識」，這個欄位補上這個區別。"
         ),
+    )
+    unknown_ratio: float = Field(
+        default=0.0,
+        description=(
+            "辨識不出藝人的影片佔可移動影片的比例（0.0–1.0）。分母不含被釘住的"
+            "不可用影片——它們從來不參與分群。"
+        ),
+    )
+    effective_grouping_ratio: float = Field(
+        default=0.0,
+        description=(
+            "真正被聚集起來的影片佔可移動影片的比例（0.0–1.0）：屬於「兩首以上"
+            "同群」的影片數 ÷ 可移動影片數。**`unknown` 群不計入分子**——把辨識"
+            "失敗的影片全丟進同一桶不是聚集，是垃圾桶；把它算進來會讓最該被攔下"
+            "的清單看起來聚集良好（K-pop 那份含 unknown 是 77%，排除後是 38%）。"
+        ),
+    )
+    orphan_group_count: int = Field(
+        default=0,
+        description="只有一首歌的群組數量（孤兒群）。接近群組總數時代表這份清單不適合自動分群。",
+    )
+    grouping_benefit: Literal["ok", "low"] = Field(
+        default="ok",
+        description=(
+            "分群效益判定。`low` 代表這份清單重排後使用者大概感受不到差別，"
+            "**但這是警告不是拒絕執行**：Phase 3 要先把 `grouping_warnings` "
+            "告知使用者並取得確認，不要靜默照跑。判定在 `optimize` 階段完成，"
+            "本來就是 0 API units，所以警告一定發生在使用者付出配額之前。"
+        ),
+    )
+    grouping_warnings: list[str] = Field(
+        default_factory=list,
+        description="`grouping_benefit` 為 `low` 時的具體原因，每一條都已帶入實際數字，可直接轉述給使用者。",
     )
     channel_majority_overrides: list[ChannelMajorityOverride] = Field(
         default_factory=list,

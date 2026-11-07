@@ -84,6 +84,31 @@
    - `metadata_missing_count > 0`：有影片可在清單中看到，但 `videos.list` 沒有回傳它的資料（常見於地區限制）。這類影片仍會正常參與重排（不影響位置正確性），但沒有標題／頻道名可用於藝人辨識，分組時多半會落入 `unknown`。請在 Phase 3 一併告知使用者。
 3. 首次執行若需要 OAuth 登入，底層庫會觸發系統瀏覽器視窗。請提示使用者注意瀏覽器彈窗並完成授權。
 
+#### 選用：找出重複收錄的影片（0 API units）
+
+使用者抱怨「同一首歌重複加進清單」時才跑，不是每次都要做：
+
+```
+python -m scripts.yt_tool duplicates data/current.json
+```
+
+```json
+{"status": "success", "total_items": 192, "distinct_videos": 188,
+ "duplicate_groups": 4, "redundant_items": 4,
+ "groups": [{"video_id": "_lxS-x7DACQ", "title": "Unity", "occurrences": 2,
+             "keep": {"playlist_item_id": "UEx0...", "position": 5},
+             "removable": [{"playlist_item_id": "UEx0...", "position": 96}]}]}
+```
+
+- **只比對 `video_id` 完全相同的項目**，所以零誤判。它**不會**把
+  `aLIEz` 與 `aLIEz (Remastered)`、原版與 Live／Acoustic 版當成重複——
+  那些是使用者刻意收藏的不同版本，之前用標題相似度判斷時正是在這裡誤判。
+  也因此，使用者說「有重複」但這裡回報 0 筆時，請如實說明「沒有完全相同的重複項目，
+  你看到的可能是同一首歌的不同版本」，不要自行放寬判準去湊出結果。
+- `keep` 是清單中最前面的那一份，`removable` 是其餘的。
+- **這個指令只列出，不會刪除任何東西。** 要移除得由使用者自己在 YouTube 介面操作——
+  刪除不可逆，目前沒有接上任何刪除指令。
+
 ### Phase 2: 本地計算 (Local Computation)
 
 根據使用者的需求類型，選擇以下其中一種路徑。三條路徑都會產出同樣格式的變更檔，也都套用 LIS 錨點最佳化。
@@ -92,13 +117,22 @@
 
 適用於「把相同歌手/團體的影片放在一起」等分組任務，可同時指定群內排序。使用內建的 `optimize` 指令，**零 Token 消耗、零 API 配額**：
 
-1. **（可選）建立藝人別名對照表**：若播放清單包含同一藝人的不同名稱變體，可建立 `data/artist_aliases.json`：
+1. **（可選，但真實清單上通常需要）建立藝人別名對照表** `data/artist_aliases.json`。
+   JSON 的 key 是要合併成的正式名稱，value 是所有會出現的變體——包含**頻道名原文**
+   與**被誤判成藝人的歌名**：
    ```json
    {
-     "BTS": ["Bangtan Boys", "방탄소년단"],
-     "BLACKPINK": ["블랙핑크", "BP"]
+     "米津玄師": ["Kenshi Yonezu", "kenshi yonezu", "Kenshi Yonezu  米津玄師"],
+     "優里": ["Yuuri", "優里 Official YouTube Channel", "優里ちゃんねる【公式】"],
+     "tuki.": ["tuki.(17)", "晩餐歌", "一輪花", "月面着陸計画"]
    }
    ```
+   它會在分群之前把辨識結果正規化，因此能合併「**已經辨識成功但拼法不同**」的群組——
+   跨語言別名（`kenshi yonezu` / `米津玄師`）、頻道贅字（`優里 official youtube`）、
+   以及標題被當成藝人的情況。比對是正規化後的完全相符，不做模糊比對：這一趟跑在
+   每一個項目上，模糊比對一旦誤中就會整份清單默默合併錯兩位藝人。
+   > 沒有傳 `--aliases` 就完全不生效，預設分群行為不變。實測在一份 192 首的清單上，
+   > 群組數 126 → 108、孤兒群 101 → 81。
 
 2. **執行最佳化計算**：
 
@@ -131,17 +165,30 @@
      "group_details": {"bts": 30, "blackpink": 25},
      "unresolved_count": 3,
      "metadata_missing_count": 2,
+     "unknown_ratio": 0.015,
+     "effective_grouping_ratio": 0.72,
+     "orphan_group_count": 18,
+     "grouping_benefit": "ok",
+     "grouping_warnings": [],
      "channel_majority_overrides": [],
      "fingerprint": "07580a1cecc69364"
    }
    ```
    - `anchors`：不需移動的影片數量（LIS 錨點）
    - `pinned_count`：無法移動的私人／已刪除影片數量
+   - `grouping_benefit`：**分群效益判定，先看這個**。為 `"low"` 時代表這份清單重排完
+     使用者大概感受不到差別，`grouping_warnings` 會逐條說明原因並帶好數字。
+     這時**不要直接往下做**：把警告轉述給使用者，說明預估配額，問他還要不要繼續，
+     或改用其他維度（路徑 B/C）。這是警告不是拒絕——使用者說要做就照做。
+     判定發生在 `optimize`，本來就是 0 API units，所以一定在花配額之前。
+   - `unknown_ratio` / `effective_grouping_ratio` / `orphan_group_count`：
+     上面那個判定的三個依據。有效聚集率是「和別人聚在一起的影片 ÷ 可移動影片」，
+     **`unknown` 群不算聚集**（那是垃圾桶不是群組）。門檻是 unknown ≥ 20% 或
+     有效聚集率 < 30%，在 11 份真實樣本上乾淨分開、無邊界案例。
    - `unresolved_count`：完全辨識不出藝人的影片數。**這個數字是 0 不代表分群一定正確**，
-     它只計算「兩層都失敗」的情況。請一併檢查 `groups_found`：若同一位藝人出現多個相近的
-     key，或群組數接近影片數（幾乎全是單曲群），代表這份清單的命名形態不適合自動分群，
-     應改用路徑 B/C 明確指定欄位。`artist_aliases.json` 只在辨識失敗時才會生效，
-     無法用來合併「已辨識但分錯」的群組。
+     它只計算「兩層都失敗」的情況——所以才要看 `grouping_benefit`，那份 40 組裝 44 首的
+     日文清單 `unresolved_count` 正好是 0。若同一位藝人出現多個相近的 key，
+     用 `--aliases data/artist_aliases.json` 把它們併起來。
    - `metadata_missing_count`：`unresolved_count` 當中，有多少是因為根本沒有資料可辨識
      （`videos.list` 沒回傳，通常是地區限制），而不是辨識演算法失敗。這些影片無法靠
      `artist_aliases.json` 救回來——沒有標題或頻道名可以比對。若這個數字偏高，如實告知

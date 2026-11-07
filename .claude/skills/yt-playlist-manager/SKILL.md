@@ -29,12 +29,18 @@ python -m scripts.yt_tool setup_credentials <path_to_client_secret.json>
 # 1. 抓取（--refresh 可略過 30 分鐘快取）
 python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json
 
+# 1b. 找重複（0 API units，只在使用者抱怨重複時才跑）。只認 video_id 完全相同，只列出不刪除。
+python -m scripts.yt_tool duplicates data/current.json
+
 # 2A. 分組（0 API units，推薦）。只做分組，群內維持原順序 —— 這是預設，移動最少。
 python -m scripts.yt_tool optimize data/current.json \
     --target-out data/new.json --out data/changes.json \
-    --group-order first_appearance
+    --group-order first_appearance --aliases data/artist_aliases.json
 #    ↑ 僅在使用者「明確指定」群內順序時，才加上 --within-group-sort viewCount:desc
 #      （見規則 0）。加上它會增加移動筆數，預覽時必須分開列出這筆成本。
+#    ↑ --aliases 會把同一位藝人的不同拼法併成一組（跨語言別名、頻道贅字、歌名被誤判成藝人）。
+#      回傳的 grouping_benefit 為 "low" 時，先把 grouping_warnings 轉述給使用者，
+#      問他還要不要花這筆配額，不要直接往下做。
 
 # 2B. 自訂順序：自己寫腳本產生 data/new.json（必須是 current 的重排），再算差異
 python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json

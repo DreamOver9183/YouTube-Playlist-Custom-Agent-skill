@@ -582,6 +582,17 @@ def s05_optimize_is_local(h: Harness) -> list[str]:
           f"expected {len(MAIN_ARTISTS)} groups, target has {len(groups)}: {groups}")
     check(report["unresolved_count"] == 0,
           f"every item should resolve to an artist, {report['unresolved_count']} did not")
+    # The grouping-benefit gate rides along on optimize (0 units) so the warning
+    # always lands before the user spends quota.
+    for field_name in ("unknown_ratio", "effective_grouping_ratio",
+                       "orphan_group_count", "grouping_benefit", "grouping_warnings"):
+        check(field_name in report, f"optimize must report {field_name}")
+    check(report["grouping_benefit"] == "ok",
+          f"four fat artist groups should pass the gate: {report['grouping_warnings']}")
+    check(report["grouping_warnings"] == [], "a passing playlist must carry no warnings")
+    check(report["unknown_ratio"] == 0.0, f"unknown_ratio should be 0, got {report['unknown_ratio']}")
+    check(report["effective_grouping_ratio"] == 1.0,
+          f"every item is in a group of >1, expected 1.0, got {report['effective_grouping_ratio']}")
     check(sorted(report["groups_found"]) == sorted(a.lower() for a, _ in MAIN_ARTISTS),
           f"unexpected group keys: {report['groups_found']}")
 
@@ -616,6 +627,40 @@ def s05_optimize_is_local(h: Harness) -> list[str]:
     return [f"{report['anchors']} anchors / {report['need_to_move']} moves, 0 API units",
             f"replay(current, changes) == target ({len(current)} items)",
             f"saved {report['quota_saved_vs_naive']} units vs a naive {naive_moves}-move plan"]
+
+
+def s05b_duplicates_report(h: Harness) -> list[str]:
+    """Phase 1 optional: duplicate detection is local, exact, and read-only."""
+    before = h.quota()
+    current = read_json(h.path("current.json"))
+
+    run = h.tool("duplicates", str(h.path("current.json")))
+    check(run.code == 0, f"duplicates failed: {run.last}")
+    report = run.last
+    check(h.quota() == before,
+          f"duplicates must cost 0 API units, spent {h.quota() - before}")
+
+    # The fixture playlist has no repeated video, so the honest answer is zero.
+    by_video = {}
+    for row in current:
+        by_video.setdefault(row["video_id"], []).append(row)
+    expected = {vid for vid, rows in by_video.items() if len(rows) > 1}
+
+    check(report["total_items"] == len(current),
+          f"total_items {report['total_items']} != {len(current)}")
+    check(report["distinct_videos"] == len(by_video),
+          f"distinct_videos {report['distinct_videos']} != {len(by_video)}")
+    check({g["video_id"] for g in report["groups"]} == expected,
+          f"duplicate set mismatch: {[g['video_id'] for g in report['groups']]}")
+    check(report["redundant_items"] == sum(len(g["removable"]) for g in report["groups"]),
+          "redundant_items must equal the number of removable entries")
+
+    # Nothing may be deleted, ever — the command reports and stops.
+    deletes = [c for c in h.state.get("calls", []) if c["op"].endswith(".delete")]
+    check(not deletes, f"duplicates must never delete: {deletes}")
+
+    return [f"{report['total_items']} items / {report['distinct_videos']} videos, "
+            f"{report['duplicate_groups']} duplicate groups, 0 units, 0 deletes"]
 
 
 def s06_optimize_without_google_stack(h: Harness) -> list[str]:
@@ -999,6 +1044,7 @@ SCENARIOS: list[Scenario] = [
     Scenario("fetch", "Phase 1", "Fetch: pagination, batching, private videos", s03_fetch_pagination),
     Scenario("cache", "Phase 1", "Cache hit vs --refresh, token reuse", s04_cache_behaviour),
     Scenario("optimize", "Phase 2A", "Optimize: grouping, sorting, minimal plan", s05_optimize_is_local),
+    Scenario("duplicates", "Phase 1", "Duplicate report is local, exact, read-only", s05b_duplicates_report),
     Scenario("offline", "Phase 2A", "Optimize really is offline and deterministic", s06_optimize_without_google_stack),
     Scenario("preview", "Phase 3", "Preview payload matches reality", s07_preview_payload),
     Scenario("update", "Phase 4", "Write-back reaches the target order", s08_update_write_back),
