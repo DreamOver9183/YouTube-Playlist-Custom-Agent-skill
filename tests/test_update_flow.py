@@ -26,7 +26,6 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-import pytest
 from googleapiclient.errors import HttpError
 
 from scripts import yt_tool
@@ -36,9 +35,15 @@ from scripts.schemas import EnrichedPlaylistItem
 PLAYLIST_ID = "PLtestflow"
 
 
-@pytest.fixture
-def tmp_dir(tmp_path: Path) -> Path:
-    return tmp_path
+try:  # pytest is optional: CI runs this file directly with the built-in runner below.
+    import pytest
+except ImportError:  # pragma: no cover
+    pytest = None
+
+if pytest is not None:
+    @pytest.fixture
+    def tmp_dir(tmp_path: Path) -> Path:
+        return tmp_path
 
 
 # ─── Fakes ────────────────────────────────────────
