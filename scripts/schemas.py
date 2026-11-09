@@ -30,6 +30,7 @@ class SortField(str, Enum):
     TITLE = "title"
     CHANNEL_TITLE = "channelTitle"
     ADDED_AT = "addedAt"
+    TRACK_NUMBER = "trackNumber"  # (disc_number, track_number)；Spotify 依專輯分組時的自然順序
 
 
 class SortOrder(str, Enum):
@@ -82,13 +83,40 @@ class VideoMetadata(BaseModel):
     privacy_status: str = "public"
 
 
+class ArtistRef(BaseModel):
+    """平台提供的結構化藝人（Spotify ``artists[]``）。"""
+    name: str = ""
+    id: str = ""
+
+
+class AlbumRef(BaseModel):
+    """平台提供的結構化專輯（Spotify ``album``）。"""
+    id: str = ""
+    name: str = ""
+    album_type: str = ""
+    total_tracks: int = 0
+
+
 class EnrichedPlaylistItem(BaseModel):
-    """合併 PlaylistItemData + VideoMetadata 的完整資料。"""
+    """播放清單中的一個項目（平台中立；``Track`` 是它的別名）。
+
+    兩個平台共用同一個模型，欄位意義：
+
+    - ``playlist_item_id``：快照內唯一的項目鍵。YouTube 是 playlistItems 的 ID；
+      Spotify 項目沒有自己的 ID，用 ``<uri>#<同一首第幾次出現>`` 合成。
+    - ``video_id``：媒體 ID。YouTube 是 videoId；Spotify 是 track／episode ID
+      （本機檔案沒有 ID，改用 uri）。
+    - ``platform``：``youtube`` 或 ``spotify``；舊檔沒有這個欄位時視為 YouTube。
+    - ``artists`` / ``album`` / ``track_number`` / ``disc_number`` / ``isrc`` / ``uri``：
+      只有 Spotify 會填，YouTube 一律是預設值。
+    - ``description``：只有 YouTube 會填（videos.list 本來就回傳，0 額外配額）。
+    """
     playlist_item_id: str
     video_id: str
     position: int
     added_at: datetime
     playlist_id: str = ""
+    platform: Literal["youtube", "spotify"] = "youtube"
 
     # 來自 VideoMetadata
     title: str = ""
@@ -100,6 +128,13 @@ class EnrichedPlaylistItem(BaseModel):
     comment_count: int = 0
     tags: list[str] = Field(default_factory=list)
     privacy_status: str = "public"
+    description: str = ""
+    artists: list[ArtistRef] = Field(default_factory=list)
+    album: Optional[AlbumRef] = None
+    track_number: int = 0
+    disc_number: int = 0
+    isrc: str = ""
+    uri: str = ""
     is_available: bool = True
     metadata_available: bool = Field(
         default=True,
@@ -139,6 +174,7 @@ class EnrichedPlaylistItem(BaseModel):
                 "comment_count": metadata.comment_count,
                 "tags": metadata.tags,
                 "privacy_status": metadata.privacy_status,
+                "description": metadata.description,
             })
         else:
             base["channel_title"] = item.channel_title
@@ -176,6 +212,27 @@ class PositionChange(BaseModel):
     def api_position(self) -> int:
         """送給 API 的位置（``new_position`` 的語意別名）。"""
         return self.new_position
+
+
+#: 平台中立的名稱。程式內仍沿用 ``EnrichedPlaylistItem``，避免大範圍改名。
+Track = EnrichedPlaylistItem
+
+
+class RangeMove(BaseModel):
+    """Spotify 的一次區段搬移（單一次 ``PUT /playlists/{id}/items`` 呼叫）。
+
+    ``range_start`` 與 ``insert_before`` 都是**送出這一次呼叫當下**的索引，且
+    ``insert_before`` 依 Spotify 的語意以「搬移前」的清單計算。與 YouTube 的
+    ``PositionChange`` 一樣，這些搬移**順序相依**：必須依 ``execution_order`` 逐筆送出。
+    """
+    execution_order: int
+    range_start: int
+    insert_before: int
+    range_length: int = Field(ge=1)
+    item_keys: list[str] = Field(description="這一段依序包含的項目鍵（playlist_item_id）")
+    first_title: str = ""
+    old_position: int = Field(description="這一段第一首在原清單中的索引（供預覽）")
+    final_position: int = Field(description="這一段第一首在最終清單中的索引（供預覽）")
 
 
 class CachedPlaylist(BaseModel):

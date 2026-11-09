@@ -11,6 +11,8 @@ Core components:
    pinned (unavailable) items that must keep their original position
 3. Move planning against a simulated live list — the position sent to the
    API is computed at execution time, not taken from the target index
+4. Spotify: grouping on the platform's structured artist / album ids, and a
+   block-move planner (one call per contiguous run, ``S − LIS(runs)`` calls)
 
 All computation is local (0 API units).
 """
@@ -33,6 +35,7 @@ from scripts.schemas import (
     EnrichedPlaylistItem,
     OptimizationReport,
     PositionChange,
+    RangeMove,
     SortConfig,
 )
 
@@ -1298,9 +1301,6 @@ def evaluate_grouping_benefit(
     )
 
 
-#: Backwards-compatible alias (the pipeline is no longer just "optimization").
-
-
 def run_full_optimization(
     items: list[EnrichedPlaylistItem],
     aliases_path: Path | None = None,
@@ -1342,3 +1342,218 @@ def run_full_optimization(
     report.grouping_warnings = benefit.warnings
 
     return target, changes, report, resolutions
+
+
+# ─────────────────────────────────────────────
+# Spotify: structured grouping + block moves
+# ─────────────────────────────────────────────
+
+#: ``--group-by`` values each platform supports.  YouTube has no structured
+#: album (album clustering there was dropped in v3.10.0), so it is artist-only.
+GROUP_BY_CHOICES: dict[str, tuple[str, ...]] = {
+    "youtube": ("artist",),
+    "spotify": ("artist", "album"),
+}
+
+
+def _structured_group_key(item: EnrichedPlaylistItem, group_by: str) -> tuple[str, str] | None:
+    """Return ``(stable_key, display_name)`` from the platform's own fields."""
+    if group_by == "album":
+        if item.album and (item.album.id or item.album.name):
+            return item.album.id or f"name:{item.album.name}", item.album.name or item.album.id
+        return None
+    if item.artists:
+        primary = item.artists[0]
+        if primary.id or primary.name:
+            return primary.id or f"name:{primary.name}", primary.name or primary.id
+    return None
+
+
+def group_by_structured_field(
+    items: list[EnrichedPlaylistItem],
+    group_by: str = "artist",
+    group_order: str = "first_appearance",
+    within_group_sort: SortConfig | None = None,
+) -> tuple[list[EnrichedPlaylistItem], dict[str, list[int]], list[ArtistResolution]]:
+    """Group on the primary artist id (or album id) the platform already gives us.
+
+    No title parsing, no guessing: Spotify returns ``artists[]`` and ``album``
+    as entities with ids, so two spellings of one artist are one group and two
+    artists who share a name stay apart.  Items without the field (local files,
+    podcast episodes) land in ``unknown``.
+
+    Returns the same shape the artist pipeline produces so the grouping-benefit
+    gate (:func:`evaluate_grouping_benefit`) applies unchanged.
+    """
+    keyed: list[tuple[str, str] | None] = [
+        None if not item.is_available else _structured_group_key(item, group_by)
+        for item in items
+    ]
+
+    # Display labels: the entity name, disambiguated only on a real collision.
+    names_by_key: dict[str, str] = {}
+    for entry in keyed:
+        if entry:
+            names_by_key.setdefault(entry[0], entry[1])
+    name_counts = Counter(names_by_key.values())
+    label_of = {
+        key: name if name_counts[name] == 1 else f"{name} ({key.rsplit(':', 1)[-1][:6]})"
+        for key, name in names_by_key.items()
+    }
+
+    groups: dict[str, list[int]] = defaultdict(list)
+    resolutions: list[ArtistResolution] = []
+    for idx, (item, entry) in enumerate(zip(items, keyed)):
+        if not item.is_available:
+            resolutions.append(
+                ArtistResolution(artist_key="__pinned__", confidence=1.0, method="unavailable")
+            )
+            continue
+        if entry is None:
+            resolutions.append(ArtistResolution(artist_key="unknown", confidence=0.0, method="unknown"))
+            groups["unknown"].append(idx)
+            continue
+        label = label_of[entry[0]]
+        resolutions.append(
+            ArtistResolution(artist_key=label, confidence=1.0, method=f"platform_{group_by}")
+        )
+        groups[label].append(idx)
+
+    if group_order == "alphabetical":
+        ordered_keys = sorted(groups.keys())
+    elif group_order == "count_desc":
+        ordered_keys = sorted(groups.keys(), key=lambda k: len(groups[k]), reverse=True)
+    else:
+        ordered_keys = sorted(groups.keys(), key=lambda k: min(groups[k]))
+
+    movable_order: list[EnrichedPlaylistItem] = []
+    for key in ordered_keys:
+        group_items = [items[idx] for idx in groups[key]]
+        if within_group_sort is not None:
+            group_items = apply_sort(group_items, within_group_sort)
+        movable_order.extend(group_items)
+
+    return weave_pinned(movable_order, items), dict(groups), resolutions
+
+
+def apply_range_move(
+    live: list[str], range_start: int, insert_before: int, range_length: int
+) -> list[str]:
+    """Replay one Spotify reorder call on an id list.
+
+    Spotify counts ``insert_before`` in the list as it was **before** the move,
+    so a target past the block shifts left by ``range_length`` once the block is
+    lifted out.
+    """
+    block = live[range_start:range_start + range_length]
+    rest = live[:range_start] + live[range_start + range_length:]
+    slot = insert_before if insert_before <= range_start else insert_before - range_length
+    return rest[:slot] + block + rest[slot:]
+
+
+def build_range_plan(
+    current: list[EnrichedPlaylistItem],
+    target: list[EnrichedPlaylistItem],
+) -> list[RangeMove]:
+    """Plan Spotify block moves: one call per contiguous run, ``S − LIS(runs)`` calls.
+
+    A *run* is a maximal stretch of the current list whose items are also
+    consecutive, in the same order, in the target.  Runs never need to be
+    split, so each one moves as a block.  The runs that already appear in
+    target order (an LIS over runs) stay put; every other run is moved, in
+    target order, to sit right after its target predecessor.  Unavailable items
+    form their own runs and are forced anchors, exactly like the YouTube planner.
+
+    Since every item-level LIS extends to a run-level one, the call count is
+    never above the item-level ``N − LIS`` that YouTube needs.
+
+    Raises:
+        ValueError: If *target* is not a permutation of *current*.
+        RuntimeError: If replaying the plan does not reproduce *target* — this
+            would be a planner bug and must never reach the API.
+    """
+    normalized = normalize_target(current, target)
+    cur_keys = [item.playlist_item_id for item in current]
+    tgt_keys = [item.playlist_item_id for item in normalized]
+    pinned = pinned_item_ids(current)
+    pos_t = {key: idx for idx, key in enumerate(tgt_keys)}
+    cur_index = {key: idx for idx, key in enumerate(cur_keys)}
+    title_of = {item.playlist_item_id: item.title for item in current}
+
+    runs: list[list[str]] = []
+    for key in cur_keys:
+        if (
+            runs
+            and key not in pinned
+            and runs[-1][-1] not in pinned
+            and pos_t[key] == pos_t[runs[-1][-1]] + 1
+        ):
+            runs[-1].append(key)
+        else:
+            runs.append([key])
+
+    runs_in_target = sorted(runs, key=lambda run: pos_t[run[0]])
+    seq = [cur_index[run[0]] for run in runs_in_target]
+
+    anchors: set[int] = set()
+    segment_start, lower_bound = 0, -1
+    for idx, run in enumerate(runs_in_target):
+        if run[0] not in pinned:
+            continue
+        anchors.add(idx)
+        anchors |= _lis_segment(seq, segment_start, idx, lower_bound, seq[idx])
+        segment_start, lower_bound = idx + 1, seq[idx]
+    anchors |= _lis_segment(seq, segment_start, len(seq), lower_bound, None)
+
+    live = list(cur_keys)
+    moves: list[RangeMove] = []
+    for idx, run in enumerate(runs_in_target):
+        if idx in anchors:
+            continue
+        first = run[0]
+        start = live.index(first)
+        target_slot = pos_t[first]
+        insert_before = 0 if target_slot == 0 else live.index(tgt_keys[target_slot - 1]) + 1
+        if insert_before == start:
+            continue  # already sitting right after its predecessor
+        moves.append(
+            RangeMove(
+                execution_order=len(moves),
+                range_start=start,
+                insert_before=insert_before,
+                range_length=len(run),
+                item_keys=list(run),
+                first_title=title_of.get(first, ""),
+                old_position=cur_index[first],
+                final_position=target_slot,
+            )
+        )
+        live = apply_range_move(live, start, insert_before, len(run))
+
+    if live != tgt_keys:
+        raise RuntimeError("Range plan does not reproduce the target order; refusing to emit it.")
+
+    logger.info(
+        "Range plan: %d items, %d runs, %d run anchors, %d calls.",
+        len(cur_keys), len(runs), len(anchors), len(moves),
+    )
+    return moves
+
+
+def plan_range_reorder(
+    current: list[EnrichedPlaylistItem],
+    target: list[EnrichedPlaylistItem],
+) -> tuple[list[RangeMove], dict[str, int]]:
+    """Spotify counterpart of :func:`plan_reorder`: block moves plus cost figures."""
+    normalized = normalize_target(current, target)
+    moves = build_range_plan(current, normalized)
+    pinned = pinned_item_ids(current)
+    item_anchors = compute_lis_anchors(current, normalized, pinned)
+    stats = {
+        "total_items": len(current),
+        "calls": len(moves),
+        "items_moved": sum(move.range_length for move in moves),
+        "item_level_moves": len(current) - len(item_anchors),
+        "pinned_count": len(pinned),
+    }
+    return moves, stats

@@ -5,6 +5,10 @@
 定這個格式的原因很簡單：樣本的 `items` **就是** `EnrichedPlaylistItem`，與
 `yt_tool fetch --out` 的產物同一種東西。任何工具要吃樣本都不需要轉接層。
 
+> v4.0 起 `EnrichedPlaylistItem` 多了幾個有預設值的欄位：`platform`（舊檔視為 `youtube`）、
+> YouTube 的 `description`，以及只有 Spotify 會填的 `artists`、`album`、`track_number`、
+> `disc_number`、`isrc`、`uri`。舊樣本不需要改寫就能載入。
+
 在此之前，Task 3 的第一版樣本用的是自訂欄位（`index` / `channel` / `views` /
 `published_date`），每次要餵給 `optimizer` 都得先寫一段對照程式碼，而那段程式碼
 本身沒有被測試涵蓋 —— 轉接層是缺陷的溫床，不是便利。

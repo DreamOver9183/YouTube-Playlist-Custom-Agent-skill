@@ -5,7 +5,7 @@ Phase 0 憑證握手 → Phase 1 fetch → Phase 2 本地計算（optimize / dif
 Phase 3 預覽資料 → Phase 4 寫回、重試、中斷續傳。
 
 ```bash
-python tests/e2e/run_e2e.py                      # 全部 17 個情境
+python tests/e2e/run_e2e.py                      # 全部 20 個情境
 python tests/e2e/run_e2e.py -k update,resume     # 只跑指定情境（逗號分隔、子字串比對）
 python tests/e2e/run_e2e.py --keep               # 保留暫存工作區以便檢查產出檔案
 ```
@@ -61,7 +61,7 @@ python tests/e2e/dryrun.py data/current.json data/changes.json \
 
 ## 通過條件
 
-全部 17 個情境必須通過，離開碼為 0。核心判準：
+全部 20 個情境必須通過，離開碼為 0。核心判準：
 
 **正確性（最重要）**
 
@@ -116,6 +116,13 @@ python tests/e2e/dryrun.py data/current.json data/changes.json \
 | 14 | Phase 4 | 變更集完整性防護 |
 | 15 | Phase 2A | 已排序清單為真正的 no-op |
 | 16 | 全域 | 參數錯誤回傳結構化錯誤碼、接受播放清單網址 |
+| 17 | Spotify 0–1 | Client ID 驗證、過期 token 自動更新、以網址抓取、重複曲目與本機檔案、快取 |
+| 18 | Spotify 2–4 | 依藝人分組 → 區段搬移（呼叫數 = S − LIS(段)）→ 寫回並全量驗證；依專輯分組＋曲序；YouTube 拒絕 `--group-by album` |
+| 19 | Spotify 4 | 429 依 Retry-After 重試、403 中止後從遠端實際狀態續傳、502 已落地不重送、遠端漂移在寫入前被擋下 |
+
+Spotify 情境改用 `fake_spotify.py`：它是一個真的 HTTP 伺服器（127.0.0.1 隨機埠），
+所以 `requests` 呼叫、分頁、標頭與狀態碼處理都是真的走一遍；工具透過
+`YT_SKILL_SPOTIFY_API_BASE` / `YT_SKILL_SPOTIFY_ACCOUNTS_BASE` 連到它，這兩個變數只接受 loopback 位址。
 
 ---
 

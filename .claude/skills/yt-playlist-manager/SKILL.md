@@ -1,8 +1,8 @@
 ---
 name: yt-playlist-manager
 description: |
-  管理與重排 YouTube / YouTube Music 播放清單。
-  當使用者想要對播放清單排序、分組（例如「同歌手放一起」）、篩選或重新排列時使用。
+  管理與重排 YouTube / YouTube Music 與 Spotify 播放清單。
+  當使用者想要對播放清單排序、分組（例如「同歌手放一起」「同專輯放一起」）、篩選或重新排列時使用。
   流程為：fetch 抓取 → 本地計算最小變更集（0 API 配額）→ 聊天室預覽並取得同意 → 寫回。
 ---
 
@@ -24,9 +24,11 @@ description: |
 
 ```bash
 # 0. 憑證（預設 ~/.gemini/skills/yt-playlist-manager/credentials，可用 $YT_SKILL_HOME 覆寫）
-python -m scripts.yt_tool setup_credentials <path_to_client_secret.json>
+python -m scripts.yt_tool setup_credentials <path_to_client_secret.json>   # YouTube
+python -m scripts.yt_tool setup_spotify <client_id>   # Spotify；沒有 Client ID 就照 docs/SPOTIFY_SETUP.md 帶使用者建 App
+python -m scripts.yt_tool spotify-check [<spotify_playlist_url>]   # 唯讀檢查 Spotify 連線
 
-# 1. 抓取（--refresh 可略過 30 分鐘快取）
+# 1. 抓取（--refresh 可略過 30 分鐘快取）。平台由網址自動判斷：open.spotify.com / spotify: 為 Spotify，其餘為 YouTube
 python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json
 
 # 1b. 找重複（0 API units，只在使用者抱怨重複時才跑）。只認 video_id 完全相同，只列出不刪除。
@@ -41,6 +43,7 @@ python -m scripts.yt_tool optimize data/current.json \
 #    ↑ --aliases 會把同一位藝人的不同拼法併成一組（跨語言別名、頻道贅字、歌名被誤判成藝人）。
 #      回傳的 grouping_benefit 為 "low" 時，先把 grouping_warnings 轉述給使用者，
 #      問他還要不要花這筆配額，不要直接往下做。
+#    ↑ Spotify：可加 --group-by album（只限 Spotify）。成本看 estimated_calls，沒有配額；--aliases 不生效。
 
 # 2B. 自訂順序：自己寫腳本產生 data/new.json（必須是 current 的重排），再算差異
 python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json

@@ -17,6 +17,9 @@ These tests replay every plan against a local simulation of
    never receive an API call.
 5. Resume: interrupting the plan and continuing still lands on the target.
 6. Guards: non-permutation targets are rejected instead of silently written.
+7. Spotify block moves: the same exhaustive replay under Spotify's
+   ``range_start`` / ``insert_before`` semantics, with the call count equal to
+   ``S - LIS(runs)`` and never above the item-level ``N - LIS``.
 """
 
 import logging
@@ -33,6 +36,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from scripts.optimizer import (
     build_move_plan,
+    build_range_plan,
     compute_lis_anchors,
     normalize_target,
     plan_reorder,
@@ -378,6 +382,107 @@ def test_within_group_sort_applied_and_exact():
 # ─── Main ─────────────────────────────────────────
 
 
+# ─── Test 7: Spotify block moves ─────────────────
+
+
+def spotify_replay(current, moves) -> list[str]:
+    """Simulate Spotify's reorder call, written independently of the planner.
+
+    Per the Web API reference: the block ``[range_start, range_start +
+    range_length)`` is moved to sit before the item that was at index
+    ``insert_before`` *before* the call (``insert_before == len`` means the end).
+    """
+    live = [item.playlist_item_id for item in current]
+    for move in moves:
+        start, length, before = move.range_start, move.range_length, move.insert_before
+        assert 0 <= start and start + length <= len(live), f"range out of bounds: {move}"
+        assert 0 <= before <= len(live), f"insert_before out of bounds: {move}"
+        assert not (start < before <= start + length), f"no-op / self-overlapping move: {move}"
+        anchor = live[before] if before < len(live) else None
+        block = live[start:start + length]
+        assert block == move.item_keys, f"block {block} != planned keys {move.item_keys}"
+        rest = [key for key in live if key not in set(block)]
+        slot = rest.index(anchor) if anchor is not None else len(rest)
+        live = rest[:slot] + block + rest[slot:]
+    return live
+
+
+def run_count(current, target) -> tuple[int, int]:
+    """(S, LIS over runs) computed from scratch for the expected call count."""
+    pos_t = {item.playlist_item_id: idx for idx, item in enumerate(target)}
+    seq = [pos_t[item.playlist_item_id] for item in current]
+    firsts = [seq[0]]
+    for prev, value in zip(seq, seq[1:]):
+        if value != prev + 1:
+            firsts.append(value)
+    tails: list[int] = []
+    for value in firsts:
+        pos = bisect_left(tails, value)
+        if pos == len(tails):
+            tails.append(value)
+        else:
+            tails[pos] = value
+    return len(firsts), len(tails)
+
+
+def test_spotify_exhaustive_block_moves():
+    """All permutations of n = 2..7 under Spotify semantics: exact target, S - LIS(runs) calls."""
+    checked = saved = 0
+    for n in range(2, 8):
+        current = build_playlist(n)
+        for perm in permutations(range(n)):
+            target = [current[i] for i in perm]
+            moves = build_range_plan(current, target)
+            result = spotify_replay(current, moves)
+            assert result == ids(target), f"n={n} perm={perm}: {result} != {ids(target)}"
+
+            runs, run_lis = run_count(current, target)
+            assert len(moves) == runs - run_lis, (
+                f"n={n} perm={perm}: {len(moves)} calls, expected S-LIS(runs)={runs - run_lis}"
+            )
+            item_level = n - lis_length(current, target)
+            assert len(moves) <= item_level, f"n={n} perm={perm}: block plan worse than N-LIS"
+            assert [m.execution_order for m in moves] == list(range(len(moves)))
+            saved += item_level - len(moves)
+            checked += 1
+    print(f"  ✓ spotify exhaustive: {checked} permutations exact, "
+          f"S-LIS(runs) calls, {saved} calls saved vs item-level N-LIS")
+
+
+def test_spotify_block_moves_large_and_pinned():
+    """Random larger playlists, with and without pinned items, still land exactly."""
+    rng = random.Random(2026)
+    for trial in range(60):
+        n = rng.randint(20, 120)
+        hidden = set(rng.sample(range(n), k=rng.randint(0, 4))) if trial % 2 else set()
+        current = build_playlist(n, unavailable=hidden)
+        movable = [item for item in current if item.is_available]
+        shuffled = list(movable)
+        if trial % 3 == 0:
+            rng.shuffle(shuffled)
+        else:
+            # Grouping-like target: a few blocks swapped around (the common case).
+            cut = sorted(rng.sample(range(1, len(shuffled)), k=min(4, len(shuffled) - 1)))
+            blocks = [shuffled[i:j] for i, j in zip([0] + cut, cut + [len(shuffled)])]
+            rng.shuffle(blocks)
+            shuffled = [item for block in blocks for item in block]
+        target = normalize_target(current, shuffled + [current[i] for i in sorted(hidden)])
+        moves = build_range_plan(current, target)
+        result = spotify_replay(current, moves)
+        assert result == ids(target), f"trial {trial}: block plan did not land on target"
+        for idx in hidden:
+            assert result[idx] == f"p{idx}", f"trial {trial}: pinned p{idx} drifted"
+        moved = {key for move in moves for key in move.item_keys}
+        assert not moved & {f"p{i}" for i in hidden}, f"trial {trial}: a pinned item was moved"
+        # With pinned items the unconstrained N - LIS is not achievable by any
+        # plan, so compare against the item-level planner under the same pins.
+        item_level, _ = plan_reorder(current, target)
+        assert len(moves) <= len(item_level), (
+            f"trial {trial}: {len(moves)} block calls > {len(item_level)} item-level moves"
+        )
+    print("  ✓ spotify random: 60 playlists (n=20..120, half with pinned items) exact")
+
+
 TESTS = [
     ("Exhaustive Correctness", [
         test_exhaustive_permutations,
@@ -402,6 +507,10 @@ TESTS = [
     ("Full Pipeline", [
         test_full_pipeline_replays_exactly,
         test_within_group_sort_applied_and_exact,
+    ]),
+    ("Spotify Block Moves", [
+        test_spotify_exhaustive_block_moves,
+        test_spotify_block_moves_large_and_pinned,
     ]),
 ]
 
