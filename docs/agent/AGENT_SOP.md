@@ -50,7 +50,8 @@
    `--within-group-sort` 參數或路徑 B 的排序腳本 —— 那樣斷層在你組參數時就被填掉，
    之後沒有任何一步會再提醒你。**判斷依據永遠是使用者的原話，不是你組出來的參數。**
 
-2. **確認 Playlist ID**：若使用者未提供 ID 或網址，主動追問。你不需要自己用 Regex 解析，直接把整串 URL 或 ID 傳給 `yt_tool.py`，它有內建解析器。
+2. **確認 Playlist ID 與平台**：若使用者未提供 ID 或網址，主動追問。你不需要自己用 Regex 解析，直接把整串 URL 或 ID 傳給 `yt_tool.py`，它有內建解析器，也會自動判斷平台：
+   `open.spotify.com/playlist/…` 或 `spotify:playlist:…` 是 **Spotify**，其餘一律當成 **YouTube**。之後每一步的回傳值都帶有 `platform` 欄位。
 3. **執行 Fetch 測試**：
    直接執行 `python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json`
 4. **處理憑證缺失 (`CREDENTIALS_MISSING`)**：
@@ -64,6 +65,14 @@
      - `code: "FILE_NOT_FOUND"`：告知使用者該路徑找不到檔案，請其檢查後重新提供。
      - `code: "INVALID_JSON"`：告知使用者該 JSON 不是合法的 Google OAuth 桌面應用程式憑證，並引導其重新下載及提供。
      - `code: "COPY_FAILED"`：可能為權限問題，建議以管理員權限重新執行。
+5. **Spotify 設定缺失 (`SPOTIFY_NOT_CONFIGURED`)**：
+   - 使用者需要自己在 Spotify 開發者後台建一個 App 拿 Client ID（App 擁有者必須是 Premium）。
+     **照 `docs/SPOTIFY_SETUP.md` 在聊天室一步一步帶他做**，不要只丟連結；開發者條款一律由使用者自己勾選同意，你不可代為操作。
+   - 取得 Client ID 後執行 `python -m scripts.yt_tool setup_spotify <client_id>`。
+     回 `INVALID_CLIENT_ID` 時，多半是貼成了 Client Secret 或少了字元，請使用者回 App 的 Settings 重新複製。
+   - 第一次讀取清單時會輸出 `waiting_for_user` 並開啟瀏覽器授權頁，請使用者按「同意」。授權約 6 個月後失效，屆時會自動再開一次。
+   - 想確認設定是否正確，可執行唯讀的 `python -m scripts.yt_tool spotify-check <playlist_url>`；
+     `playlist.can_reorder` 為 `false` 代表這份清單不是他擁有或協作的，Spotify 不允許重排。
 
 ### Phase 1: 獲取資料 (Data Acquisition)
 
@@ -148,7 +157,14 @@ python -m scripts.yt_tool duplicates data/current.json
    ```
    - `--group-order`：`first_appearance`（預設）、`alphabetical`、`count_desc`
      > 重排既有清單時請優先使用 `first_appearance`：字典序會把所有群組重新洗牌，需要移動的影片數（也就是配額）會高出好幾倍。
-   - `--within-group-sort`：`<欄位>:<asc|desc>`，欄位可用 `viewCount`、`publishedAt`、`duration`、`title`、`channelTitle`、`addedAt`。省略則群內維持原順序。
+   - `--within-group-sort`：`<欄位>:<asc|desc>`，欄位可用 `viewCount`、`publishedAt`、`duration`、`title`、`channelTitle`、`addedAt`、`trackNumber`。省略則群內維持原順序。
+     （Spotify 沒有觀看數；依專輯分組時，使用者若說「照專輯曲序」才用 `trackNumber:asc`。）
+   - `--group-by`：`artist`（預設）或 `album`。**`album` 只限 Spotify**——Spotify 直接提供專輯 ID，
+     不需要猜；YouTube 沒有結構化專輯，會回 `UNSUPPORTED_GROUP_BY`。分組依據一樣要來自使用者原話（Phase 0）。
+
+   **Spotify 的差異**：分組直接用 Spotify 的藝人／專輯 ID，不跑標題辨識，所以 `--aliases` 不生效（回傳 `aliases_ignored`）。
+   回傳值沒有配額，改看 `estimated_calls`（API 呼叫次數）、`items_moved`（實際被搬動的歌曲數）與
+   `item_level_moves`（若一首一首搬要幾次）。Spotify 一次呼叫可以搬一整段連續的歌，所以呼叫數通常遠少於歌曲數。
 
 3. **解讀回傳值**：
    ```json
@@ -227,6 +243,9 @@ python -m scripts.yt_tool duplicates data/current.json
 
    - 「原位置」用 `old_position`，「最終位置」用 `final_position`。
    - **不要**把 `new_position` 當成最終位置顯示給使用者——那是送給 API 的中繼位置，會讓使用者誤解。
+   - **Spotify 變更檔**（`version: 3`）的內容在 `ops`：每一筆是一段連續的歌。用 `first_title`、`range_length`、
+     `old_position` → `final_position` 呈現，**不要**顯示 `range_start` / `insert_before`（同樣是送 API 的中繼索引）。
+     表格下方寫「API 呼叫 N 次（Spotify 沒有每日配額）」，不要寫 units。
 
    表格下方明確列出：
    - **預估配額消耗：XXXX units**
@@ -264,7 +283,7 @@ python -m scripts.yt_tool duplicates data/current.json
 
    使用者選擇只做分組時，直接改用 `data/changes_grouponly.json` 進入 Phase 4。
 
-4. **配額警告**：若 `estimated_quota` > 2500，加上以下醒目警告：
+4. **配額警告（只適用 YouTube）**：若 `estimated_quota` > 2500，加上以下醒目警告：
    > ⚠️ 此次操作預估消耗配額超過 2,500 units。每日 API 上限為 10,000 units，請確認是否執行。
 
 5. **暫停並等待使用者明確回覆**「OK」或「同意」，不可自動執行 Phase 4。
@@ -295,6 +314,17 @@ python -m scripts.yt_tool duplicates data/current.json
 | `code: "ITEM_NOT_FOUND"` / 其他錯誤 | 某一筆移動失敗 | 後續位置是以該筆完成為前提計算的，工具已停止。請重新 `fetch --refresh` 後重新計算 |
 | `code: "LEGACY_CHANGE_SET"` | 舊版變更檔 | 重新執行 `optimize` / `diff` 產生新檔 |
 
+**Spotify 的寫回**（同一個 `update` 指令，依網址自動切換）：
+
+| 回傳 | 意義 | 應對 |
+|:---|:---|:---|
+| `status: "success"` + `verified: true` | 全部完成，且重新讀取整份清單確認等於目標 | 回報 `total` 與 `api_calls` |
+| `code: "STALE_SNAPSHOT"` | 寫入前比對整份清單，發現已被改動；**沒有寫入任何一筆** | `fetch --refresh` → 重新計算 → 重新確認 |
+| `status: "partial"`（`RATE_LIMITED`、`FORBIDDEN`、網路錯誤等） | 中途停止；清單只是部分重排，歌曲沒有增減 | 再執行同一指令會從遠端**實際狀態**續傳；若使用者想回到原順序，`fetch --refresh` 後 `diff <新快照> <原本的 current.json>`，照一般流程確認後寫回 |
+| `code: "POST_VERIFY_MISMATCH"` | 所有搬移都送出了，但重新讀取的順序與目標不符（多半是有人同時在 Spotify 上改動） | `fetch --refresh` 後重新計算，告知使用者 |
+| `code: "FORBIDDEN"` | 這份清單不是使用者擁有或協作的 | 告知 Spotify 只允許重排自己的清單 |
+| `code: "AUTH_*"` | 授權失敗、逾時或被拒絕 | 請使用者重試並在瀏覽器按「同意」；仍失敗就回 Phase 0 檢查 Client ID 與 Redirect URI |
+
 4. 寫回成功後本地快取會自動失效，下次 `fetch` 會取得最新順序。
 
 ---
@@ -306,3 +336,5 @@ python -m scripts.yt_tool duplicates data/current.json
 - LIS 錨點演算法找出不需移動的影片，通常可節省 **25–70%** 的配額
 - 超過 180 次 update（9,000 units）的操作，建議拆成兩天執行
 - 所有計算（分組、排序、最佳化）皆在本地完成，消耗 **0 API units**
+- **Spotify 沒有每日單位配額**，只有短時間的速率限制（工具會照 `Retry-After` 自動等待）。成本以 API 呼叫次數計，
+  寫回前後各讀一次整份清單做驗證，每次搬移一段連續的歌算一次呼叫

@@ -109,6 +109,8 @@ def _sort_key_factory(
             return lambda item: item.channel_title.lower()
         case SortField.ADDED_AT:
             return lambda item: _ensure_aware(item.added_at)
+        case SortField.TRACK_NUMBER:
+            return lambda item: (item.disc_number, item.track_number)
         case _:
             raise ValueError(f"Unsupported sort field: {field!r}")
 

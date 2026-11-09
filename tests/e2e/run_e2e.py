@@ -8,8 +8,9 @@ commands ``docs/agent/AGENT_SOP.md`` tells an Agent to run.  Nothing from
 implementation against itself — the expected orderings, quota figures and
 reorder replays are computed independently in this file.
 
-Only the network boundary is faked (``tests/e2e/fake_youtube.py``), so no real
-OAuth consent, no real quota, no real playlist is touched.
+Only the network boundary is faked (``tests/e2e/fake_youtube.py`` in-process,
+``tests/e2e/fake_spotify.py`` as a local HTTP server), so no real OAuth consent,
+no real quota, no real playlist is touched.
 
 Run:
     python tests/e2e/run_e2e.py            # full suite
@@ -35,6 +36,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
+import fake_spotify
+
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent
 
@@ -43,7 +46,7 @@ REPO = HERE.parent.parent
 PL_MAIN = "PLE2EMAIN"        # 120 items, 2 private — fetch / cache / optimize / update
 PL_STALE = "PLE2ESTALE"      # 30 items — remote drift must be refused
 PL_RESUME = "PLE2ERESUME"    # 30 items — retry, abort, resume
-PL_CLEAN = "PLE2ECLEAN"      # 60 items, no private — TS engine + minimality
+PL_CLEAN = "PLE2ECLEAN"      # 60 items, no private — Agent-written target + minimality
 PL_SORTED = "PLE2ESORTED"    # 24 items already grouped — the zero-change case
 
 QUOTA_LIST = 1
@@ -274,6 +277,14 @@ class Harness:
         self.creds_source = workspace / "downloads" / "client_secret.json"
         self.creds_source.parent.mkdir(parents=True, exist_ok=True)
         self.creds_source.write_text(json.dumps(VALID_OAUTH_JSON), encoding="utf-8")
+        self.spotify: fake_spotify.FakeSpotify | None = None
+        self.spotify_base = ""
+
+    def ensure_spotify(self) -> fake_spotify.FakeSpotify:
+        if self.spotify is None:
+            self.spotify = fake_spotify.FakeSpotify()
+            self.spotify_base = self.spotify.start()
+        return self.spotify
 
     # -- state --------------------------------------------------
 
@@ -323,6 +334,9 @@ class Harness:
         env["PYTHONUTF8"] = "1"
         env["PYTHONIOENCODING"] = "utf-8"
         env["YT_SKILL_HOME"] = str(skill_home if skill_home is not None else self.skill_home)
+        if self.spotify_base:
+            env["YT_SKILL_SPOTIFY_API_BASE"] = f"{self.spotify_base}/v1"
+            env["YT_SKILL_SPOTIFY_ACCOUNTS_BASE"] = self.spotify_base
         if with_fake:
             env["YT_E2E_STATE"] = str(self.state_file)
         else:
@@ -1003,6 +1017,259 @@ def s16_bad_arguments(h: Harness) -> list[str]:
     return ["4 argument errors return structured JSON codes", "playlist URL form accepted"]
 
 
+# ─── Spotify (real HTTP against tests/e2e/fake_spotify.py) ────────
+
+SP_MAIN = "E2ESPOTIFYMAIN"
+SP_FAULT = "E2ESPOTIFYFAULT"
+SP_AMBIG = "E2ESPOTIFYAMBIG"
+SP_STALE = "E2ESPOTIFYSTALE"
+SP_CLIENT_ID = "0123456789abcdef0123456789abcdef"
+
+_ARTISTS = [("ar_aimer", "Aimer"), ("ar_yoasobi", "YOASOBI"), ("ar_kinggnu", "King Gnu"), ("ar_ado", "Ado")]
+_ALBUMS = {
+    "ar_aimer": [("al_aimer1", "Walpurgis"), ("al_aimer2", "Open α Door")],
+    "ar_yoasobi": [("al_yoa1", "THE BOOK")],
+    "ar_kinggnu": [("al_kg1", "CEREMONY"), ("al_kg2", "THE GREATEST UNKNOWN")],
+    "ar_ado": [("al_ado1", "Kyogen")],
+}
+
+
+def spotify_fixture(length: int, seed: int) -> list[dict[str, Any]]:
+    """Interleaved artists/albums, one duplicated track and one local file."""
+    rng = random.Random(seed)
+    entries = []
+    for serial in range(length):
+        artist = rng.choice(_ARTISTS)
+        album = rng.choice(_ALBUMS[artist[0]])
+        entries.append(fake_spotify.track(seed * 100 + serial, artist, album, number=rng.randint(1, 12)))
+    entries.insert(length // 2, dict(entries[2]))  # the same track added twice
+    entries.append(fake_spotify.track(seed * 100 + 99, ("", "Local Band"), ("", "Demo Tape"), 1, local=True))
+    return entries
+
+
+def sp_key(record: dict[str, Any], field: str) -> str:
+    if field == "album":
+        album = record.get("album") or {}
+        return album.get("id") or f"name:{album.get('name', '')}"
+    artist = (record.get("artists") or [{}])[0]
+    return artist.get("id") or f"name:{artist.get('name', '')}"
+
+
+def expected_grouped(current: list[dict[str, Any]], field: str) -> list[str]:
+    """First-appearance groups, original order inside each — written from the spec."""
+    order: dict[str, int] = {}
+    for record in current:
+        order.setdefault(sp_key(record, field), len(order))
+    ranked = sorted(enumerate(current), key=lambda pair: (order[sp_key(pair[1], field)], pair[0]))
+    return [record["playlist_item_id"] for _, record in ranked]
+
+
+def spotify_replay(keys: list[str], ops: list[dict[str, Any]]) -> list[str]:
+    """Apply Spotify reorder calls from the API contract (independent of the planner)."""
+    live = list(keys)
+    for op in sorted(ops, key=lambda o: o["execution_order"]):
+        start, span, before = op["range_start"], op["range_length"], op["insert_before"]
+        anchor = live[before] if before < len(live) else None
+        block = live[start:start + span]
+        check(block == op["item_keys"], f"op {op['execution_order']} would move {block}, planned {op['item_keys']}")
+        rest = [key for key in live if key not in block]
+        slot = rest.index(anchor) if anchor is not None else len(rest)
+        live = rest[:slot] + block + rest[slot:]
+    return live
+
+
+def runs_minus_lis(current: list[str], target: list[str]) -> int:
+    pos = {key: idx for idx, key in enumerate(target)}
+    seq = [pos[key] for key in current]
+    firsts = [seq[0]] + [b for a, b in zip(seq, seq[1:]) if b != a + 1]
+    tails: list[int] = []
+    for value in firsts:
+        slot = bisect.bisect_left(tails, value)
+        if slot == len(tails):
+            tails.append(value)
+        else:
+            tails[slot] = value
+    return len(firsts) - len(tails)
+
+
+def uri_of(key: str) -> str:
+    return key.rsplit("#", 1)[0]
+
+
+def seed_spotify_token(h: "Harness", expired: bool) -> None:
+    path = h.skill_home / "credentials" / "spotify_token.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({
+        "client_id": SP_CLIENT_ID,
+        "access_token": "e2e-access-token",
+        "refresh_token": "e2e-refresh-token",
+        "expires_at": time.time() + (-60 if expired else 3600),
+        "scope": "playlist-modify-private",
+    }), encoding="utf-8")
+
+
+def sp_fetch_and_plan(h: "Harness", playlist: str, stem: str, *extra: str) -> tuple[list[dict], dict]:
+    fetched = h.tool("fetch", f"spotify:playlist:{playlist}", "--out", str(h.path(f"{stem}_current.json")),
+                     "--refresh")
+    check(fetched.code == 0, f"spotify fetch failed: {fetched.last}")
+    planned = h.tool("optimize", str(h.path(f"{stem}_current.json")),
+                     "--target-out", str(h.path(f"{stem}_new.json")),
+                     "--out", str(h.path(f"{stem}_changes.json")), *extra)
+    check(planned.code == 0, f"spotify optimize failed: {planned.last}")
+    return read_json(h.path(f"{stem}_current.json")), read_json(h.path(f"{stem}_changes.json"))
+
+
+def s17_spotify_setup_and_fetch(h: "Harness") -> list[str]:
+    """Spotify Phase 0–1: client id handshake, token refresh, fetch by URL, cache."""
+    fake = h.ensure_spotify()
+    fake.add_playlist(SP_MAIN, spotify_fixture(22, seed=7))
+
+    run = h.tool("spotify-check")
+    check(run.code == 1 and run.last.get("code") == "SPOTIFY_NOT_CONFIGURED",
+          f"an unconfigured Spotify should be SPOTIFY_NOT_CONFIGURED, got {run.last}")
+    run = h.tool("setup_spotify", "this-is-a-client-secret-not-an-id")
+    check(run.code == 1 and run.last.get("code") == "INVALID_CLIENT_ID",
+          f"a malformed client id should be INVALID_CLIENT_ID, got {run.last}")
+    run = h.tool("setup_spotify", SP_CLIENT_ID.upper())
+    check(run.code == 0, f"setup_spotify failed: {run.last}")
+    stored = read_json(h.skill_home / "credentials" / "spotify.json")
+    check(stored["client_id"] == SP_CLIENT_ID, f"client id not normalised/stored: {stored}")
+    check(stored["redirect_uri"] == "http://127.0.0.1:8765/callback", f"wrong redirect uri {stored}")
+
+    seed_spotify_token(h, expired=True)
+    url = f"https://open.spotify.com/playlist/{SP_MAIN}?si=e2e"
+    fetched = h.tool("fetch", url, "--out", str(h.path("sp_current.json")), "--refresh")
+    check(fetched.code == 0, f"spotify fetch failed: {fetched.last}")
+    report = fetched.last
+    check(report["platform"] == "spotify" and report["item_count"] == 24, f"bad fetch report {report}")
+    check(report["snapshot_id"] == fake.snapshot_id(SP_MAIN), "fetch did not record the snapshot id")
+    check(fake.count("POST", "/api/token") == 1, "an expired token must be refreshed exactly once")
+    token = read_json(h.skill_home / "credentials" / "spotify_token.json")
+    check(token["access_token"].startswith("e2e-access-token-") and token["expires_at"] > time.time(),
+          "the refreshed token was not persisted")
+
+    items = read_json(h.path("sp_current.json"))
+    keys = ids_of(items)
+    check(len(set(keys)) == len(keys), "spotify item keys are not unique")
+    check([uri_of(k) for k in keys] == fake.uris(SP_MAIN), "fetched order differs from the remote")
+    dupes = [k for k in keys if k.endswith("#1")]
+    check(len(dupes) == 1, f"the duplicated track should get exactly one '#1' key, got {dupes}")
+    local = [r for r in items if r["uri"].startswith("spotify:local:")]
+    check(len(local) == 1 and local[0]["artists"][0]["name"] == "Local Band" and local[0]["is_available"],
+          f"local file not mapped as a movable item: {local}")
+
+    gets_before = fake.count("GET")
+    cached = h.tool("fetch", url, "--out", str(h.path("sp_current2.json")))
+    check(cached.code == 0 and cached.last["source"] == "cache", f"second fetch should hit cache: {cached.last}")
+    check(fake.count("GET") == gets_before, "a cache hit must not call Spotify")
+
+    checked = h.tool("spotify-check", url)
+    check(checked.code == 0, f"spotify-check failed: {checked.last}")
+    check(checked.last["playlist"]["can_reorder"] is True and checked.last["playlist"]["total_items"] == 24,
+          f"spotify-check playlist report wrong: {checked.last}")
+    return ["client id validated + normalised; expired token refreshed once",
+            "24 items via URL: duplicate keyed '#1', local file movable; cache hit makes 0 calls",
+            "spotify-check reports the playlist as reorderable"]
+
+
+def s18_spotify_group_and_update(h: "Harness") -> list[str]:
+    """Spotify Phase 2–4: artist grouping → block moves → write-back → full verify."""
+    fake = h.ensure_spotify()
+    current, change_set = sp_fetch_and_plan(h, SP_MAIN, "sp")
+    keys = ids_of(current)
+    target = read_json(h.path("sp_new.json"))
+    check(ids_of(target) == expected_grouped(current, "artist"),
+          "artist grouping is not first-appearance groups with original order inside")
+    check(change_set["version"] == 3 and change_set["platform"] == "spotify", "not a v3 Spotify change set")
+    ops = change_set["ops"]
+    check(spotify_replay(keys, ops) == ids_of(target), "replaying the block moves misses the target")
+    check(len(ops) == runs_minus_lis(keys, ids_of(target)), f"{len(ops)} calls is not S-LIS(runs)")
+    item_level = len(keys) - lis_length(keys, ids_of(target))
+    check(len(ops) <= item_level, "block plan uses more calls than item-level moves")
+
+    youtube_like = [{"playlist_item_id": "y1", "video_id": "v1", "position": 0,
+                     "added_at": "2026-01-01T00:00:00Z", "title": "A - x", "channel_title": "A"}]
+    h.path("yt_tiny.json").write_text(json.dumps(youtube_like), encoding="utf-8")
+    run = h.tool("optimize", str(h.path("yt_tiny.json")), "--target-out", str(h.path("yt_tiny_new.json")),
+                 "--out", str(h.path("yt_tiny_changes.json")), "--group-by", "album")
+    check(run.code == 1 and run.last.get("code") == "UNSUPPORTED_GROUP_BY",
+          f"album grouping on YouTube should be UNSUPPORTED_GROUP_BY, got {run.last}")
+
+    puts_before = fake.count("PUT", f"/playlists/{SP_MAIN}/items")
+    applied = h.tool("update", f"spotify:playlist:{SP_MAIN}", str(h.path("sp_changes.json")))
+    check(applied.code == 0, f"spotify update failed: {applied.last}")
+    check(applied.last["verified"] is True and applied.last["quota_used"] == 0, f"bad update report {applied.last}")
+    check(fake.count("PUT", f"/playlists/{SP_MAIN}/items") - puts_before == len(ops),
+          "the number of reorder calls differs from the plan")
+    check(fake.uris(SP_MAIN) == [uri_of(k) for k in ids_of(target)], "remote order is not the target")
+
+    album_current, album_set = sp_fetch_and_plan(h, SP_MAIN, "sp_album", "--group-by", "album",
+                                                 "--within-group-sort", "trackNumber:asc")
+    album_target = read_json(h.path("sp_album_new.json"))
+    runs: list[str] = []
+    for record in album_target:
+        key = sp_key(record, "album")
+        if not runs or runs[-1] != key:
+            runs.append(key)
+    check(len(runs) == len(set(runs)), f"albums are not contiguous: {runs}")
+    for album in runs:
+        numbers = [r["track_number"] for r in album_target if sp_key(r, "album") == album]
+        check(numbers == sorted(numbers), f"album {album} not in track order: {numbers}")
+    check(spotify_replay(ids_of(album_current), album_set["ops"]) == ids_of(album_target),
+          "album plan does not replay to its target")
+    return [f"artist grouping: {len(keys)} items in {len(ops)} block calls (item-level would be {item_level})",
+            "write-back verified by a full re-read; 0 quota units",
+            f"album grouping + trackNumber: {len(runs)} contiguous albums, replay exact",
+            "--group-by album refused for YouTube"]
+
+
+def s19_spotify_faults_and_resume(h: "Harness") -> list[str]:
+    """Spotify failure modes: 429 retry, fatal abort + resume, ambiguous 5xx, stale remote."""
+    fake = h.ensure_spotify()
+    fake.add_playlist(SP_FAULT, spotify_fixture(26, seed=11))
+    current, change_set = sp_fetch_and_plan(h, SP_FAULT, "spf")
+    ops = change_set["ops"]
+    check(len(ops) >= 4, f"fixture too easy: only {len(ops)} calls")
+    target_uris = [uri_of(k) for k in ids_of(read_json(h.path("spf_new.json")))]
+
+    fake.arm(SP_FAULT, when_applied=0, status=429, retry_after=1)
+    fake.arm(SP_FAULT, when_applied=2, status=403)
+    first = h.tool("update", f"spotify:playlist:{SP_FAULT}", str(h.path("spf_changes.json")))
+    check(first.code == 1 and first.last.get("code") == "FORBIDDEN" and first.last["status"] == "partial",
+          f"a 403 mid-run should stop with partial/FORBIDDEN, got {first.last}")
+    check(first.last["successful"] == 2 and first.last["resume_from"] == 2, f"wrong progress {first.last}")
+    check(fake.count("PUT", f"/playlists/{SP_FAULT}/items") == 4, "expected 429 + 2 writes + 403 = 4 PUTs")
+
+    resumed = h.tool("update", f"spotify:playlist:{SP_FAULT}", str(h.path("spf_changes.json")))
+    check(resumed.code == 0 and resumed.last["resumed_from"] == 2 and resumed.last["verified"],
+          f"resume should continue from move 2 and verify: {resumed.last}")
+    check(fake.uris(SP_FAULT) == target_uris, "resumed run did not land on the target")
+
+    fake.add_playlist(SP_AMBIG, spotify_fixture(18, seed=23))
+    _, ambig_set = sp_fetch_and_plan(h, SP_AMBIG, "spa")
+    fake.arm(SP_AMBIG, when_applied=1, status=502, apply_first=True)
+    ambiguous = h.tool("update", f"spotify:playlist:{SP_AMBIG}", str(h.path("spa_changes.json")))
+    check(ambiguous.code == 0 and ambiguous.last["verified"], f"ambiguous 502 should reconcile: {ambiguous.last}")
+    check(fake.count("PUT", f"/playlists/{SP_AMBIG}/items") == len(ambig_set["ops"]),
+          "a write that landed before its 502 was sent again")
+    check(fake.uris(SP_AMBIG) == [uri_of(k) for k in ids_of(read_json(h.path("spa_new.json")))],
+          "ambiguous-write run did not land on the target")
+
+    fake.add_playlist(SP_STALE, spotify_fixture(16, seed=5))
+    sp_fetch_and_plan(h, SP_STALE, "sps")
+    with fake.lock:
+        entries = fake.playlists[SP_STALE]
+        entries[0], entries[-1] = entries[-1], entries[0]
+        fake.versions[SP_STALE] += 1
+    stale = h.tool("update", f"spotify:playlist:{SP_STALE}", str(h.path("sps_changes.json")))
+    check(stale.code == 1 and stale.last.get("code") == "STALE_SNAPSHOT", f"drift should be STALE: {stale.last}")
+    check(fake.count("PUT", f"/playlists/{SP_STALE}/items") == 0, "a stale run must not write anything")
+    return ["429 honoured via Retry-After; 403 stops at move 3 with progress saved",
+            "re-run resumes from the remote's actual state and verifies",
+            "502 after the move landed is reconciled, never re-sent",
+            "remote drift caught by a full-list compare before any write"]
+
+
 SCENARIOS: list[Scenario] = [
     Scenario("entry_points", "Phase 0", "Agent entry points and CLI surface", s01_entry_points),
     Scenario("credentials", "Phase 0", "Credential setup handshake", s02_credentials_gate),
@@ -1021,6 +1288,9 @@ SCENARIOS: list[Scenario] = [
     Scenario("guards", "Phase 4", "Change-set integrity guards", s14_change_set_guards),
     Scenario("noop", "Phase 2A", "Already-sorted playlist is a true no-op", s15_no_op_playlist),
     Scenario("arguments", "All", "Operator errors are structured, URLs accepted", s16_bad_arguments),
+    Scenario("spotify_setup", "SP 0-1", "Spotify: client id, token refresh, fetch, cache", s17_spotify_setup_and_fetch),
+    Scenario("spotify_update", "SP 2-4", "Spotify: grouping → block moves → verified write", s18_spotify_group_and_update),
+    Scenario("spotify_faults", "SP 4", "Spotify: 429, abort/resume, ambiguous 5xx, stale", s19_spotify_faults_and_resume),
 ]
 
 
@@ -1032,6 +1302,8 @@ def cleanup_side_effects() -> None:
     for directory, pattern in (
         (REPO / "scripts" / "cache", "playlist_PLE2E*.json"),
         (REPO / "scripts" / "logs", "progress_PLE2E*.json"),
+        (REPO / "scripts" / "cache", "playlist_spotify_E2E*.json"),
+        (REPO / "scripts" / "logs", "progress_spotify_E2E*.json"),
     ):
         if directory.is_dir():
             for path in directory.glob(pattern):
@@ -1090,6 +1362,9 @@ def main() -> int:
                 print(f"      ! {line}")
         outcomes.append(outcome)
 
+    if harness.spotify is not None:
+        harness.spotify.stop()
+
     passed = [o for o in outcomes if o.passed]
     failed = [o for o in outcomes if not o.passed]
     state = harness.state
@@ -1106,6 +1381,9 @@ def main() -> int:
           f"({len([c for c in state.get('calls', []) if c['op'] == 'playlistItems.update'])} writes, "
           f"{len([c for c in state.get('calls', []) if c['op'].endswith('.list')])} reads)")
     print(f" oauth consents : {state.get('oauth_consent_runs', 0)}")
+    if harness.spotify is not None:
+        print(f" spotify fake   : {len(harness.spotify.calls)} HTTP calls "
+              f"({harness.spotify.count('PUT')} reorders)")
     print(f" real API calls : 0 (network boundary faked)")
     print("=" * 78)
 

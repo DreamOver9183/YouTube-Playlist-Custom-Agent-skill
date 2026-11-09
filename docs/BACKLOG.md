@@ -310,7 +310,7 @@ AGENT_SOP.md 的 `unresolved_count` 說明裡**已經寫了正確的知識**（�
 
 ## 6. v4.0 重構（2026-11-07 起）
 
-**狀態**：計畫已核可，**M0 瘦身已完成**，M1–M4 尚未動工。
+**狀態**：計畫已核可，**M0、M1 已完成**（M1 待使用者用自己的 Spotify 清單做真實驗收），M2–M4 尚未動工。
 
 使用者提出五件事：專案偏離「最輕量達成目的」、藝人辨識全靠 regex 而放棄了 LLM 的
 優勢、要支援 Spotify、要一套可驗證的辨識公式、聊天室的預覽表「完全不想看」。
@@ -319,7 +319,7 @@ AGENT_SOP.md 的 `unresolved_count` 說明裡**已經寫了正確的知識**（�
 | 里程碑 | 內容 | 狀態 |
 |---|---|---|
 | M0 | 移除 TypeScript 認知引擎（Python 主流程從未呼叫，「同歌手」實際退化成依頻道分組）、一次性腳本、死碼；修好從 2026-08-21 起一直失敗的 CI | **完成** |
-| M1 | 平台中立 schema、Spotify 轉接器（`/items` 端點、PKCE、區段搬移 `S − LIS(段)`）、Spotify 依專輯分組 | 未動工 |
+| M1 | 平台中立 schema、Spotify 轉接器（`/items` 端點、PKCE、區段搬移 `S − LIS(段)`）、Spotify 依專輯分組 | **完成**（待真實驗收） |
 | M2 | HTML 拖拉檢查頁（保存後聊天室只問一句）＋每次執行的帶時間戳目錄（同時解決第 5 條） | 未動工 |
 | M3 | Agent 優先辨識＋多特徵加權公式（B³-F1 對近似真值與人工真值驗證，打不過現行 resolver 就不替換） | 未動工 |
 | M4 | 雙平台 SOP 與文件收尾 | 未動工 |
@@ -330,6 +330,19 @@ AGENT_SOP.md 的 `unresolved_count` 說明裡**已經寫了正確的知識**（�
 - 真值同時用 ytmusicapi 近似真值與人工校正真值。ytmusicapi **仍不進執行期**（第 1 條）。
 - Spotify 支援依專輯分組（`album.id` 是結構化欄位，成本幾乎為零）；YouTube 專輯聚集維持不做。
 - 使用者有 Spotify Premium 但不會用 Developer Dashboard，M1 要附逐步建 app 的引導。
+
+M1 與計畫的出入（都是為了少寫程式，行為與驗收條件不變）：
+
+- 沒有另建 `scripts/platforms/` 的 Protocol 層：只有兩個平台，在 `yt_tool` 依平台分派即可；
+  Spotify 的程式集中在 `scripts/spotify_api.py`。
+- 沒有新建 `Track` 類別：`EnrichedPlaylistItem` 加上有預設值的平台中立欄位，`Track` 是它的別名，
+  免去大範圍改名。
+- YouTube 變更檔維持 `version: 2`（只多一個 `platform` 欄位），Spotify 用 `version: 3`。
+  計畫原本要求 YouTube 也升到 v3 並拒絕 v2，但那會讓 YouTube 行為改變，違反 M1a「YouTube 行為不變」。
+- refresh token 失效時不回 `SPOTIFY_REAUTH`，而是像 YouTube 一樣自動重開授權頁。
+
+M1 實測：e2e 的 24 首測試清單依藝人分組，區段搬移 7 次呼叫（一首一首搬要 8 次）；
+n = 2..7 的 5912 種排列中，區段搬移共省下 1014 次呼叫，且每一種都等於 `S − LIS(段)`。
 
 M0 查到但留給後續里程碑的事：
 

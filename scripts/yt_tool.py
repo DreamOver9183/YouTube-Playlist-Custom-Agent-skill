@@ -1,5 +1,5 @@
 """
-yt_tool.py — Background tool for YouTube Playlist Agent-Skill.
+yt_tool.py — Background tool for the playlist Agent-Skill (YouTube and Spotify).
 
 This script is designed to be executed by AI Agents, NOT the human user.
 It provides simple CLI commands to interact with the YouTube API.
@@ -11,12 +11,15 @@ Features:
 - Custom credentials path support (defaults to ~/.gemini/skills/yt-playlist-manager/credentials,
   override with $YT_SKILL_HOME or --credentials).
 
-Commands:
-1. setup_credentials <path>
+Commands (the platform is detected from the playlist URL / the fetched file):
+1. setup_credentials <path>            (YouTube)
+   setup_spotify <client_id>           (Spotify)
 2. fetch <playlist_id_or_url> --out <output.json> [--refresh]
-3. optimize <current.json> --target-out <new.json> --out <changes.json>
+3. optimize <current.json> --target-out <new.json> --out <changes.json> [--group-by artist|album]
 4. diff <old_playlist.json> <new_playlist.json> --out <changes.json>
 5. update <playlist_id_or_url> <changes.json>
+6. duplicates <current.json>
+7. spotify-check [playlist_url]       (read-only Spotify smoke test)
 
 Change-set files are versioned objects (see ``write_change_set``).  The moves
 inside are **order-dependent**: they must be executed in ``execution_order`` and
@@ -39,7 +42,17 @@ from typing import TYPE_CHECKING, Any
 
 from scripts.cache_manager import PlaylistCache
 from scripts.executor import estimate_quota
-from scripts.optimizer import find_duplicate_videos, plan_reorder, run_full_optimization
+from scripts.optimizer import (
+    GROUP_BY_CHOICES,
+    apply_range_move,
+    evaluate_grouping_benefit,
+    find_duplicate_videos,
+    group_by_structured_field,
+    normalize_target,
+    plan_range_reorder,
+    plan_reorder,
+    run_full_optimization,
+)
 
 # Ensure UTF-8 output on all platforms (especially Windows PowerShell/cmd)
 if hasattr(sys.stdout, "reconfigure"):
@@ -50,6 +63,7 @@ from scripts.schemas import (
     EnrichedPlaylistItem,
     ExecutionResult,
     PositionChange,
+    RangeMove,
     SortConfig,
     SortField,
     SortOrder,
@@ -58,6 +72,7 @@ from scripts.schemas import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover
+    from scripts.spotify_api import SpotifyClient
     from scripts.youtube_api import YouTubeClient
 
 # The Google client stack is imported lazily so that `optimize` and `diff` —
@@ -187,6 +202,7 @@ def write_change_set(
     fingerprint = compute_change_set_fingerprint(playlist_id, changes)
     payload = {
         "version": CHANGE_SET_VERSION,
+        "platform": "youtube",
         "playlist_id": playlist_id,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "fingerprint": fingerprint,
@@ -221,6 +237,9 @@ def read_change_set(path: Path) -> dict[str, Any]:
             "這是舊版（v1）變更檔，其位置是以尾端優先的靜態索引計算的，直接執行會打亂清單。"
             "請重新執行 optimize 或 diff 產生新的變更檔。",
         )
+
+    if isinstance(raw, dict) and raw.get("version") == SPOTIFY_CHANGE_SET_VERSION:
+        return read_spotify_change_set(raw)
 
     if not isinstance(raw, dict) or raw.get("version") != CHANGE_SET_VERSION:
         fail(
@@ -325,10 +344,13 @@ def clear_progress(playlist_id: str) -> None:
 
 def cmd_fetch(args: argparse.Namespace) -> None:
     emit({"status": "started", "command": "fetch", "message": "開始獲取清單資料..."})
+    platform, playlist_id = detect_platform(args.playlist)
+    if platform == "spotify":
+        cmd_fetch_spotify(args, playlist_id)
+        return
+
     creds_path = credentials_path_from(args)
     ensure_credentials(creds_path)
-
-    playlist_id = extract_id(args.playlist)
     logger.info("Fetching playlist ID: %s (refresh=%s)", playlist_id, args.refresh)
 
     cache = PlaylistCache()
@@ -372,6 +394,7 @@ def cmd_fetch(args: argparse.Namespace) -> None:
     emit(
         {
             "status": "success",
+            "platform": "youtube",
             "item_count": len(items),
             "hidden_count": hidden_count,
             "hidden_note": (
@@ -417,6 +440,25 @@ def cmd_diff(args: argparse.Namespace) -> None:
     old_items = _load_items(Path(args.old), "原始清單")
     new_items = _load_items(Path(args.new), "目標清單")
 
+    if old_items and old_items[0].platform == "spotify":
+        out_path = Path(args.out)
+        _moves, stats, fingerprint = _spotify_plan_and_write(old_items, new_items, out_path, {})
+        emit(
+            {
+                "status": "success",
+                "platform": "spotify",
+                "changes_count": stats["calls"],
+                "estimated_calls": stats["calls"],
+                "items_moved": stats["items_moved"],
+                "item_level_moves": stats["item_level_moves"],
+                "pinned_count": stats["pinned_count"],
+                "estimated_quota": 0,
+                "fingerprint": fingerprint,
+                "file": str(out_path),
+            }
+        )
+        return
+
     try:
         changes, report = plan_reorder(old_items, new_items)
     except ValueError as exc:
@@ -440,6 +482,7 @@ def cmd_diff(args: argparse.Namespace) -> None:
     emit(
         {
             "status": "success",
+            "platform": "youtube",
             "changes_count": len(changes),
             "anchors": report.anchors,
             "pinned_count": report.pinned_count,
@@ -482,6 +525,18 @@ def cmd_optimize(args: argparse.Namespace) -> None:
     current_items = _load_items(Path(args.current), "目前清單")
     if not current_items:
         fail("EMPTY_PLAYLIST", "播放清單是空的。")
+
+    platform = current_items[0].platform
+    group_by = args.group_by or "artist"
+    if group_by not in GROUP_BY_CHOICES[platform]:
+        fail(
+            "UNSUPPORTED_GROUP_BY",
+            f"{platform} 不支援 --group-by {group_by}（可用：{', '.join(GROUP_BY_CHOICES[platform])}）。"
+            "YouTube 沒有結構化的專輯資料，專輯聚集已於 v3.10.0 決定不做。",
+        )
+    if platform == "spotify":
+        cmd_optimize_spotify(args, current_items)
+        return
 
     aliases_path = Path(args.aliases) if args.aliases else None
     group_order = args.group_order or "first_appearance"
@@ -533,6 +588,8 @@ def cmd_optimize(args: argparse.Namespace) -> None:
     emit(
         {
             "status": "success",
+            "platform": "youtube",
+            "group_by": "artist",
             "total_items": report.total_items,
             "anchors": report.anchors,
             "need_to_move": report.need_to_move,
@@ -658,11 +715,20 @@ def cmd_update(args: argparse.Namespace) -> None:
     from scripts.youtube_api import classify_http_error
 
     emit({"status": "started", "command": "update", "message": "開始寫回播放清單..."})
+    platform, playlist_id = detect_platform(args.playlist)
+    change_set = read_change_set(Path(args.changes))
+    planned_platform = change_set.get("platform") or "youtube"
+    if planned_platform != platform:
+        fail(
+            "MISMATCHED_PLAYLIST",
+            f"變更檔是 {planned_platform} 的，但指令指定的是 {platform} 播放清單。",
+        )
+    if platform == "spotify":
+        cmd_update_spotify(args, playlist_id, change_set)
+        return
+
     creds_path = credentials_path_from(args)
     ensure_credentials(creds_path)
-
-    playlist_id = extract_id(args.playlist)
-    change_set = read_change_set(Path(args.changes))
     changes: list[PositionChange] = change_set["changes"]
 
     planned_playlist_id = change_set.get("playlist_id") or ""
@@ -847,6 +913,447 @@ def cmd_setup_credentials(args: argparse.Namespace) -> None:
         )
 
 
+# --- Spotify ---
+
+#: Spotify change sets are block moves (``RangeMove``), not YouTube's
+#: remove-then-insert position updates, so they carry their own version.
+SPOTIFY_CHANGE_SET_VERSION = 3
+
+#: Spotify reads are cheap (no unit quota), so post-write verification re-reads
+#: the whole list; it retries a few times because Spotify can take seconds to
+#: make a new snapshot visible.
+POST_VERIFY_DELAYS = (0, 2, 5, 10)
+
+
+def spotify_config_path() -> Path:
+    return DEFAULT_CREDENTIALS_DIR / "spotify.json"
+
+
+def spotify_token_path() -> Path:
+    return DEFAULT_CREDENTIALS_DIR / "spotify_token.json"
+
+
+def spotify_store_key(playlist_id: str) -> str:
+    """Cache / progress key; the prefix keeps it apart from YouTube ids."""
+    return f"spotify_{playlist_id}"
+
+
+def detect_platform(raw: str) -> tuple[str, str]:
+    """Return ``(platform, playlist_id)`` for a URL, URI or bare id.
+
+    Anything that is not recognisably Spotify is treated as YouTube, which is
+    what every pre-v4 command line already passes.
+    """
+    from scripts.spotify_api import extract_spotify_playlist_id
+
+    spotify_id = extract_spotify_playlist_id(raw)
+    if spotify_id:
+        return "spotify", spotify_id
+    return "youtube", extract_id(raw)
+
+
+def get_spotify_client() -> "SpotifyClient":
+    from scripts.spotify_api import SpotifyClient, SpotifyError
+
+    config_path = spotify_config_path()
+    try:
+        client_id = json.loads(config_path.read_text(encoding="utf-8"))["client_id"]
+    except (OSError, ValueError, KeyError):
+        fail(
+            "SPOTIFY_NOT_CONFIGURED",
+            "尚未設定 Spotify Client ID。請照 docs/SPOTIFY_SETUP.md 在 Spotify 開發者後台建立 App，"
+            "再執行 setup_spotify <client_id>。",
+            expected_path=str(config_path),
+        )
+    client = SpotifyClient(client_id=client_id, token_path=spotify_token_path())
+    try:
+        client.authenticate()
+    except SpotifyError as exc:
+        fail(exc.code, f"Spotify 授權失敗：{exc}")
+    return client
+
+
+def _fail_spotify(exc: Exception, context: str) -> None:
+    code = getattr(exc, "code", "SPOTIFY_ERROR")
+    fail(code, f"{context}：{exc}")
+
+
+def cmd_fetch_spotify(args: argparse.Namespace, playlist_id: str) -> None:
+    from scripts.spotify_api import SpotifyError, entries_to_items
+
+    store_key = spotify_store_key(playlist_id)
+    cache = PlaylistCache()
+    cached = None if args.refresh else cache.get(store_key)
+    api_calls = 0
+
+    if cached:
+        items, source, snapshot_id = cached.items, "cache", cached.etag
+        fetched_at = cached.created_at.isoformat()
+    else:
+        client = get_spotify_client()
+        try:
+            snapshot_id = client.get_snapshot_id(playlist_id)
+            entries = client.get_playlist_entries(playlist_id)
+        except SpotifyError as exc:
+            _fail_spotify(exc, "讀取 Spotify 播放清單失敗")
+        if not entries:
+            fail("EMPTY_PLAYLIST", "播放清單是空的或無法存取。")
+        items = entries_to_items(entries, playlist_id)
+        cache.set(store_key, items, etag=snapshot_id)
+        source, fetched_at, api_calls = "api", datetime.now(timezone.utc).isoformat(), client.calls
+
+    out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(
+        json.dumps([item.model_dump(mode="json") for item in items], ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    missing = sum(1 for item in items if not item.metadata_available)
+    emit(
+        {
+            "status": "success",
+            "platform": "spotify",
+            "item_count": len(items),
+            "hidden_count": 0,
+            "metadata_missing_count": missing,
+            "metadata_missing_note": (
+                "有項目沒有曲目資料（通常是無法播放或已下架），仍可正常移動位置，"
+                "分組時會落入 unknown。" if missing else ""
+            ),
+            "source": source,
+            "fetched_at": fetched_at,
+            "snapshot_id": snapshot_id,
+            "api_calls": api_calls,
+            "file": str(out_path),
+        }
+    )
+
+
+def _range_fingerprint(playlist_id: str, moves: list[RangeMove]) -> str:
+    import hashlib
+
+    lines = [f"{m.range_start}:{m.insert_before}:{m.range_length}" for m in moves]
+    text = f"spotify:{playlist_id}\n" + "\n".join(lines)
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def write_spotify_change_set(
+    path: Path,
+    playlist_id: str,
+    current_items: list[EnrichedPlaylistItem],
+    target_items: list[EnrichedPlaylistItem],
+    moves: list[RangeMove],
+    report_extra: dict[str, Any],
+) -> str:
+    from scripts.spotify_api import uri_of_key
+
+    fingerprint = _range_fingerprint(playlist_id, moves)
+    payload = {
+        "version": SPOTIFY_CHANGE_SET_VERSION,
+        "platform": "spotify",
+        "playlist_id": playlist_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "fingerprint": fingerprint,
+        "execution": "sequential",
+        "note": (
+            "依 execution_order 由小到大逐筆執行；每一筆是一次區段搬移。不可重新排序、跳過或平行執行。"
+            "range_start / insert_before 是送出當下的索引，final_position 才是最終索引。"
+        ),
+        "source_snapshot": {
+            "item_count": len(current_items),
+            "item_keys": [item.playlist_item_id for item in current_items],
+            "uris": [uri_of_key(item.playlist_item_id) for item in current_items],
+        },
+        "target_uris": [uri_of_key(item.playlist_item_id) for item in target_items],
+        "report": report_extra,
+        "ops": [m.model_dump(mode="json") for m in moves],
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return fingerprint
+
+
+def _spotify_plan_and_write(
+    current: list[EnrichedPlaylistItem],
+    target: list[EnrichedPlaylistItem],
+    out_path: Path,
+    report_extra: dict[str, Any],
+) -> tuple[list[RangeMove], dict[str, int], str]:
+    try:
+        moves, stats = plan_range_reorder(current, target)
+    except ValueError as exc:
+        fail("TARGET_MISMATCH", str(exc))
+    fingerprint = write_spotify_change_set(
+        out_path,
+        _playlist_id_of(current),
+        current,
+        normalize_target(current, target),
+        moves,
+        {**stats, **report_extra},
+    )
+    return moves, stats, fingerprint
+
+
+def cmd_optimize_spotify(args: argparse.Namespace, items: list[EnrichedPlaylistItem]) -> None:
+    group_by = args.group_by or "artist"
+    within_group_sort = _parse_within_group_sort(args.within_group_sort)
+    target, groups, resolutions = group_by_structured_field(
+        items, group_by, args.group_order or "first_appearance", within_group_sort
+    )
+    benefit = evaluate_grouping_benefit(groups, resolutions)
+
+    target_path = Path(args.target_out)
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    target_path.write_text(
+        json.dumps([item.model_dump(mode="json") for item in target], ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    out_path = Path(args.out)
+    _moves, stats, fingerprint = _spotify_plan_and_write(
+        items, target, out_path, {"group_by": group_by, "groups_found": list(groups)}
+    )
+    emit(
+        {
+            "status": "success",
+            "platform": "spotify",
+            "group_by": group_by,
+            "total_items": stats["total_items"],
+            "estimated_calls": stats["calls"],
+            "items_moved": stats["items_moved"],
+            "item_level_moves": stats["item_level_moves"],
+            "estimated_quota": 0,
+            "pinned_count": stats["pinned_count"],
+            "groups_found": list(groups),
+            "group_details": {k: len(v) for k, v in groups.items()},
+            "unresolved_count": sum(1 for r in resolutions if r.method == "unknown"),
+            "unknown_ratio": benefit.unknown_ratio,
+            "effective_grouping_ratio": benefit.effective_grouping_ratio,
+            "orphan_group_count": benefit.orphan_group_count,
+            "grouping_benefit": benefit.verdict,
+            "grouping_warnings": benefit.warnings,
+            "aliases_ignored": bool(args.aliases),
+            "fingerprint": fingerprint,
+            "target_file": str(target_path),
+            "changes_file": str(out_path),
+        }
+    )
+
+
+def read_spotify_change_set(raw: dict[str, Any]) -> dict[str, Any]:
+    try:
+        moves = [RangeMove.model_validate(x) for x in raw.get("ops", [])]
+    except Exception as exc:
+        fail("PARSE_ERROR", f"變更檔內容格式錯誤：{exc}")
+    moves.sort(key=lambda m: m.execution_order)
+    if [m.execution_order for m in moves] != list(range(len(moves))):
+        fail("CORRUPT_CHANGE_SET", "execution_order 不連續，變更檔可能已被手動修改。")
+    if raw.get("fingerprint") != _range_fingerprint(raw.get("playlist_id", ""), moves):
+        fail("CORRUPT_CHANGE_SET", "變更檔指紋不符，可能已被手動修改。請重新執行 optimize 或 diff。")
+    snapshot = raw.get("source_snapshot") or {}
+    keys = list(snapshot.get("item_keys") or [])
+    if not keys or len(keys) != len(raw.get("target_uris") or []):
+        fail("CORRUPT_CHANGE_SET", "變更檔缺少快照或目標順序。請重新執行 optimize 或 diff。")
+    raw["ops"] = moves
+    return raw
+
+
+def _replay_states(keys: list[str], moves: list[RangeMove]) -> list[list[str]]:
+    """``states[k]`` is the uri order after the first *k* moves."""
+    from scripts.spotify_api import uri_of_key
+
+    states = [[uri_of_key(k) for k in keys]]
+    live = list(keys)
+    for move in moves:
+        live = apply_range_move(live, move.range_start, move.insert_before, move.range_length)
+        states.append([uri_of_key(k) for k in live])
+    return states
+
+
+def cmd_update_spotify(args: argparse.Namespace, playlist_id: str, change_set: dict[str, Any]) -> None:
+    from scripts.spotify_api import SpotifyError
+
+    planned = change_set.get("playlist_id") or ""
+    if planned and planned != playlist_id:
+        fail("MISMATCHED_PLAYLIST", f"變更檔是為播放清單 {planned} 計算的，但指令指定了 {playlist_id}。")
+
+    moves: list[RangeMove] = change_set["ops"]
+    store_key = spotify_store_key(playlist_id)
+    if not moves:
+        emit({"status": "success", "platform": "spotify", "message": "No changes to apply.", "api_calls": 0})
+        return
+
+    fingerprint = change_set["fingerprint"]
+    states = _replay_states(change_set["source_snapshot"]["item_keys"], moves)
+    client = get_spotify_client()
+
+    # Where is the remote right now?  Spotify reads are free of unit quota, so
+    # compare the whole list (YouTube can only afford the first page).
+    try:
+        snapshot_id = client.get_snapshot_id(playlist_id)
+        remote = client.get_playlist_uris(playlist_id)
+    except SpotifyError as exc:
+        _fail_spotify(exc, "寫回前的清單驗證失敗")
+
+    progress = load_progress(store_key, fingerprint)
+    candidates = [progress] + [k for k in range(len(states)) if k != progress]
+    start = next((k for k in candidates if k < len(states) and states[k] == remote), None)
+    if start is None:
+        fail(
+            "STALE_SNAPSHOT",
+            "遠端播放清單與此變更檔所依據的快照不一致（可能已在 Spotify 上被更動）。"
+            "請重新執行 fetch --refresh 後重新計算，再寫回。",
+            api_calls=client.calls,
+        )
+    if start:
+        logger.info("Spotify resume: remote matches the state after %d/%d moves.", start, len(moves))
+
+    applied = start
+    interrupted = False
+    aborted_code = aborted_message = ""
+    for index in range(start, len(moves)):
+        move = moves[index]
+        attempt = 0
+        while True:
+            try:
+                snapshot_id = client.reorder(
+                    playlist_id, move.range_start, move.insert_before, move.range_length, snapshot_id
+                ) or snapshot_id
+                applied = index + 1
+                save_progress(store_key, fingerprint, applied)
+                break
+            except KeyboardInterrupt:
+                interrupted = True
+                break
+            except SpotifyError as exc:
+                if exc.ambiguous and attempt < MAX_RETRIES:
+                    # A reorder is not idempotent: look before retrying.
+                    time.sleep(RETRY_DELAYS[min(attempt, len(RETRY_DELAYS) - 1)])
+                    attempt += 1
+                    try:
+                        remote = client.get_playlist_uris(playlist_id)
+                        snapshot_id = client.get_snapshot_id(playlist_id)
+                    except SpotifyError:
+                        continue
+                    if remote == states[index + 1]:
+                        applied = index + 1
+                        save_progress(store_key, fingerprint, applied)
+                        break
+                    if remote == states[index]:
+                        continue
+                    aborted_code, aborted_message = "STALE_SNAPSHOT", "寫入結果不確定，且遠端順序已與預期不符。"
+                    break
+                aborted_code, aborted_message = exc.code, str(exc)
+                break
+        if interrupted or aborted_code:
+            break
+        time.sleep(WRITE_PAUSE_SECONDS)
+
+    completed = applied >= len(moves)
+    verified = False
+    if completed:
+        clear_progress(store_key)
+        for delay in POST_VERIFY_DELAYS:
+            time.sleep(delay)
+            try:
+                if client.get_playlist_uris(playlist_id) == change_set["target_uris"]:
+                    verified = True
+                    break
+            except SpotifyError:
+                continue
+    if applied > start or completed:
+        PlaylistCache().invalidate(store_key)
+
+    payload: dict[str, Any] = {
+        "status": "success" if completed and verified else ("error" if completed else "partial"),
+        "platform": "spotify",
+        "total": len(moves),
+        "successful": applied,
+        "resumed_from": start,
+        "api_calls": client.calls,
+        "quota_used": 0,
+        "interrupted": interrupted,
+        "resume_from": None if completed else applied,
+        "verified": verified,
+    }
+    if completed and not verified:
+        payload["code"] = "POST_VERIFY_MISMATCH"
+        payload["message"] = (
+            "所有搬移都已送出，但重新讀取的順序與目標不符（可能有人同時在 Spotify 上更動）。"
+            "請 fetch --refresh 後重新計算。"
+        )
+    elif aborted_code:
+        payload["code"] = aborted_code
+        payload["message"] = (
+            f"第 {applied + 1}/{len(moves)} 筆搬移失敗（{aborted_code}）：{aborted_message}。"
+            "清單目前只是部分重排、項目沒有增減。再次執行同一指令會從遠端實際狀態續傳；"
+            "若要回到原順序，fetch --refresh 後對原本的 current.json 執行 diff。"
+        )
+    elif interrupted:
+        payload["message"] = f"已完成 {applied}/{len(moves)} 筆，再次執行同一指令即可續傳。"
+    emit(payload)
+    if payload["status"] != "success":
+        sys.exit(1)
+
+
+def cmd_setup_spotify(args: argparse.Namespace) -> None:
+    from scripts.spotify_api import CLIENT_ID_PATTERN, REDIRECT_URI, _write_private_json
+
+    client_id = args.client_id.strip().lower()
+    if not CLIENT_ID_PATTERN.match(client_id):
+        fail(
+            "INVALID_CLIENT_ID",
+            "這不是有效的 Spotify Client ID（應為 32 個英數字元，在 App 的 Settings → Basic Information）。"
+            "注意不要貼成 Client Secret。",
+        )
+    path = spotify_config_path()
+    try:
+        _write_private_json(path, {"client_id": client_id, "redirect_uri": REDIRECT_URI})
+    except OSError as exc:
+        fail("COPY_FAILED", f"無法寫入 {path}：{exc}")
+    emit(
+        {
+            "status": "success",
+            "message": "Spotify Client ID 已設定。第一次讀取清單時會開啟瀏覽器請你按「同意」。",
+            "path": str(path),
+            "redirect_uri": REDIRECT_URI,
+        }
+    )
+
+
+def cmd_spotify_check(args: argparse.Namespace) -> None:
+    """Read-only smoke test: sign-in works, and (optionally) the playlist is reorderable."""
+    from scripts.spotify_api import SpotifyError
+
+    emit({"status": "started", "command": "spotify-check", "message": "檢查 Spotify 連線（唯讀）..."})
+    client = get_spotify_client()
+    report: dict[str, Any] = {"status": "success", "scopes": client._token.get("scope", "")}
+    try:
+        me = client.me()
+        report["user"] = {"id": me.get("id", ""), "display_name": me.get("display_name", "")}
+        if args.playlist:
+            platform, playlist_id = detect_platform(args.playlist)
+            if platform != "spotify":
+                fail("NOT_SPOTIFY", "spotify-check 只接受 Spotify 播放清單網址或 URI。")
+            meta = client.get_playlist_meta(playlist_id)
+            first_page = client._request(
+                "GET", f"/playlists/{playlist_id}/items", params={"limit": 1}
+            )
+            owner = (meta.get("owner") or {}).get("id", "")
+            report["playlist"] = {
+                "id": playlist_id,
+                "name": meta.get("name", ""),
+                "snapshot_id": meta.get("snapshot_id", ""),
+                "total_items": first_page.get("total"),
+                "owner_is_you": owner == report["user"]["id"],
+                "collaborative": bool(meta.get("collaborative")),
+                "can_reorder": owner == report["user"]["id"] or bool(meta.get("collaborative")),
+            }
+    except SpotifyError as exc:
+        _fail_spotify(exc, "Spotify 連線檢查失敗")
+    report["api_calls"] = client.calls
+    emit(report)
+
+
 # --- Main ---
 
 
@@ -861,6 +1368,14 @@ def main():
         # overwriting a value already given before the subcommand.
         sub.add_argument("--credentials", type=Path, default=argparse.SUPPRESS,
                          help="Path to client_secret.json (optional)")
+
+    p_setup_spotify = subparsers.add_parser("setup_spotify")
+    p_setup_spotify.add_argument("client_id", help="Client ID of your Spotify Dashboard app")
+    p_setup_spotify.set_defaults(func=cmd_setup_spotify)
+
+    p_check = subparsers.add_parser("spotify-check", help="Read-only Spotify connection check")
+    p_check.add_argument("playlist", nargs="?", default="", help="Spotify playlist URL / URI (optional)")
+    p_check.set_defaults(func=cmd_spotify_check)
 
     p_setup = subparsers.add_parser("setup_credentials")
     p_setup.add_argument("path", help="Path to client_secret.json to install")
@@ -901,7 +1416,9 @@ def main():
                             choices=["first_appearance", "alphabetical", "count_desc"],
                             help="Group ordering strategy")
     p_optimize.add_argument("--within-group-sort", default=None,
-                            help="Sort inside each group, e.g. viewCount:desc / duration:asc")
+                            help="Sort inside each group, e.g. viewCount:desc / trackNumber:asc")
+    p_optimize.add_argument("--group-by", default="artist", choices=["artist", "album"],
+                            help="Grouping key; album is Spotify-only")
     p_optimize.set_defaults(func=cmd_optimize)
 
     args = parser.parse_args()

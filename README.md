@@ -1,10 +1,10 @@
-# YouTube Playlist Manager — AI Agent Skill
+# Playlist Manager — AI Agent Skill（YouTube／Spotify）
 
-一個以「最輕量方式達成目的」為原則的 YouTube 播放清單管理 Agent-Skill。廣泛支援 **Claude Code**、**Codex**、**GitHub Copilot Workspace**、**Antigravity CLI** 等多種開發者 AI Agent 框架。
+一個以「最輕量方式達成目的」為原則的 YouTube 與 Spotify 播放清單管理 Agent-Skill。廣泛支援 **Claude Code**、**Codex**、**GitHub Copilot Workspace**、**Antigravity CLI** 等多種開發者 AI Agent 框架。
 
 架構是 **「Agent 為大腦、Python 為手臂」**：
 - **Agent**：解讀使用者的原話、缺維度就發問、需要時自己寫出目標順序。
-- **Python 工具 (`scripts/`)**：負責 YouTube Data API v3 通訊、OAuth 2.0 授權、Patience Sorting LIS 錨點演算法、模擬盤面的精確移動規劃與斷點續傳寫回。
+- **Python 工具 (`scripts/`)**：負責 YouTube Data API v3 與 Spotify Web API 通訊、授權、Patience Sorting LIS 錨點演算法、模擬盤面的精確移動規劃與斷點續傳寫回。
 
 ---
 
@@ -35,6 +35,9 @@
 3. 下載 JSON 憑證檔案（放在任意位置即可）。
 
 > 首次使用時，若偵測到沒有憑證，工具會主動在對話視窗要求您輸入憑證的絕對路徑。之後 Agent 會執行 `setup_credentials` 指令自動驗證並複製到安全路徑（限制檔名與權限為 `0o600` / `0o700`）。
+
+**Spotify**：需要在 Spotify 開發者後台建一個自己的 App 取得 Client ID（App 擁有者須為 Premium），
+步驟見 [`docs/SPOTIFY_SETUP.md`](docs/SPOTIFY_SETUP.md)，Agent 會在聊天室一步一步帶你做。
 
 ### 3. 自然語言指令範例
 
@@ -99,20 +102,23 @@ YouTube Playlist skill/
 │   ├── yt_tool.py                      # 後台 CLI 工具進入點
 │   ├── optimizer.py                    # LIS 錨點、移動規劃與三層藝人辨識
 │   ├── youtube_api.py                  # YouTube Data API v3 封裝與錯誤分類
+│   ├── spotify_api.py                  # Spotify Web API：PKCE 登入、讀取、區段搬移
 │   ├── executor.py                     # 群內排序鍵與配額估算
 │   ├── cache_manager.py                # 本地 JSON 快取層 (30-min TTL)
 │   ├── schemas.py                      # Pydantic v2 資料模型與指紋工具
 │   └── __init__.py
 ├── tests/
 │   ├── test_optimizer.py               # 最佳化與辨識測試 (53 項)
-│   ├── test_reorder_property.py        # 重排正確性窮舉驗證 (12 項)
+│   ├── test_reorder_property.py        # 重排正確性窮舉驗證 (14 項，含 Spotify 區段搬移)
 │   ├── test_update_flow.py             # 寫回安全性測試 (7 項)
+│   ├── test_spotify_api.py             # Spotify 用戶端測試 (5 項)
 │   ├── fixtures/                       # 真實清單樣本（重複偵測回歸素材）
 │   ├── dev/                            # 開發者工具（不屬於 skill，見 tests/dev/README.md）
-│   └── e2e/                            # 端對端測試（離線，17 個情境）
+│   └── e2e/                            # 端對端測試（離線，20 個情境）
 │       ├── run_e2e.py                  # 驅動真實 CLI 子行程的黑箱測試
 │       ├── dryrun.py                   # 用真實快照演練寫回（0 配額、零異動）
 │       ├── fake_youtube.py             # YouTube Data API v3 離線替身
+│       ├── fake_spotify.py             # Spotify Web API 本機 HTTP 替身
 │       ├── sitecustomize.py            # 在子行程啟動時注入替身
 │       └── README.md                   # 測試方法與通過條件
 ├── .github/workflows/ci.yml            # CI：三組單元測試、E2E 與 SKILL.md 一致性
@@ -134,6 +140,10 @@ python -m scripts.yt_tool setup_credentials <path_to_client_secret.json>
 # 2. 獲取播放清單資料（帶 30 分鐘快取；--refresh 可強制重抓）
 python -m scripts.yt_tool fetch <playlist_id_or_url> --out data/current.json [--refresh]
 
+# 1b. Spotify：設定 Client ID，並做一次唯讀連線檢查
+python -m scripts.yt_tool setup_spotify <client_id>
+python -m scripts.yt_tool spotify-check https://open.spotify.com/playlist/<id>
+
 # 2b. (選用) 找出重複收錄的影片（0 API 配額，只列出不刪除）
 python -m scripts.yt_tool duplicates data/current.json
 
@@ -154,6 +164,16 @@ python -m scripts.yt_tool update <playlist_id_or_url> data/changes.json
 
 > 變更檔中的移動是**順序相依**的：每一次 `playlistItems.update` 都會讓其餘影片重新編號，
 > 因此位置是在本地模擬盤面上即時算出的，必須依 `execution_order` 逐筆執行，不可重新排序或跳過。
+
+#### Spotify 的差異
+
+| | YouTube | Spotify |
+|:---|:---|:---|
+| 分組依據 | 標題／頻道辨識藝人 | Spotify 直接提供的藝人 ID；另可 `--group-by album` |
+| 一次 API 呼叫 | 搬 1 首（50 units） | 搬一整段連續的歌（無每日配額） |
+| 最少呼叫數 | `N − LIS` | `S − LIS(段)`，S 是「現在連續、目標也連續」的段數 |
+| 寫回前驗證 | 比對前 50 筆 | 比對整份清單 |
+| 寫回後驗證 | — | 重新讀取整份清單，必須等於目標 |
 
 #### 藝人辨識規則（選項 A 的分群依據）
 
@@ -188,6 +208,9 @@ python tests/test_reorder_property.py
 # 寫回安全性：過期快照、中斷續傳、進度污染、配額耗盡、退避重試
 python tests/test_update_flow.py
 
+# Spotify 用戶端：PKCE 登入、資料對應、401／429／5xx 處理
+python tests/test_spotify_api.py
+
 # 端對端：以真實 CLI 子行程跑完整 SOP 流程（離線，不需憑證／不耗配額）
 python tests/e2e/run_e2e.py
 
@@ -203,7 +226,7 @@ python tests/e2e/dryrun.py data/current.json data/changes.json --target data/new
 只把網路邊界換成離線替身（`fake_youtube.py` 重現分頁、批次、`remove + insert` 重排語意、
 配額計價與 `HttpError` 錯誤內容）。測試檔完全不 import `scripts/`，預期順序與配額都獨立算出。
 
-17 個情境涵蓋：憑證握手 → fetch 分頁／快取／token 重用 → optimize/diff 零配額計算 →
+20 個情境（含 3 個 Spotify 情境）涵蓋：憑證握手 → fetch 分頁／快取／token 重用 → optimize/diff 零配額計算 →
 預覽資料正確性 → 寫回、遠端漂移偵測、中斷續傳、變更集防護 → 參數錯誤處理。
 通過條件與情境清單見 [`tests/e2e/README.md`](tests/e2e/README.md)。
 
