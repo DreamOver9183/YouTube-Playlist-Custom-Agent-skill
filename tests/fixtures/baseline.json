@@ -1,0 +1,121 @@
+{
+ "resolver": "v3 group_by_artist（正規式＋頻道＋多數決）",
+ "train": {
+  "items": 586,
+  "precision": 0.9504,
+  "recall": 0.9146,
+  "f1": 0.9321,
+  "unknown_rate": 0.0154
+ },
+ "holdout": {
+  "items": 325,
+  "precision": 0.8229,
+  "recall": 0.8899,
+  "f1": 0.8551,
+  "unknown_rate": 0.1077
+ },
+ "gold": {
+  "items": 0
+ },
+ "per_list": {
+  "#0 舊日文": {
+   "train": {
+    "items": 188,
+    "precision": 0.9805,
+    "recall": 0.8681,
+    "f1": 0.9209,
+    "unknown_rate": 0.0
+   }
+  },
+  "#1 Task3": {
+   "train": {
+    "items": 191,
+    "precision": 0.9155,
+    "recall": 0.922,
+    "f1": 0.9187,
+    "unknown_rate": 0.0471
+   }
+  },
+  "#2 中文歌1": {
+   "train": {
+    "items": 44,
+    "precision": 0.9091,
+    "recall": 1.0,
+    "f1": 0.9524,
+    "unknown_rate": 0.0
+   }
+  },
+  "#3 中文歌2": {
+   "holdout": {
+    "items": 113,
+    "precision": 0.8598,
+    "recall": 0.9788,
+    "f1": 0.9154,
+    "unknown_rate": 0.0
+   }
+  },
+  "#4 OST/BGM": {
+   "train": {
+    "items": 56,
+    "precision": 0.9235,
+    "recall": 0.9042,
+    "f1": 0.9137,
+    "unknown_rate": 0.0
+   }
+  },
+  "#5 主題清單": {
+   "holdout": {
+    "items": 82,
+    "precision": 0.5966,
+    "recall": 0.8735,
+    "f1": 0.709,
+    "unknown_rate": 0.0
+   }
+  },
+  "#6 電影音樂1": {
+   "train": {
+    "items": 51,
+    "precision": 0.9804,
+    "recall": 0.902,
+    "f1": 0.9395,
+    "unknown_rate": 0.0
+   }
+  },
+  "#7 電影音樂2": {
+   "train": {
+    "items": 26,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "unknown_rate": 0.0
+   }
+  },
+  "#8 K-pop": {
+   "holdout": {
+    "items": 87,
+    "precision": 0.9007,
+    "recall": 0.7356,
+    "f1": 0.8098,
+    "unknown_rate": 0.4023
+   }
+  },
+  "#9 中文歌3": {
+   "train": {
+    "items": 30,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "unknown_rate": 0.0
+   }
+  },
+  "#10 日文歌單": {
+   "holdout": {
+    "items": 43,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "unknown_rate": 0.0
+   }
+  }
+ }
+}

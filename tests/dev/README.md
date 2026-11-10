@@ -14,6 +14,7 @@
 | 工具 | 用途 | 寫檔擋門 |
 |---|---|---|
 | `grouping_gate_bench.py` | 用 `scripts/cache/` 收錄的真實清單校準分群效益閘門的兩道門檻（`_UNKNOWN_RATIO_GATE`、`_EFFECTIVE_GROUPING_GATE`）。門檻改動後一定要重跑 `--check` | 不寫檔 |
+| `resolver_bench.py` | M3 的藝人辨識評測台：以 B³（精確率／召回率／F1）與 unknown 率，比較辨識結果與近似真值、人工真值；也負責建立 `tests/fixtures/playlists/` 與寫入 `tests/fixtures/baseline.json` | `YT_DEV_WRITE=1` |
 | `ytm_probe.py` | 用 ytmusicapi 取得音樂目錄的藝人／專輯標註，產生 `ytm_samples/`，作為開發期的近似真值 | `YT_DEV_YTM=1` |
 | `ytm_samples/*.json` | 11 份清單、928 列 ytmusicapi 標註。藝人是「發行掛名」（例如 `SawanoHiroyuki[nZk]:mizuki`），不是一人一 key，當真值使用時要先正規化 | — |
 
@@ -25,6 +26,9 @@ ytmusicapi 只用在開發期，刻意不放進 `requirements.txt`（執行期�
 ```bash
 python tests/dev/grouping_gate_bench.py           # 印出全部樣本的閘門指標
 python tests/dev/grouping_gate_bench.py --check   # 驗證閘門恰好攔到該攔的清單
+
+python tests/dev/resolver_bench.py --per-list     # 現行辨識在訓練集／保留集／人工真值上的 B³ 分數
+YT_DEV_WRITE=1 python tests/dev/resolver_bench.py --baseline   # 寫入 tests/fixtures/baseline.json
 
 pip install ytmusicapi
 YT_DEV_YTM=1 python tests/dev/ytm_probe.py <playlist_id_or_url>
