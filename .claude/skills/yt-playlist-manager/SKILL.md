@@ -3,7 +3,7 @@ name: yt-playlist-manager
 description: |
   管理與重排 YouTube / YouTube Music 與 Spotify 播放清單。
   當使用者想要對播放清單排序、分組（例如「同歌手放一起」「同專輯放一起」）、篩選或重新排列時使用。
-  流程為：fetch 抓取 → 本地計算最小變更集（0 API 配額）→ 聊天室預覽並取得同意 → 寫回。
+  流程為：fetch 抓取 → 本地計算最小變更集（0 API 配額）→ 瀏覽器檢查頁確認 → 聊天室一句同意 → 寫回。
 ---
 
 # YouTube Playlist Agent-Skill
@@ -15,9 +15,9 @@ description: |
 ## 不可違反的五條規則
 
 0. **不可自行補上使用者沒說的排序維度**：使用者說「同歌手放一起」時，他**只**要求了分組，沒有要求群內順序。擅自加上觀看數排序會對已經聚在一起的群組產生額外移動（每筆 50 units），使用者會視之為「無意義搬動」。需求缺哪個維度就查 `docs/agent/clarify_scenarios.json` 發問，不要猜。詳見 AGENT_SOP.md Phase 0。
-1. **絕不盲目寫入**：呼叫 `update` 前，必須在聊天室畫出變更預覽表並取得使用者明確同意。
+1. **寫回前一定要取得同意，而且用檢查頁、不用預覽表**：先用 `review start` 開檢查頁讓使用者看、拖拉、按保存；`review wait` 回 `saved` 後，把 `summary_line` 用一句話告訴使用者，等他明確回覆同意才 `update`。不要在聊天室貼預覽表（使用者明確表示不想看）；只有無法使用瀏覽器時，才在聊天室列出前 10 筆移動與總數。
 2. **變更集順序相依**：`playlistItems.update` 是「移除後插入」，每次呼叫都會讓其餘影片重新編號。變更檔中的 `new_position` 是在模擬盤面上算出的中繼位置，**必須依 `execution_order` 逐筆執行；不可手動編輯、重新排序、拆分或跳過任何一筆**。要調整就重新執行 `optimize` / `diff`。
-3. **預覽表用 `final_position`**：`new_position` 是送 API 的中繼位置，直接顯示給使用者會造成誤解。
+3. **不要給使用者看中繼位置**：`new_position`、`range_start`、`insert_before` 都是送 API 的中繼索引。檢查頁已經顯示每首歌的最終位置；需要在聊天室提到位置時一律用 `final_position`。
 4. **`STALE_SNAPSHOT` 代表遠端已被改動**：重新 `fetch --refresh` 後重算，絕不用 `--skip-verify` 硬闖。
 
 ## 指令速查
@@ -39,7 +39,7 @@ python -m scripts.yt_tool optimize data/current.json \
     --target-out data/new.json --out data/changes.json \
     --group-order first_appearance --aliases data/artist_aliases.json
 #    ↑ 僅在使用者「明確指定」群內順序時，才加上 --within-group-sort viewCount:desc
-#      （見規則 0）。加上它會增加移動筆數，預覽時必須分開列出這筆成本。
+#      （見規則 0）。加上它會增加移動筆數，確認時必須分開說出這筆成本。
 #    ↑ --aliases 會把同一位藝人的不同拼法併成一組（跨語言別名、頻道贅字、歌名被誤判成藝人）。
 #      回傳的 grouping_benefit 為 "low" 時，先把 grouping_warnings 轉述給使用者，
 #      問他還要不要花這筆配額，不要直接往下做。
@@ -48,8 +48,11 @@ python -m scripts.yt_tool optimize data/current.json \
 # 2B. 自訂順序：自己寫腳本產生 data/new.json（必須是 current 的重排），再算差異
 python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json
 
-# 3. 預覽並取得同意（見 AGENT_SOP.md Phase 3）
+# 3. 檢查頁（見 AGENT_SOP.md Phase 3）：開頁 → 等保存 → 把 summary_line 一句話轉述 → 等使用者同意
+python -m scripts.yt_tool review start data/current.json data/new.json   # 回傳 run_dir 與 url
+python -m scripts.yt_tool review wait <run_dir>     # saved / waiting（再跑一次）/ cancelled / expired
+python -m scripts.yt_tool review cancel <run_dir>   # 使用者在聊天室說不要了
 
-# 4. 寫回（會先花 1 unit 驗證遠端一致性；中斷後重跑同指令即續傳）
-python -m scripts.yt_tool update <playlist_id> data/changes.json
+# 4. 寫回 review wait 產生的變更檔（YouTube 先花 1 unit 驗證遠端；中斷後重跑同指令即續傳）
+python -m scripts.yt_tool update <playlist_url> <run_dir>/changes.json
 ```

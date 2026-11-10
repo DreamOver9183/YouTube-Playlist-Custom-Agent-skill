@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>播放清單檢查</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --text: #1d2330; --muted: #667085; --line: #e3e6ec; --hover: #f5f7fa;
+    --accent: #2f6fed; --accent-text: #ffffff; --accent-soft: rgba(47, 111, 237, .09); --flash: #d6e4ff;
+    --danger: #c2410c; --move: #c2410c; --move-bg: #fff1e6; --move-text: #9a3412;
+    --warn-bg: #fef3c7; --warn-text: #92400e; --pin-bg: #eef1f5; --pin-text: #475467;
+    --toast: #1d2330; --toast-text: #ffffff;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .06); --lift: 0 14px 32px rgba(16, 24, 40, .22);
+    --sat: 68%; --lum: 46%;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151b; --panel: #1a1f27; --text: #e7eaf0; --muted: #98a2b3; --line: #2a313c; --hover: #202632;
+      --accent: #6b9bff; --accent-text: #0b1220; --accent-soft: rgba(107, 155, 255, .13); --flash: #22385f;
+      --danger: #fb923c; --move: #fb923c; --move-bg: #3a2614; --move-text: #fdba74;
+      --warn-bg: #3b2f0b; --warn-text: #fcd34d; --pin-bg: #252b35; --pin-text: #cbd5e1;
+      --toast: #e7eaf0; --toast-text: #12151b;
+      --shadow: none; --lift: 0 14px 32px rgba(0, 0, 0, .55); --lum: 62%;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text);
+         font: 15px/1.5 system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+  body.dragging { cursor: grabbing; user-select: none; }
+  body.dragging * { cursor: grabbing !important; }
+  header { position: sticky; top: 0; z-index: 20; background: var(--panel); border-bottom: 1px solid var(--line); box-shadow: var(--shadow); }
+  .bar { max-width: 1180px; margin: 0 auto; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+  h1 { font-size: 17px; margin: 0; }
+  .meta, .legend, .note { color: var(--muted); font-size: 12px; }
+  .legend { grid-column: 1 / -1; margin-top: -10px; }
+  .legend span { margin-right: 12px; white-space: nowrap; }
+  .cost { font-size: 14px; }
+  .cost strong { font-size: 18px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  button, select { font: inherit; border-radius: 8px; padding: 6px 12px; border: 1px solid var(--line); background: var(--panel); color: var(--text); }
+  button { cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+  button.danger { color: var(--danger); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  main { max-width: 1180px; margin: 0 auto; padding: 14px 16px 48px; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+  .help { color: var(--muted); font-size: 13px; margin: 0; grid-column: 1 / -1; }
+  .msg { display: none; grid-column: 1 / -1; padding: 8px 12px; border-radius: 8px; background: var(--warn-bg); color: var(--warn-text); }
+
+  /* ── the list: one card per section, one row per song ── */
+  .list { position: relative; min-width: 0; touch-action: pan-y; }
+  .list > :first-child { margin-top: 0; }
+  .ghead, .row, .boxset { --gc: hsl(var(--hue, 220) var(--sat) var(--lum)); background: var(--panel);
+                          border: 1px solid var(--line); border-left: 5px solid var(--gc); border-bottom: 0; }
+  .ghead { display: flex; align-items: center; gap: 8px; padding: 7px 10px 7px 8px; margin-top: 12px; border-radius: 10px 10px 0 0;
+           cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  .ghead .name { font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .ghead .count { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  .ghead .toggle { margin-left: auto; padding: 2px 10px; font-size: 12.5px; flex: none; }
+  .ghead.unknown { background: repeating-linear-gradient(45deg, var(--pin-bg) 0 8px, var(--panel) 8px 16px); }
+  .ghead.unknown, .row.u, .boxset.u { --gc: var(--muted); }
+  .ghead.drop-target { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
+  .ghead.drop-target .count::after { content: "　← 放進這一組（改組）"; color: var(--accent); font-weight: 650; }
+  .swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--gc); flex: none; }
+  .row { display: grid; grid-template-columns: 16px 28px 38px minmax(0, 1fr) auto 40px; gap: 10px; align-items: center;
+         padding: 6px 12px 6px 8px; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+         transition: background-color .12s; }
+  .row:hover { background: var(--hover); }
+  .row.selected { background: var(--accent-soft); }
+  .row.end, .boxset.end, .end-tmp { border-bottom: 1px solid var(--line); border-radius: 0 0 10px 10px; }
+  .ghead.end-tmp { border-radius: 10px; }
+  .row:focus-visible, .ghead:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .row.pinned { cursor: not-allowed; margin-top: 12px; border: 1px dashed var(--line); border-radius: 10px; background: var(--pin-bg); color: var(--pin-text); }
+  .row.flash { animation: flash .9s ease-out; }
+  @keyframes flash { from { background-color: var(--flash); } to { background-color: var(--panel); } }
+  .row.armed { background: var(--hover); transform: scale(.985); }
+  .handle { color: var(--muted); text-align: center; font-size: 13px; letter-spacing: -2px; touch-action: none; }
+  .pos { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; }
+  .row.moved .pos { color: var(--move); font-weight: 650; }
+  .thumb { width: 38px; height: 38px; border-radius: 6px; object-fit: cover; display: block; background: var(--pin-bg); }
+  .thumb.ph { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 15px; }
+  .title { min-width: 0; }
+  .title .t, .title .s { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .title .s { color: var(--muted); font-size: 12.5px; }
+  .own { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 1px;
+         background: hsl(var(--hue) var(--sat) var(--lum)); box-shadow: 0 0 0 2px var(--warn-bg); }
+  .tail { display: flex; gap: 8px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+  .dur { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .badge { font-size: 12px; border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+  .b-move { background: var(--move-bg); color: var(--move-text); font-variant-numeric: tabular-nums; }
+  .b-warn { background: var(--warn-bg); color: var(--warn-text); }
+  .b-pin { background: var(--panel); color: var(--pin-text); border: 1px solid var(--line); }
+  .tail select { font-size: 13px; padding: 2px 6px; max-width: 190px; }
+  .boxset { padding: 9px 14px; color: var(--muted); font-size: 13px; cursor: pointer; }
+  .boxset:hover { background: var(--hover); }
+  .lifted { display: none !important; }
+  .gap { margin: 4px 0; border: 2px dashed var(--accent); border-radius: 10px; background: var(--accent-soft); }
+  .ghost { position: fixed; z-index: 50; pointer-events: none; margin: 0; border-radius: 10px; border-bottom: 1px solid var(--line);
+           box-shadow: var(--lift); transform: scale(1.015); opacity: .97; transition: opacity .12s; }
+  .ghost.away { opacity: .45; }
+  .ghost.stack { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-weight: 650;
+                 box-shadow: 0 5px 0 -2px var(--panel), 0 5px 0 -1px var(--line), 0 10px 0 -4px var(--panel), 0 10px 0 -3px var(--line), var(--lift); }
+  .ghost.regroup::after { content: attr(data-hint); position: absolute; right: 10px; top: -12px; font-size: 12px; font-weight: 650;
+                          background: var(--accent); color: var(--accent-text); border-radius: 999px; padding: 1px 10px; }
+
+  /* ── info card ── */
+  .card { position: sticky; top: 96px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; box-shadow: var(--shadow); font-size: 13px; }
+  .card .empty { color: var(--muted); margin: 0; }
+  .card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; margin-bottom: 10px; background: var(--pin-bg); }
+  .card h2 { font-size: 16px; margin: 0 0 4px; line-height: 1.35; }
+  .card dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; margin: 10px 0; }
+  .card dt { color: var(--muted); white-space: nowrap; }
+  .card dd { margin: 0; overflow-wrap: anywhere; }
+  .card .line { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .card .line select { max-width: 100%; }
+  .card a { color: var(--accent); }
+  .card .close { float: right; padding: 2px 8px; margin: 0 0 6px 8px; font-size: 12.5px; }
+  .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--toast); color: var(--toast-text); padding: 8px 14px;
+           border-radius: 999px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 60; }
+  .toast.show { opacity: 1; }
+  .done { position: fixed; inset: 0; background: var(--bg); display: none; align-items: center; justify-content: center; z-index: 70; padding: 16px; }
+  .done .box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 28px; max-width: 440px; text-align: center; }
+  .done h2 { margin: 0 0 8px; }
+  .done p { color: var(--muted); margin: 0; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: minmax(0, 1fr); }
+    .card { position: fixed; left: 0; right: 0; bottom: 0; top: auto; max-height: 46vh; overflow: auto; border-radius: 14px 14px 0 0; z-index: 30; display: none; }
+    .card.open { display: block; }
+  }
+  @media (max-width: 640px) {
+    .bar { padding: 8px 12px; gap: 6px 12px; }
+    h1 { font-size: 16px; }
+    .actions button { padding: 5px 10px; }
+    main { padding: 10px 12px 48px; gap: 12px; }
+    .legend { margin-top: -6px; }
+    .row { grid-template-columns: 14px 22px 34px minmax(0, 1fr) auto; gap: 8px; padding: 6px 10px 6px 6px; }
+    .thumb { width: 34px; height: 34px; }
+    .dur { grid-column: 5; grid-row: 1; }
+    .tail { grid-column: 3 / -1; grid-row: 2; justify-content: flex-start; }
+    .tail:empty { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div>
+      <h1 id="heading">檢查排序結果</h1>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="cost" id="cost" aria-live="polite"></div>
+    <div class="actions">
+      <button type="button" id="undo" title="Ctrl+Z">上一步</button>
+      <button type="button" id="reset">重置</button>
+      <button type="button" id="cancel" class="danger">取消</button>
+      <button type="button" id="save" class="primary">保存</button>
+    </div>
+  </div>
+</header>
+<main>
+  <p class="help" id="help"></p>
+  <div class="legend" id="legend"></div>
+  <div class="msg" id="msg" role="alert"></div>
+  <div class="list" id="list" role="list" aria-label="播放清單"></div>
+  <aside class="card" id="card" aria-live="polite"></aside>
+</main>
+<div class="sr" id="live" aria-live="assertive"></div>
+<div class="toast" id="toast" role="status"></div>
+<div class="done" id="done"><div class="box"><h2 id="done-title"></h2><p id="done-text"></p></div></div>
+
+<script id="review-data" type="application/json">/*__REVIEW_DATA__*/null</script>
+<script>
+(() => {
+  "use strict";
+  const DATA = JSON.parse(document.getElementById("review-data").textContent);
+  const TOKEN = new URLSearchParams(location.search).get("t") || "";
+  const LABEL_MODE = DATA.mode === "label";
+  const SPOTIFY = DATA.platform === "spotify";
+  const N = DATA.items.length;
+  const ITEM = new Map(DATA.items.map((item, index) => [item.key, { ...item, orig: index }]));
+  const PINNED_SLOTS = DATA.items.map((item, i) => (item.pinned ? i : -1)).filter((i) => i >= 0);
+  const PROPOSED_MOVABLE = DATA.proposed.filter((key) => !ITEM.get(key).pinned);
+  const PROPOSED_GROUP = Object.fromEntries(DATA.items.map((item) => [item.key, item.group || ""]));
+  const ANIMATE = N <= 400 && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const HISTORY_LIMIT = 200;
+
+  let movable = [...PROPOSED_MOVABLE];
+  let groupOf = { ...PROPOSED_GROUP };
+  let history = [];
+  let log = [];
+  let selected = null;
+  let selectionLocked = false;  // a click / focus pins the info card; hover only previews until then
+  let finished = false;
+  let drag = null;
+  let settling = false;
+  let flashKeys = new Set();
+  const collapsed = new Set();
+  const thumbs = new Map();  // key -> <img>, reused across renders so covers never flicker
+  const $ = (id) => document.getElementById(id);
+  const list = $("list");
+
+  // ── order, sections, cost ─────────────────────────────────────────────────
+  function fullOrder() {
+    const out = new Array(N).fill(null);
+    for (const slot of PINNED_SLOTS) out[slot] = DATA.items[slot].key;
+    let next = 0;
+    for (let slot = 0; slot < N; slot++) if (out[slot] === null) out[slot] = movable[next++];
+    return out;
+  }
+
+  function lis(seq) {  // indices of one longest strictly increasing subsequence
+    const tails = [], tailAt = [], parent = new Array(seq.length).fill(-1);
+    for (let i = 0; i < seq.length; i++) {
+      let lo = 0, hi = tails.length;
+      while (lo < hi) { const mid = (lo + hi) >> 1; if (tails[mid] < seq[i]) lo = mid + 1; else hi = mid; }
+      tails[lo] = seq[i]; tailAt[lo] = i; parent[i] = lo > 0 ? tailAt[lo - 1] : -1;
+    }
+    const keep = new Set();
+    for (let k = tails.length ? tailAt[tails.length - 1] : -1; k !== -1; k = parent[k]) keep.add(k);
+    return keep;
+  }
+
+  function anchorsOf(order, ref) {
+    // Same rule as optimizer.compute_lis_anchors: pinned items are forced anchors that split
+    // the list into segments, each with its own LIS bounded by the pins around it.
+    const seq = order.map(ref);
+    const keep = new Set();
+    const segment = (lo, hi, lower, upper) => {
+      const idx = [];
+      for (let i = lo; i < hi; i++) if (seq[i] > lower && (upper === null || seq[i] < upper)) idx.push(i);
+      for (const j of lis(idx.map((i) => seq[i]))) keep.add(idx[j]);
+    };
+    let start = 0, lower = -1;
+    order.forEach((key, i) => {
+      if (!ITEM.get(key).pinned) return;
+      keep.add(i); segment(start, i, lower, seq[i]); start = i + 1; lower = seq[i];
+    });
+    segment(start, order.length, lower, null);
+    return keep;
+  }
+
+  function costs(order) {
+    const anchors = anchorsOf(order, (key) => ITEM.get(key).orig);
+    const moved = new Set(order.filter((key, i) => !ITEM.get(key).pinned && !anchors.has(i)));
+    const at = new Map(order.map((key, i) => [key, i]));
+    const firsts = [];
+    let prev = null;
+    for (const item of DATA.items) {  // Spotify: one call per run contiguous now and in the new order
+      const contiguous = prev && !item.pinned && !prev.pinned && at.get(item.key) === at.get(prev.key) + 1;
+      if (!contiguous) firsts.push(at.get(item.key));
+      prev = item;
+    }
+    return { moved, moves: moved.size, calls: firsts.length - lis(firsts).size };
+  }
+
+  const PROPOSED_MOVABLE_INDEX = new Map(PROPOSED_MOVABLE.map((key, i) => [key, i]));
+
+  function diffCount() {
+    // State, not clicks: how many songs you moved relative to the proposal (movable − LIS)
+    // + songs whose group changed.  Same rule as review_server.save_order; pins are ignored
+    // here on purpose (this counts what you did, the API cost line honours pins).
+    const regrouped = movable.filter((key) => groupOf[key] !== PROPOSED_GROUP[key]).length;
+    if (LABEL_MODE) return regrouped;  // order does not matter when labelling
+    const moves = movable.length - lis(movable.map((key) => PROPOSED_MOVABLE_INDEX.get(key))).size;
+    return moves + regrouped;
+  }
+
+  function sections(order) {
+    // A section is a run of one group.  A single foreign song flanked by that group on both
+    // sides stays inside it as a "stray"; a pinned song always ends a section.
+    // In "G G X G X X" the lone G is the one out of place (a G dragged into the X run), so X
+    // starts its own section there instead of becoming a stray inside G.
+    const out = [];
+    const seen = new Map();
+    const of = (k, group) => k !== undefined && !ITEM.get(k).pinned && groupOf[k] === group;
+    for (let i = 0; i < order.length;) {
+      const key = order[i];
+      if (ITEM.get(key).pinned) { out.push({ type: "pin", key }); i++; continue; }
+      const group = groupOf[key];
+      const keys = [key], strays = new Set();
+      i++;
+      while (i < order.length && !ITEM.get(order[i]).pinned) {
+        if (groupOf[order[i]] === group) { keys.push(order[i++]); continue; }
+        if (of(order[i + 1], group) && !of(order[i + 2], groupOf[order[i]])) { keys.push(order[i]); strays.add(order[i]); i++; continue; }
+        break;
+      }
+      const n = seen.get(group) || 0;
+      seen.set(group, n + 1);
+      // Printable separator: the id goes into a data-* attribute and CSS selectors (no NUL).
+      out.push({ type: "section", id: `${n}␞${group}`, group, keys, strays, cont: n > 0 });
+    }
+    return out;
+  }
+
+  // ── state changes ─────────────────────────────────────────────────────────
+  const snapshot = () => ({ movable: [...movable], groupOf: { ...groupOf } });
+
+  function commit(change, entry) {
+    const before = snapshot();
+    change();
+    const changed = movable.join("\u0000") !== before.movable.join("\u0000") ||
+                    Object.keys(groupOf).some((k) => groupOf[k] !== before.groupOf[k]);
+    if (!changed) { render(); return false; }
+    history.push(before);
+    if (history.length > HISTORY_LIMIT) history.shift();
+    log.push({ at: new Date().toISOString(), ...entry });
+    render();
+    return true;
+  }
+
+  function moveTo(keys, beforeKey, toGroup, type, extra) {
+    const from = fullOrder().indexOf(keys[0]);
+    let entry = { type: type || "item", keys: [...keys], from_index: from, ...(extra || {}) };
+    const ok = commit(() => {
+      const rest = movable.filter((key) => !keys.includes(key));
+      const at = beforeKey == null ? rest.length : rest.indexOf(beforeKey);
+      rest.splice(at < 0 ? rest.length : at, 0, ...keys);
+      movable = rest;
+      if (toGroup !== undefined) {
+        entry.from_group = groupOf[keys[0]]; entry.to_group = toGroup;
+        keys.forEach((key) => { groupOf[key] = toGroup; });
+      }
+      entry.to_index = fullOrder().indexOf(keys[0]);
+    }, entry);
+    if (ok) announce(`《${ITEM.get(keys[0]).title}》${keys.length > 1 ? `等 ${keys.length} 首` : ""}移到第 ${entry.to_index + 1} 首${toGroup !== undefined ? `，改為「${groupName(toGroup)}」組` : ""}`);
+    return ok;
+  }
+
+  function relabel(key, group) {
+    // Explicit regroup from the info card / row menu.  Order mode: the song stays where it is.
+    // Label mode: it moves next to its new group so the list stays grouped.
+    if (group === groupOf[key]) return false;
+    if (LABEL_MODE) {
+      const members = movable.filter((k) => k !== key && groupOf[k] === group);
+      const before = members.length ? nextAfter(members[members.length - 1], [key]) : null;
+      return moveTo([key], before, group, "relabel");
+    }
+    const ok = commit(() => { groupOf[key] = group; },
+                      { type: "relabel", keys: [key], from_group: groupOf[key], to_group: group });
+    if (ok) announce(`《${ITEM.get(key).title}》改為「${groupName(group)}」組`);
+    return ok;
+  }
+
+  function undo() {
+    const prev = history.pop();
+    if (!prev) return false;
+    movable = prev.movable; groupOf = prev.groupOf;
+    log.push({ at: new Date().toISOString(), type: "undo" });
+    render();
+    announce("已回到上一步");
+    return true;
+  }
+
+  function reset() {
+    if (diffCount() === 0) return false;
+    movable = [...PROPOSED_MOVABLE]; groupOf = { ...PROPOSED_GROUP }; history = [];
+    log.push({ at: new Date().toISOString(), type: "reset" });
+    render();
+    toast("已重置為建議順序");
+    announce("已重置為建議順序");
+    return true;
+  }
+
+  function following(keys) {
+    // The movable song right after a held block, i.e. where the block sits now (null = end).
+    const i = movable.indexOf(keys[keys.length - 1]);
+    for (let j = i + 1; j < movable.length; j++) if (!keys.includes(movable[j])) return movable[j];
+    return null;
+  }
+
+  function nextAfter(key, excluded) {
+    const rest = movable.filter((k) => !excluded.includes(k));
+    const i = rest.indexOf(key);
+    return i >= 0 && i + 1 < rest.length ? rest[i + 1] : null;
+  }
+
+  function cleanGroupName(raw) {
+    const name = String(raw || "").trim().slice(0, 60).trim();
+    if (!name || name.toLowerCase() === "unknown") return null;
+    const existing = [...new Set(Object.values(groupOf))].find((g) => g === name);
+    return existing || name;
+  }
+
+  // ── rendering ─────────────────────────────────────────────────────────────
+  // Neighbouring groups get clearly different colours: hues follow the golden angle in the order
+  // the groups first appear in the proposal; groups created on the page fall back to a hash.
+  const GROUP_HUE = new Map();
+  for (const key of DATA.proposed) {
+    const g = PROPOSED_GROUP[key];
+    if (!ITEM.get(key).pinned && !GROUP_HUE.has(g)) GROUP_HUE.set(g, Math.round((210 + GROUP_HUE.size * 137.508) % 360));
+  }
+  const hue = (name) => {
+    if (GROUP_HUE.has(name)) return GROUP_HUE.get(name);
+    let h = 0; for (const ch of name) h = (h * 31 + ch.codePointAt(0)) % 360; return h;
+  };
+  const isUnknown = (group) => !group || group === "unknown";
+  const groupName = (group) => (isUnknown(group) ? "待確認" : group);
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  const badge = (cls, text) => el("span", "badge " + cls, text);
+
+  function subline(item) {
+    const who = item.artists.length ? item.artists.join("、") : item.channel;
+    return [who, SPOTIFY && item.album ? item.album.name : ""].filter(Boolean).join(" · ");
+  }
+
+  function thumbEl(item) {
+    if (!item.image_url) return el("span", "thumb ph", "♪");
+    let img = thumbs.get(item.key);
+    if (!img) {
+      img = el("img", "thumb");
+      img.alt = "";
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.referrerPolicy = "no-referrer";
+      img.addEventListener("error", () => { const ph = el("span", "thumb ph", "♪"); thumbs.set(item.key, ph); img.replaceWith(ph); });
+      img.src = item.image_url;
+      thumbs.set(item.key, img);
+    }
+    return img;
+  }
+
+  function rowEl(key, pos, info, sec) {
+    const item = ITEM.get(key);
+    const node = el("div", "row");
+    node.dataset.key = key;
+    node.dataset.pos = String(pos);
+    node.setAttribute("role", "listitem");
+    node.tabIndex = 0;
+    const stray = !!sec && sec.strays.has(key);
+    const moved = !LABEL_MODE && info.moved.has(key);
+    if (sec) {
+      node.dataset.sec = sec.id;
+      node.style.setProperty("--hue", String(hue(sec.group || "-")));
+      if (isUnknown(sec.group)) node.classList.add("u");
+    }
+    if (item.pinned) node.classList.add("pinned");
+    if (moved) node.classList.add("moved");
+    if (stray) node.classList.add("stray");
+    if (key === selected) node.classList.add("selected");
+    if (flashKeys.has(key)) node.classList.add("flash");
+    node.setAttribute("aria-label", `第 ${pos} 首：${item.title}${item.sub ? `，${item.sub}` : ""}，${item.pinned ? "釘選" : groupName(groupOf[key]) + " 組"}${moved ? "，會被搬動" : ""}`);
+
+    node.append(el("span", "handle", item.pinned ? "🔒" : "⋮⋮"), el("span", "pos", String(pos)), thumbEl(item));
+    const title = el("div", "title");
+    const t = el("div", "t");
+    if (stray) { const dot = el("span", "own"); dot.style.setProperty("--hue", String(hue(groupOf[key] || "-"))); t.append(dot); }
+    t.append(document.createTextNode(item.title));
+    title.append(t, el("div", "s", subline(item)));
+    node.append(title);
+
+    const tail = el("div", "tail");
+    if (item.pinned) tail.append(badge("b-pin", "釘選：私人／已刪除，無法移動"));
+    else {
+      if (stray) tail.append(badge("b-warn", `⚠ 屬於「${groupName(groupOf[key])}」`));
+      if (LABEL_MODE) tail.append(groupSelect(key));
+      else if (moved) tail.append(badge("b-move", `原 #${item.orig + 1} → #${pos}`));
+    }
+    node.append(tail, el("span", "dur", fmtDuration(item.duration_seconds)));
+    return node;
+  }
+
+  function headEl(sec, from, to) {
+    const node = el("div", "ghead" + (isUnknown(sec.group) ? " unknown" : ""));
+    node.style.setProperty("--hue", String(hue(sec.group || "-")));
+    node.dataset.section = sec.id;
+    node.dataset.group = sec.group;
+    node.tabIndex = 0;
+    node.setAttribute("role", "button");
+    const strays = sec.strays.size;
+    const name = groupName(sec.group) + (sec.cont ? "（續）" : "");
+    node.setAttribute("aria-label", `${name}，${sec.keys.length} 首。Space 拿起整組，C 收合`);
+    const toggle = el("button", "toggle", collapsed.has(sec.id) ? "展開" : "收合");
+    toggle.type = "button";
+    toggle.tabIndex = -1;
+    toggle.addEventListener("click", () => toggleCollapse(sec.id));
+    node.append(el("span", "handle", "⋮⋮"), el("span", "swatch"), el("span", "name", name),
+                el("span", "count", `${sec.keys.length} 首${strays ? `（含 ${strays} 首他組）` : ""} · #${from}${to > from ? `–${to}` : ""}`),
+                toggle);
+    return node;
+  }
+
+  function boxEl(sec) {
+    const node = el("div", "boxset end" + (isUnknown(sec.group) ? " u" : ""));
+    node.style.setProperty("--hue", String(hue(sec.group || "-")));
+    node.dataset.box = sec.id;
+    const strays = sec.strays.size;
+    node.textContent = `已收合 ${sec.keys.length} 首${strays ? `（含 ${strays} 首他組）` : ""}，點這裡展開`;
+    return node;
+  }
+
+  let layout = { sections: [], sectionOf: new Map(), order: [] };
+
+  function render() {
+    const active = document.activeElement;
+    const refocus = active && list.contains(active)
+      ? (active.dataset.key ? `.row[data-key="${CSS.escape(active.dataset.key)}"]`
+        : active.dataset.section ? `.ghead[data-section="${CSS.escape(active.dataset.section)}"]` : null)
+      : null;
+    const order = fullOrder();
+    const info = costs(order);
+    const secs = sections(order);
+    const sectionOf = new Map();
+    const frag = document.createDocumentFragment();
+    let pos = 0;
+    for (const sec of secs) {
+      if (sec.type === "pin") { frag.append(rowEl(sec.key, ++pos, info, null)); continue; }
+      sec.keys.forEach((k) => sectionOf.set(k, sec));
+      frag.append(headEl(sec, pos + 1, pos + sec.keys.length));
+      if (collapsed.has(sec.id)) { frag.append(boxEl(sec)); pos += sec.keys.length; continue; }
+      sec.keys.forEach((key, i) => {
+        const row = rowEl(key, ++pos, info, sec);
+        if (i === sec.keys.length - 1) row.classList.add("end");
+        frag.append(row);
+      });
+    }
+    list.replaceChildren(frag);
+    flashKeys = new Set();
+    layout = { sections: secs, sectionOf, order };
+    if (refocus) list.querySelector(refocus)?.focus({ preventScroll: true });
+    renderHeader(info, secs);
+    renderCard();
+  }
+
+  function renderHeader(info, secs) {
+    const diff = diffCount();
+    $("meta").textContent = `${SPOTIFY ? "Spotify" : "YouTube"} · ${N} 首 · ${secs.filter((s) => s.type === "section").length} 段`;
+    $("legend").replaceChildren(
+      ...(LABEL_MODE ? ["左側色條＝群組", "⚠ 不在自己的組", "🔒 釘選"]
+                     : ["左側色條＝群組", "橘色＝會被搬動", "⚠ 不在自己的組", "🔒 釘選"])
+        .map((text) => el("span", "", text)));
+    const cost = $("cost");
+    cost.replaceChildren();
+    if (LABEL_MODE) {
+      cost.append(el("strong", "", String(diff)), document.createTextNode(" 首改了群組"));
+    } else if (SPOTIFY) {
+      cost.append(document.createTextNode("要搬 "), el("strong", "", String(info.moves)), document.createTextNode(" 首 · API 呼叫 "),
+                  el("strong", "", String(info.calls)), document.createTextNode(" 次"));
+    } else {
+      cost.append(document.createTextNode("要搬 "), el("strong", "", String(info.moves)),
+                  document.createTextNode(` 首 · 約 ${info.moves ? 1 + info.moves * 50 : 0} units`));
+    }
+    cost.append(el("div", "note", `你改了 ${diff} 處${LABEL_MODE ? "" : " · 預估值，保存後以工具計算為準"}`));
+    $("reset").disabled = diff === 0 || finished;
+    $("undo").disabled = history.length === 0 || finished;
+  }
+
+  // ── info card ─────────────────────────────────────────────────────────────
+  function fmtDuration(s) {
+    if (!s) return "—";
+    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = String(s % 60).padStart(2, "0");
+    return h ? `${h}:${String(m).padStart(2, "0")}:${sec}` : `${m}:${sec}`;
+  }
+  const fmtDate = (iso) => (iso ? String(iso).slice(0, 10) : "—");
+  const fmtCount = (n) => (n ? Number(n).toLocaleString("zh-Hant") : "—");
+
+  function renderCard() {
+    const card = $("card");
+    card.replaceChildren();
+    if (!selected) {
+      card.append(el("p", "empty", "把游標移到歌上，這裡就會顯示它的詳細資料；點一下可以固定。"));
+      card.classList.remove("open");
+      return;
+    }
+    const item = ITEM.get(selected);
+    const order = layout.order.length ? layout.order : fullOrder();
+    const now = order.indexOf(selected);
+    const willMove = costs(order).moved.has(selected);
+    const close = el("button", "close", "關閉");
+    close.type = "button";
+    close.addEventListener("click", () => { selected = null; selectionLocked = false; render(); });
+    card.append(close);
+    if (item.image_url) {
+      const img = el("img");
+      img.alt = "封面";
+      img.referrerPolicy = "no-referrer";
+      img.addEventListener("error", () => { img.hidden = true; });
+      img.src = item.image_url;
+      card.append(img);
+    }
+    card.append(el("h2", "", item.title));
+    const dl = el("dl");
+    const row = (label, value) => { if (value === "" || value === null || value === undefined) return; dl.append(el("dt", "", label), el("dd", "", String(value))); };
+    row(SPOTIFY ? "藝人" : "藝人／頻道", item.artists.length ? item.artists.join("、") : (item.channel || "—"));
+    if (!SPOTIFY && item.channel) row("頻道", item.channel);
+    if (item.album) {
+      row("專輯", item.album.name || "—");
+      if (item.album.type) row("類型", { album: "專輯", single: "單曲", compilation: "合輯" }[item.album.type] || item.album.type);
+      if (item.track_number) row("曲序", `第 ${item.track_number} 首${item.album.total_tracks ? `／共 ${item.album.total_tracks} 首` : ""}${item.disc_number > 1 ? `（第 ${item.disc_number} 張）` : ""}`);
+    }
+    row("時長", fmtDuration(item.duration_seconds));
+    row(SPOTIFY ? "發行" : "上傳", fmtDate(item.published_at));
+    row("加入清單", fmtDate(item.added_at));
+    if (!SPOTIFY) { row("觀看", fmtCount(item.view_count)); row("按讚", fmtCount(item.like_count)); }
+    if (item.isrc) row("ISRC", item.isrc);
+    row("群組", item.pinned ? "（釘選，無法移動）" : groupName(groupOf[selected]));
+    if (!LABEL_MODE) row("位置", `原 #${item.orig + 1} → 現 #${now + 1}${item.pinned ? "（釘選）" : willMove ? "（會被搬動）" : "（不用搬）"}`);
+    card.append(dl);
+    if (item.media_url) {
+      const link = el("a", "", SPOTIFY ? "在 Spotify 開啟" : "在 YouTube 開啟");
+      link.href = item.media_url; link.target = "_blank"; link.rel = "noopener noreferrer";
+      card.append(link);
+    }
+    if (!item.pinned) {
+      const line = el("div", "line");
+      line.append(el("span", "", "改到這一組："), groupSelect(selected));
+      card.append(line);
+    }
+    card.classList.add("open");
+  }
+
+  function groupSelect(key) {
+    const menu = el("select");
+    menu.setAttribute("aria-label", "改到這一組");
+    const groups = [...new Set(movable.map((k) => groupOf[k]))].sort((a, b) => a.localeCompare(b));
+    for (const g of groups) {
+      const option = el("option", "", groupName(g));
+      option.value = g; option.selected = g === groupOf[key];
+      menu.append(option);
+    }
+    const create = el("option", "", "＋ 新群組…");
+    create.value = "␞new";
+    menu.append(create);
+    menu.addEventListener("change", () => {
+      let value = menu.value;
+      if (value === "␞new") {
+        value = cleanGroupName(prompt("新群組的名稱（例如歌手名）") || "");
+        if (value === null) { toast("群組名稱不能是空白或 unknown"); render(); return; }
+      }
+      relabel(key, value);
+    });
+    return menu;
+  }
+
+  function select(key, lock) {
+    if (lock) selectionLocked = true;
+    if (selected === key) return;
+    selected = key;
+    list.querySelectorAll(".row.selected").forEach((n) => n.classList.remove("selected"));
+    list.querySelector(`.row[data-key="${CSS.escape(key)}"]`)?.classList.add("selected");
+    renderCard();
+  }
+
+  // ── pointer drag ──────────────────────────────────────────────────────────
+  // Vertical only: the floating row stays in the list column and keeps the spot you grabbed
+  // under the pointer; a gap shows exactly where it will land and the other rows slide aside.
+  function sectionById(id) { return layout.sections.find((s) => s.type === "section" && s.id === id); }
+  function firstFree(keys) { return keys.find((k) => !drag.keys.includes(k)) ?? null; }
+
+  function nodeAt(y) {
+    // Layout geometry (offsetTop), not hit testing: rows sliding aside are mid-animation, and
+    // their painted position must not decide the drop.  Sideways drift does not matter either.
+    const ly = y - list.getBoundingClientRect().top;
+    let best = null, bestDy = Infinity;
+    for (const node of list.children) {
+      if (node.classList.contains("lifted")) continue;
+      const a = node.offsetTop, b = a + node.offsetHeight;
+      const dy = ly < a ? a - ly : ly > b ? ly - b : 0;
+      if (dy < bestDy) { bestDy = dy; best = node; }
+      if (a > ly) break;
+    }
+    return best && { node: best, lower: ly > best.offsetTop + best.offsetHeight / 2 };
+  }
+
+  function targetFor(x, y) {
+    // Where would the dragged thing land?  Returns {beforeKey} | {bookend: section} | null.
+    const at = nodeAt(y);
+    if (!at) return null;
+    const { node, lower } = at;
+    if (node.classList.contains("gap")) return drag.target;
+    if (node.classList.contains("ghead")) {
+      const sec = sectionById(node.dataset.section);
+      if (!sec) return null;
+      if (drag.kind === "book" && sec.group !== groupOf[drag.keys[0]]) return { bookend: sec };
+      return { beforeKey: firstFree(sec.keys) };
+    }
+    if (node.classList.contains("boxset")) {
+      const sec = sectionById(node.dataset.box);
+      return { beforeKey: lower ? nextAfter(sec.keys[sec.keys.length - 1], drag.keys) : firstFree(sec.keys) };
+    }
+    if (node.classList.contains("pinned")) return null;
+    const key = node.dataset.key;
+    if (drag.keys.includes(key)) return drag.target;
+    if (drag.kind === "section") {
+      // Whole groups snap to group boundaries; they never split another group.
+      const sec = layout.sectionOf.get(key);
+      const upper = sec.keys.indexOf(key) < sec.keys.length / 2;
+      return { beforeKey: upper ? firstFree(sec.keys) : nextAfter(sec.keys[sec.keys.length - 1], drag.keys) };
+    }
+    return { beforeKey: lower ? nextAfter(key, drag.keys) : key };
+  }
+
+  function flip(mutate) {
+    if (!ANIMATE) { mutate(); return; }
+    const nodes = [...list.querySelectorAll(".row:not(.lifted), .ghead:not(.lifted), .boxset:not(.lifted)")]
+      .filter((n) => { const r = n.getBoundingClientRect(); return r.bottom > -200 && r.top < innerHeight + 200; });
+    const before = new Map(nodes.map((n) => [n, n.getBoundingClientRect().top]));
+    mutate();
+    for (const n of nodes) {
+      const dy = before.get(n) - n.getBoundingClientRect().top;
+      if (dy) n.animate([{ transform: `translateY(${dy}px)` }, { transform: "none" }], { duration: 140, easing: "cubic-bezier(.2, .7, .3, 1)" });
+    }
+  }
+
+  function fixEnds() {
+    // Hidden (lifted) rows must not leave a section card without its bottom edge.
+    list.querySelectorAll(".end-tmp").forEach((n) => n.classList.remove("end-tmp"));
+    for (const head of list.querySelectorAll(".ghead:not(.lifted)")) {
+      const parts = list.querySelectorAll(`[data-sec="${CSS.escape(head.dataset.section)}"]:not(.lifted), [data-box="${CSS.escape(head.dataset.section)}"]:not(.lifted)`);
+      const last = parts.length ? parts[parts.length - 1] : head;
+      if (!last.classList.contains("end")) last.classList.add("end-tmp");
+    }
+  }
+
+  function placeGap(target) {
+    if (!drag.gap) { drag.gap = el("div", "gap"); drag.gap.style.height = `${drag.gapH}px`; }
+    list.querySelectorAll(".drop-target").forEach((n) => n.classList.remove("drop-target"));
+    let anchor = null;
+    if (target && target.bookend) {
+      const head = list.querySelector(`.ghead[data-section="${CSS.escape(target.bookend.id)}"]`);
+      head?.classList.add("drop-target");
+      anchor = head?.nextElementSibling ?? null;  // the top of that group
+    } else if (target && target.beforeKey != null) {
+      const sec = layout.sectionOf.get(target.beforeKey);
+      // Landing on a group boundary: inside the group when the song belongs to it, else between groups.
+      const joins = drag.kind === "book" && sec && groupOf[drag.keys[0]] === sec.group;
+      if (sec && (collapsed.has(sec.id) || drag.kind === "section" || (firstFree(sec.keys) === target.beforeKey && !joins))) {
+        anchor = list.querySelector(`.ghead[data-section="${CSS.escape(sec.id)}"]`);
+      } else {
+        anchor = list.querySelector(`.row[data-key="${CSS.escape(target.beforeKey)}"]`);
+      }
+    }
+    if (drag.ghost) {
+      const regroup = !!(target && target.bookend);
+      drag.ghost.classList.toggle("regroup", regroup);
+      if (regroup) drag.ghost.dataset.hint = `改到「${groupName(target.bookend.group)}」組`;
+    }
+    if (anchor === drag.gap || (drag.gap.parentNode && drag.gap.nextElementSibling === anchor)) return;
+    flip(() => { list.insertBefore(drag.gap, anchor); fixEnds(); });
+  }
+
+  function liftNodes() {
+    const nodes = [];
+    if (drag.kind === "section") {
+      nodes.push(list.querySelector(`.ghead[data-section="${CSS.escape(drag.section.id)}"]`));
+      nodes.push(list.querySelector(`.boxset[data-box="${CSS.escape(drag.section.id)}"]`));
+    }
+    drag.keys.forEach((k) => nodes.push(list.querySelector(`.row[data-key="${CSS.escape(k)}"]`)));
+    return nodes.filter(Boolean);
+  }
+
+  function lift(x, y, withGhost) {
+    drag.lifted = true;
+    document.body.classList.add("dragging");
+    const nodes = liftNodes();
+    const first = nodes[0].getBoundingClientRect();
+    const box = list.getBoundingClientRect();
+    drag.gapH = drag.kind === "section" ? 46 : Math.round(first.height);
+    drag.offY = drag.kind === "section" ? 22 : Math.max(0, Math.min(first.height, y - first.top));
+    drag.homeTop = first.top + scrollY;
+    if (withGhost) {
+      let ghost;
+      if (drag.kind === "section") {
+        ghost = el("div", "ghost stack");
+        ghost.style.setProperty("--hue", String(hue(drag.section.group || "-")));
+        ghost.style.background = "var(--panel)";
+        ghost.style.border = "1px solid var(--line)";
+        ghost.style.borderLeft = "5px solid hsl(var(--hue) var(--sat) var(--lum))";
+        const dot = el("span", "swatch");
+        dot.style.background = "hsl(var(--hue) var(--sat) var(--lum))";
+        ghost.append(dot, el("span", "", `${groupName(drag.section.group)} · ${drag.keys.length} 首`));
+      } else {
+        ghost = nodes[0].cloneNode(true);
+        ghost.classList.add("ghost");
+        ghost.classList.remove("selected", "flash", "end", "armed");
+      }
+      ghost.style.left = `${box.left}px`;
+      ghost.style.width = `${box.width}px`;
+      document.body.append(ghost);
+      drag.ghost = ghost;
+    }
+    drag.target = { beforeKey: following(drag.keys) };
+    flip(() => { nodes.forEach((n) => n.classList.add("lifted")); placeGap(drag.target); });
+    moveGhost(x, y);
+  }
+
+  function isAway(x) {
+    // Pulling the row far to the side means "never mind": dropping there cancels.
+    const box = list.getBoundingClientRect();
+    return box.width < 600 ? false : x < box.left - 120 || x > box.right + 120;
+  }
+
+  function moveGhost(x, y) {
+    if (!drag.ghost) return;
+    drag.ghost.style.top = `${y - drag.offY}px`;
+    drag.ghost.classList.toggle("away", isAway(x));
+  }
+
+  function settle(ghost, top, then) {
+    // Let the floating row glide into its slot (or back home) before the list re-renders.
+    if (!ghost) { then(); return; }
+    let done = false;
+    const finish = () => { if (done) return; done = true; settling = false; ghost.remove(); then(); };
+    if (!ANIMATE) { finish(); return; }
+    settling = true;
+    const dy = top - ghost.getBoundingClientRect().top;
+    const anim = ghost.animate([{ transform: "scale(1.015)" }, { transform: `translateY(${dy}px) scale(1)` }],
+                               { duration: 130, easing: "cubic-bezier(.2, .7, .3, 1)", fill: "forwards" });
+    anim.onfinish = finish;
+    setTimeout(finish, 260);  // background tabs may never finish the animation
+  }
+
+  function endDrag(apply) {
+    if (!drag) return;
+    const d = drag;
+    drag = null;
+    cancelAnimationFrame(d.scrollRaf || 0);
+    clearTimeout(d.timer || 0);
+    document.body.classList.remove("dragging");
+    d.node?.classList.remove("armed");
+    if (!d.lifted) { d.ghost?.remove(); return; }
+    const drop = apply && d.target;
+    const home = d.homeTop - scrollY;
+    settle(d.ghost, drop && d.gap ? d.gap.getBoundingClientRect().top : home, () => {
+      if (drop) {
+        flashKeys = new Set(d.keys);
+        if (d.target.bookend) {
+          // Explicit regroup: the song becomes the first of that group.
+          const first = d.target.bookend.keys.find((k) => !d.keys.includes(k)) ?? null;
+          moveTo(d.keys, first, d.target.bookend.group, "relabel");
+        } else if (d.kind === "section") {
+          moveTo(d.keys, d.target.beforeKey, undefined, "group", { group: d.section.group });
+        } else {
+          moveTo(d.keys, d.target.beforeKey, undefined, "item");
+        }
+        return;
+      }
+      render();
+      if (apply === false) announce("已取消拖拉");
+    });
+  }
+
+  function autoScroll() {
+    if (!drag || !drag.lifted) return;
+    const y = drag.lastY;
+    const top = document.querySelector("header").getBoundingClientRect().bottom + 70;
+    const bottom = innerHeight - 70;
+    const over = y < top ? y - top : y > bottom ? y - bottom : 0;
+    const speed = Math.max(-24, Math.min(24, over / 3));
+    if (speed) {
+      scrollBy(0, speed);
+      const t = targetFor(drag.lastX, y);
+      if (t) { drag.target = t; placeGap(t); }
+    }
+    drag.scrollRaf = requestAnimationFrame(autoScroll);
+  }
+
+  list.addEventListener("pointerdown", (event) => {
+    if (finished || settling || event.button > 0 || drag || kb) return;
+    if (event.target.closest("button, select, a, input")) return;
+    if (event.target.closest(".boxset")) return;  // a click expands it
+    const head = event.target.closest(".ghead");
+    const row = event.target.closest(".row");
+    if (row && row.classList.contains("pinned")) { select(row.dataset.key, true); return; }
+    if (!head && !row) return;
+    let kind, keys, section = null;
+    if (head) { section = sectionById(head.dataset.section); kind = "section"; keys = [...section.keys]; }
+    else { kind = "book"; keys = [row.dataset.key]; }
+    const touch = event.pointerType === "touch";
+    const handle = !!event.target.closest(".handle");  // the ⋮⋮ grip drags at once, even on touch
+    drag = { kind, keys, section, node: head || row, id: event.pointerId, x0: event.clientX, y0: event.clientY,
+             lastX: event.clientX, lastY: event.clientY, lifted: false, touch, armed: !touch || handle };
+    if (touch && !handle) {
+      drag.timer = setTimeout(() => { if (drag && !drag.lifted) { drag.armed = true; drag.node.classList.add("armed"); } }, 150);
+    }
+  });
+
+  // Once a touch drag is armed, stop the page from scrolling under the finger.
+  list.addEventListener("touchmove", (event) => { if (drag && drag.armed) event.preventDefault(); }, { passive: false });
+
+  document.addEventListener("pointermove", (event) => {
+    if (!drag || event.pointerId !== drag.id) return;
+    drag.lastX = event.clientX; drag.lastY = event.clientY;
+    const moved = Math.hypot(event.clientX - drag.x0, event.clientY - drag.y0);
+    if (!drag.lifted) {
+      if (drag.touch && !drag.armed) { if (moved > 8) { clearTimeout(drag.timer); drag = null; } return; }  // a scroll, not a drag
+      if (moved < 4) return;
+      try { drag.node.setPointerCapture(event.pointerId); } catch (_) { /* node may be re-rendered */ }
+      lift(event.clientX, event.clientY, true);
+      drag.scrollRaf = requestAnimationFrame(autoScroll);
+    }
+    event.preventDefault();
+    moveGhost(event.clientX, event.clientY);
+    const target = targetFor(event.clientX, event.clientY);
+    if (target) { drag.target = target; placeGap(target); }
+  }, { passive: false });
+
+  document.addEventListener("pointerup", (event) => {
+    if (!drag || event.pointerId !== drag.id) return;
+    if (!drag.lifted) {
+      const d = drag; endDrag(false);
+      if (d.kind === "book") select(d.keys[0], true);
+      return;
+    }
+    endDrag(!isAway(event.clientX));
+  });
+  document.addEventListener("pointercancel", (event) => { if (drag && event.pointerId === drag.id) endDrag(false); });
+
+  list.addEventListener("pointerover", (event) => {
+    if (drag || selectionLocked || event.pointerType !== "mouse") return;
+    const row = event.target.closest(".row");
+    if (row) select(row.dataset.key);
+  });
+  list.addEventListener("click", (event) => {
+    const box = event.target.closest(".boxset");
+    if (box) toggleCollapse(box.dataset.box);
+  });
+
+  function toggleCollapse(id) {
+    if (drag) return;
+    if (collapsed.has(id)) collapsed.delete(id); else collapsed.add(id);
+    render();
+    const sec = sectionById(id);
+    if (sec) announce(`${groupName(sec.group)}${collapsed.has(id) ? "已收合" : "已展開"}`);
+    list.querySelector(`.ghead[data-section="${CSS.escape(id)}"]`)?.focus({ preventScroll: true });
+  }
+
+  // ── keyboard ──────────────────────────────────────────────────────────────
+  let kb = null;  // {kind, keys, section, slot, bookend} while a song / group is "held" from the keyboard
+
+  function kbTargets() {
+    // Candidate drop slots in list order, as beforeKey values (null = end).
+    const rest = movable.filter((k) => !kb.keys.includes(k));
+    if (kb.kind === "book") return [...rest, null];
+    const starts = [];
+    const seen = new Set();
+    for (const sec of layout.sections) {
+      if (sec.type !== "section" || sec.id === kb.section.id) continue;
+      const first = sec.keys.find((k) => !kb.keys.includes(k));
+      if (first && !seen.has(first)) { seen.add(first); starts.push(first); }
+    }
+    return [...starts, null];
+  }
+
+  function kbShow() {
+    const slots = kbTargets();
+    kb.slot = Math.max(0, Math.min(slots.length - 1, kb.slot));
+    drag.target = kb.bookend ? { bookend: kb.bookend } : { beforeKey: slots[kb.slot] };
+    placeGap(drag.target);
+    drag.gap?.scrollIntoView({ block: "nearest" });
+    const key = slots[kb.slot];
+    announce(kb.bookend ? `放進「${groupName(kb.bookend.group)}」組？按 Space 確認`
+      : key ? `放在《${ITEM.get(key).title}》前面` : "放到最後");
+  }
+
+  function kbStart(kind, keys, section, node) {
+    drag = { kind, keys, section, node, lifted: false, id: -1, lastX: 0, lastY: 0 };
+    const r = node.getBoundingClientRect();
+    lift(r.left, r.top, false);
+    kb = { kind, keys, section, bookend: null, slot: 0 };
+    const slots = kbTargets();
+    // Start on the slot where the held song / group sits now.
+    const here = kind === "book" ? following(keys)
+      : (slots.find((k) => k && fullOrder().indexOf(k) > fullOrder().indexOf(keys[0])) ?? null);
+    kb.slot = Math.max(0, slots.indexOf(here));
+    kbShow();
+  }
+
+  function kbEnd(apply) { kb = null; endDrag(apply); }
+
+  function focusStep(from, dir) {
+    const nodes = [...list.querySelectorAll(".row:not(.lifted), .ghead:not(.lifted)")];
+    const next = nodes[nodes.indexOf(from) + dir];
+    next?.focus();
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (finished || settling) return;
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") { event.preventDefault(); if (!drag) undo(); return; }
+    if (drag && !kb && event.key === "Escape") { event.preventDefault(); endDrag(false); return; }
+    if (kb) {
+      const up = event.key === "ArrowUp" || event.key === "ArrowLeft";
+      const down = event.key === "ArrowDown" || event.key === "ArrowRight";
+      if (event.key === "Escape") { event.preventDefault(); const k = kb.keys[0]; kbEnd(false); list.querySelector(`.row[data-key="${CSS.escape(k)}"]`)?.focus(); return; }
+      if (event.key === " " || event.key === "Enter") {
+        event.preventDefault();
+        const k = kb.keys[0], sec = kb.section;
+        kbEnd(true);
+        (sec ? list.querySelector(`.ghead[data-section="${CSS.escape(layout.sectionOf.get(k)?.id ?? "")}"]`)
+             : list.querySelector(`.row[data-key="${CSS.escape(k)}"]`))?.focus();
+        return;
+      }
+      if (up || down) { event.preventDefault(); kb.bookend = null; kb.slot += down ? 1 : -1; kbShow(); return; }
+      if (event.key.toLowerCase() === "g" && kb.kind === "book") {
+        event.preventDefault();
+        const beforeKey = kbTargets()[kb.slot];
+        const sec = layout.sectionOf.get(beforeKey ?? movable[movable.length - 1]);
+        if (sec && sec.group !== groupOf[kb.keys[0]]) { kb.bookend = sec; kbShow(); }
+        return;
+      }
+      return;
+    }
+    const focus = document.activeElement;
+    if (!focus || !list.contains(focus) || !(focus.classList.contains("row") || focus.classList.contains("ghead"))) return;
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); focusStep(focus, event.key === "ArrowDown" ? 1 : -1); return; }
+    if (focus.classList.contains("row") && !focus.classList.contains("pinned") && (event.key === " " || event.key === "Enter")) {
+      event.preventDefault(); select(focus.dataset.key, true); kbStart("book", [focus.dataset.key], null, focus); return;
+    }
+    if (focus.classList.contains("ghead")) {
+      const sec = sectionById(focus.dataset.section);
+      if (event.key.toLowerCase() === "c") { event.preventDefault(); toggleCollapse(sec.id); return; }
+      if (event.key === " " || event.key === "Enter") { event.preventDefault(); kbStart("section", [...sec.keys], sec, focus); return; }
+    }
+  });
+  list.addEventListener("focusin", (event) => { const row = event.target.closest(".row"); if (row && !kb) select(row.dataset.key, true); });
+
+  // ── announcements, save / cancel ──────────────────────────────────────────
+  function announce(text) { $("live").textContent = text; }
+  let toastTimer = 0;
+  function toast(text) {
+    const node = $("toast");
+    node.textContent = text; node.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => node.classList.remove("show"), 2500);
+  }
+
+  function finish(title, text) {
+    finished = true;
+    $("done-title").textContent = title; $("done-text").textContent = text;
+    $("done").style.display = "flex";
+  }
+
+  function showError(text) { const msg = $("msg"); msg.textContent = text; msg.style.display = "block"; }
+
+  async function post(path, body) {
+    const response = await fetch(`${path}?t=${encodeURIComponent(TOKEN)}`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}),
+    });
+    let data = {};
+    try { data = await response.json(); } catch (_) { /* empty body */ }
+    if (!response.ok) throw new Error(data.message || `HTTP ${response.status}`);
+    return data;
+  }
+
+  function busy(on) { ["save", "cancel", "reset", "undo"].forEach((id) => { $(id).disabled = on; }); if (!on) render(); }
+
+  $("save").addEventListener("click", async () => {
+    busy(true);
+    try {
+      await post("/save", { order: fullOrder(), labels: groupOf, log });
+      finish("已保存", LABEL_MODE ? "標註已保存。可以關閉這個分頁，回到聊天室。"
+        : "可以關閉這個分頁，回到聊天室。AI 會讀取你的修改，告訴你要搬幾首，等你說 OK 才會真的改清單。");
+    } catch (error) { showError(`保存失敗：${error.message}`); busy(false); }
+  });
+  $("cancel").addEventListener("click", async () => {
+    if (!confirm("確定取消嗎？這次不會修改你的播放清單。")) return;
+    busy(true);
+    try { await post("/cancel"); finish("已取消", "你的播放清單不會被修改。可以關閉這個分頁。"); }
+    catch (error) { showError(`取消失敗：${error.message}`); busy(false); }
+  });
+  $("reset").addEventListener("click", reset);
+  $("undo").addEventListener("click", undo);
+  window.addEventListener("beforeunload", (event) => { if (!finished && diffCount() > 0) { event.preventDefault(); event.returnValue = ""; } });
+
+  $("heading").textContent = LABEL_MODE ? "標註群組" : "檢查排序結果";
+  document.title = LABEL_MODE ? "標註群組" : "播放清單檢查";
+  $("help").textContent = LABEL_MODE
+    ? "用每首歌右邊的選單，或把歌拖到某組的標題列上，就能改它的組。改完按「保存」。"
+    : "這是 AI 建議的新順序，由上往下播。拖動歌曲只會改順序（歌會保留自己的組）；要改組，就把歌拖到那一組的標題列上，或點歌曲後在資訊卡選群組。拖動標題列可以搬整組。滿意了按「保存」。";
+
+  // Test hook for the automated browser checks; harmless otherwise.
+  window.__review = {
+    fullOrder, costs, diffCount, moveTo, relabel, undo, reset, cleanGroupName,
+    sections: () => sections(fullOrder()).map((s) => (s.type === "pin" ? s : { ...s, strays: [...s.strays] })),
+    state: () => ({ movable: [...movable], groupOf: { ...groupOf }, log: log.length, history: history.length }),
+    lastLog: () => (log.length ? { ...log[log.length - 1] } : null),
+  };
+  render();
+})();
+</script>
+</body>
+</html>

@@ -8,7 +8,7 @@
 
 ## 核心設計原則
 
-1. **強制預覽與確認（Human-in-the-Loop）**：在呼叫 `update` 寫入指令前，必須在聊天室呈現 Markdown 格式的差異預覽表，並獲得使用者的明確同意。
+1. **檢查頁＋一句確認（Human-in-the-Loop）**：在呼叫 `update` 寫入指令前，必須先讓使用者在瀏覽器檢查頁看過、（需要的話）拖拉調整並按「保存」，再在聊天室用**一句話**報告成本，取得明確同意。使用者明確表示不想在聊天室看預覽表。
 2. **無 GUI 依賴**：本工具已完全移除 GUI 彈窗。所有憑證路徑引導皆由 Agent 在聊天室與使用者以文字問答完成，並透過 CLI 指令寫入。
 3. **安全第一**：憑證預設存放於 `~/.gemini/skills/yt-playlist-manager/credentials/client_secret.json`（可用環境變數 `YT_SKILL_HOME` 指定其他位置）。
 4. **配額最小化**：所有重排都走 LIS（最長遞增子序列）錨點演算法，只移動最少的影片。所有計算在本地完成（0 API units）。
@@ -212,7 +212,7 @@ python -m scripts.yt_tool duplicates data/current.json
      修正過——標題辨識出的藝人跟頻道衝突、信心度落在灰色地帶，且同頻道已有其他影片
      一致辨識出另一個藝人時，會改採頻道多數的判斷。每一筆都附 `title`／`from_artist_key`
      （原本的猜測）／`to_artist_key`（改採用的結果）／`corroborating_count`（佐證數）。
-     這是自動修正，不是失敗，但**請在 Phase 3 預覽時列出來讓使用者知道**，不要靜默略過。
+     這是自動修正，不是失敗，但**請在 Phase 3 開檢查頁時用一句話告訴使用者有幾首被這樣修正過**（檢查頁上可以看到它們歸在哪一組、拖回去即可），不要靜默略過。
    - `estimated_quota`：確認是否在單日限額（10,000 units）內
 
 4. 直接跳至 **Phase 3** 使用 `data/changes_optimized.json`。
@@ -230,30 +230,57 @@ python -m scripts.yt_tool duplicates data/current.json
 3. 執行差異計算：
    `python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json`
 
-### Phase 3: 差異計算與強制預覽 (Checkpoint)
+### Phase 3: 檢查頁與一句確認 (Checkpoint)
 
-1. 變更檔案：路徑 A 為 `data/changes_optimized.json`；路徑 B 為 `data/changes.json`。
-2. 若 `changes_count` / `need_to_move` 為 0，告知使用者不需變更並結束。
-3. **強制預覽 (Preview)**：讀取變更檔中 `changes` 陣列的前 15-20 筆，在聊天室中繪製 **Markdown 表格**：
+1. 若 `changes_count` / `need_to_move` / `estimated_calls` 為 0，告知使用者不需變更並結束，不用開檢查頁。
+2. 若 `grouping_benefit` 為 `low`，先照 Phase 2 的說明轉述警告、問使用者還要不要做。
+3. **開檢查頁**（取代聊天室的預覽表）：
 
-| # | 影片標題 | 原位置 | → | 最終位置 | 狀態 |
-|---|---------|--------|---|---------|------|
-| 1 | BTS - Dynamite | 45 | → | 0 | 🔄 移動 |
-| 2 | BTS - Permission to Dance | 1 | → | 1 | ⚓ 錨點 |
+   ```
+   python -m scripts.yt_tool review start data/current.json data/new.json
+   ```
 
-   - 「原位置」用 `old_position`，「最終位置」用 `final_position`。
-   - **不要**把 `new_position` 當成最終位置顯示給使用者——那是送給 API 的中繼位置，會讓使用者誤解。
-   - **Spotify 變更檔**（`version: 3`）的內容在 `ops`：每一筆是一段連續的歌。用 `first_title`、`range_length`、
-     `old_position` → `final_position` 呈現，**不要**顯示 `range_start` / `insert_before`（同樣是送 API 的中繼索引）。
-     表格下方寫「API 呼叫 N 次（Spotify 沒有每日配額）」，不要寫 units。
+   - 第二個參數是建議順序：路徑 A 是 `--target-out` 的檔案（每一首已帶 `group`，頁面會依群組上色）；
+     路徑 B 是你寫的 `data/new.json`，可以在每一筆加上 `"group": "..."`，沒有就顯示為未分組。
+   - 回傳 `run_dir`、`url`、`browser_opened`。在聊天室**只說一句**，例如：
+     「我開了一個檢查頁，可以拖拉調整順序，好了按『保存』。」並附上 `url`。
+   - 頁面是由上到下的清單：一首歌一列（封面、歌名、藝人、時長），每組一張卡片，卡片頂端是寫著組名的標題列。
+     使用者會用到的操作：
+     - 拖動歌曲**只改順序**；歌放進別組中間時保留自己的組，標成「⚠ 屬於「某組」」。
+     - 要改組必須明確操作：把歌拖到那組的標題列上，或點歌曲後在資訊卡的「改到這一組」選單選。
+     - 拖動標題列＝搬整組（只會落在組與組之間）；標題列的「收合」把整組收成一行。
+     - 「上一步」（Ctrl+Z）與「重置」（回到你的建議版）；鍵盤也能操作（Tab 選歌、Space 拿起、↑↓ 移動）。
+     - 資訊卡顯示藝人、專輯、曲序、時長、加入日期、觀看數、封面與「在 YouTube／Spotify 開啟」連結。
+   - 每次檢查都有自己的 `run_dir`（`runs/<平台>_<清單>_<時間>/`），整理前的快照、使用者的修改、操作紀錄、
+     變更檔與寫回結果都留在裡面，不會被下一次覆蓋。
+   - `browser_opened: false`：請使用者手動打開 `url`。使用者**無法使用瀏覽器**時才退回文字：
+     在聊天室列出前 10 筆會搬動的歌（標題、`old_position` → `final_position`）與總數，再請他回覆同意。
 
-   表格下方明確列出：
-   - **預估配額消耗：XXXX units**
-   - **錨點影片（不消耗配額）：XX 支**
-   - **較 Naive 方法節省：XXXX units**
-   - 若 `pinned_count > 0`：**「清單中有 N 支私人／已刪除影片無法移動，將留在原位置，可能會切斷某些群組。」**
+4. **等使用者保存**：
 
-3.5. **有用 `--within-group-sort` 時，必須把移動拆成兩桶**
+   ```
+   python -m scripts.yt_tool review wait <run_dir>
+   ```
+
+   預設最多等 540 秒（避開各家 Agent 主機的指令時限），依 `status` 應對：
+
+   | status | 應對 |
+   |:---|:---|
+   | `saved` | 把 `summary_line` **原樣轉述**（一句話），等使用者回覆。`nothing_to_do: true` 時告知不需寫回並結束 |
+   | `waiting` | 使用者還在看，再執行一次 `review wait`，不要催促 |
+   | `cancelled` | 使用者按了取消：結束這次流程，不寫回 |
+   | `expired` | 檢查頁閒置一小時已自動關閉：問使用者要不要重開 |
+
+   - 使用者在聊天室說「不要了」時，執行 `review cancel <run_dir>` 關掉檢查頁。
+   - `saved` 時的變更檔是 `<run_dir>/changes.json`，**已依使用者保存的順序重算**；之後一律寫回這個檔，
+     不是 Phase 2 產生的 `data/changes*.json`。
+   - `relabels > 0` 代表使用者明確把某些歌改到別的群組（拖到標題列上或用資訊卡選單，代表辨識錯了）。
+     簡短告知「已記下你修正的 N 首」，內容在 `<run_dir>/user_labels.json`。
+   - `edits` 是使用者改了幾處，**以狀態計算**：相對你的建議版搬了幾首（N − LIS）加上改了組的首數；
+     搬一首又搬回原位是 0。`proposed_moves` / `proposed_calls` 是你原本建議的成本，可以一併提，
+     例如「你調整後要搬 12 首（原建議 10 首）」。
+
+5. **有用 `--within-group-sort` 時，確認句要把成本拆成兩桶**
 
    群內排序的成本是**可以單獨算出來**的，而且不花配額：把同一份 `current.json`
    再跑一次 `optimize`，但**不加** `--within-group-sort`，輸出到別的檔名：
@@ -266,32 +293,22 @@ python -m scripts.yt_tool duplicates data/current.json
        --aliases data/artist_aliases.json
    ```
 
-   兩次的 `need_to_move` 相減，就是群內排序的**額外**代價。在預覽表下方列出：
+   兩次的 `need_to_move` 相減，就是群內排序的**額外**代價。確認句要明確說出第二桶可以單獨取消，例如：
+
+   > 「要搬 N₂ 首（約 N₂ × 50 units），其中 N₂ − N₁ 首只是為了把每組內部依觀看數排序。
+   > 要省下這部分的話，我可以改用只做分組的版本。」
+
+   使用者選擇只做分組時，改用 `data/new_grouponly.json` 重新開檢查頁。
+
+6. **配額警告（只適用 YouTube）**：若 `estimated_quota` > 2500，確認句加上：
+   「這次會用掉今天額度的 X%（每日上限 10,000 units）。」
+
+7. **暫停並等待使用者明確回覆**「OK」或「同意」，不可自動執行 Phase 4。
+
+8. **（建議）送出前先做離線演練**：變更筆數多、或這份清單是第一次重排時，先執行
 
    ```
-   為了把群組聚在一起：      N₁ 筆（N₁ × 50 units）
-   只為了群內排序額外增加：  N₂ − N₁ 筆（(N₂ − N₁) × 50 units）
-   ────────────────────────────────────
-   合計：                    N₂ 筆（N₂ × 50 units）
-   ```
-
-   接著明確告訴使用者**第二桶可以單獨取消**：
-
-   > 「其中 X 筆移動只是為了把每組內部依觀看數排序。有些歌手的歌本來就已經連在一起了，
-   > 這部分移動不會改變『同歌手放一起』的結果。要省下這 X × 50 units 的話，我可以改用
-   > 只做分組的版本。」
-
-   使用者選擇只做分組時，直接改用 `data/changes_grouponly.json` 進入 Phase 4。
-
-4. **配額警告（只適用 YouTube）**：若 `estimated_quota` > 2500，加上以下醒目警告：
-   > ⚠️ 此次操作預估消耗配額超過 2,500 units。每日 API 上限為 10,000 units，請確認是否執行。
-
-5. **暫停並等待使用者明確回覆**「OK」或「同意」，不可自動執行 Phase 4。
-
-6. **（建議）送出前先做離線演練**：變更筆數多、或這份清單是第一次重排時，先執行
-
-   ```
-   python tests/e2e/dryrun.py data/current.json data/changes_optimized.json --target data/new.json
+   python tests/e2e/dryrun.py <run_dir>/snapshot.json <run_dir>/changes.json --target <run_dir>/edited_order.json
    ```
 
    它會用同一份快照跑**真正的** `update` 指令對上離線替身，驗證整份變更集會不會如預期
@@ -299,9 +316,9 @@ python -m scripts.yt_tool duplicates data/current.json
 
 ### Phase 4: 執行寫回 (Execution)
 
-1. 收到確認後，執行寫回指令：
-   `python -m scripts.yt_tool update <playlist_id> data/changes_optimized.json`
-   *（路徑 B 使用 `data/changes.json`）*
+1. 收到確認後，寫回 `review wait` 產生的變更檔：
+   `python -m scripts.yt_tool update <playlist_url> <run_dir>/changes.json`
+   結果也會存成 `<run_dir>/update_result.json`。
 2. 工具會先花 **1 unit** 讀取清單頭部，確認遠端順序仍與變更檔所依據的快照一致，再逐筆寫回，並把進度寫入 `scripts/logs/progress_{playlist_id}.json`。
 3. 依回傳結果應對：
 

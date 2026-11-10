@@ -20,6 +20,8 @@ Commands (the platform is detected from the playlist URL / the fetched file):
 5. update <playlist_id_or_url> <changes.json>
 6. duplicates <current.json>
 7. spotify-check [playlist_url]       (read-only Spotify smoke test)
+8. review start <current.json> <proposed.json> [--mode order|label]  (drag-and-drop page)
+   review wait <run_dir> / review cancel <run_dir>
 
 Change-set files are versioned objects (see ``write_change_set``).  The moves
 inside are **order-dependent**: they must be executed in ``execution_order`` and
@@ -34,6 +36,7 @@ import logging
 import os
 import re
 import shutil
+import subprocess
 import sys
 import time
 from datetime import datetime, timezone
@@ -494,6 +497,23 @@ def cmd_diff(args: argparse.Namespace) -> None:
     )
 
 
+def _write_target(path: Path, target: list[EnrichedPlaylistItem], group_of: dict[str, str]) -> None:
+    """Write the target order; each item also carries its ``group`` for the review page.
+
+    The extra key is ignored when the file is loaded back as items (diff, update).
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            [dict(item.model_dump(mode="json"), group=group_of.get(item.playlist_item_id, ""))
+             for item in target],
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+
 def _parse_within_group_sort(raw: str | None) -> SortConfig | None:
     """Parse ``--within-group-sort viewCount:desc`` into a SortConfig."""
     if not raw:
@@ -548,7 +568,7 @@ def cmd_optimize(args: argparse.Namespace) -> None:
     )
 
     try:
-        target, changes, report, _ = run_full_optimization(
+        target, changes, report, resolutions = run_full_optimization(
             current_items,
             aliases_path=aliases_path,
             group_order=group_order,
@@ -557,14 +577,12 @@ def cmd_optimize(args: argparse.Namespace) -> None:
     except ValueError as exc:
         fail("TARGET_MISMATCH", str(exc))
 
+    group_of = {
+        item.playlist_item_id: ("" if res.method == "unavailable" else res.artist_key)
+        for item, res in zip(current_items, resolutions)
+    }
     target_path = Path(args.target_out)
-    target_path.parent.mkdir(parents=True, exist_ok=True)
-    target_path.write_text(
-        json.dumps(
-            [item.model_dump(mode="json") for item in target], ensure_ascii=False, indent=2
-        ),
-        encoding="utf-8",
-    )
+    _write_target(target_path, target, group_of)
 
     playlist_id = _playlist_id_of(current_items)
     out_path = Path(args.out)
@@ -870,6 +888,7 @@ def cmd_update(args: argparse.Namespace) -> None:
             f"已完成 {applied}/{len(changes)} 筆，進度已存檔，可再次執行同一指令續傳。"
         )
 
+    _record_run_result(Path(args.changes), payload)
     emit(payload)
     if not completed:
         sys.exit(1)
@@ -1102,12 +1121,12 @@ def cmd_optimize_spotify(args: argparse.Namespace, items: list[EnrichedPlaylistI
     )
     benefit = evaluate_grouping_benefit(groups, resolutions)
 
+    group_of = {
+        item.playlist_item_id: ("" if res.method == "unavailable" else res.artist_key)
+        for item, res in zip(items, resolutions)
+    }
     target_path = Path(args.target_out)
-    target_path.parent.mkdir(parents=True, exist_ok=True)
-    target_path.write_text(
-        json.dumps([item.model_dump(mode="json") for item in target], ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    _write_target(target_path, target, group_of)
     out_path = Path(args.out)
     _moves, stats, fingerprint = _spotify_plan_and_write(
         items, target, out_path, {"group_by": group_by, "groups_found": list(groups)}
@@ -1290,6 +1309,7 @@ def cmd_update_spotify(args: argparse.Namespace, playlist_id: str, change_set: d
         )
     elif interrupted:
         payload["message"] = f"已完成 {applied}/{len(moves)} 筆，再次執行同一指令即可續傳。"
+    _record_run_result(Path(args.changes), payload)
     emit(payload)
     if payload["status"] != "success":
         sys.exit(1)
@@ -1354,6 +1374,211 @@ def cmd_spotify_check(args: argparse.Namespace) -> None:
     emit(report)
 
 
+# --- Review page ---
+
+#: Each review gets its own directory, so nothing is overwritten by the next
+#: run (docs/BACKLOG.md §5).  Override with --run-root (the e2e suite does).
+RUNS_ROOT = Path(__file__).resolve().parent.parent / "runs"
+REVIEW_WAIT_DEFAULT = 540  # stays under the 10-minute foreground limit of Agent hosts
+SERVER_START_TIMEOUT = 15
+
+
+def _detach_kwargs() -> dict[str, Any]:
+    if os.name == "nt":
+        flags = getattr(subprocess, "DETACHED_PROCESS", 0x8) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0x200)
+        return {"creationflags": flags}
+    return {"start_new_session": True}
+
+
+def cmd_review_start(args: argparse.Namespace) -> None:
+    """Create a run directory, start the review server, open the browser."""
+    import secrets
+    import webbrowser
+
+    from scripts import review_server as rs
+
+    current_path, proposed_path = Path(args.current), Path(args.proposed)
+    current = _load_items(current_path, "目前清單")
+    proposed = _load_items(proposed_path, "建議順序")
+    if not current:
+        fail("EMPTY_PLAYLIST", "播放清單是空的。")
+    if sorted(i.playlist_item_id for i in current) != sorted(i.playlist_item_id for i in proposed):
+        fail("TARGET_MISMATCH", "建議順序不是目前清單的重排（有項目遺失或多出來）。")
+
+    platform = current[0].platform
+    safe_id = "".join(c for c in _playlist_id_of(current, "unknown") if c.isalnum() or c in "-_")[:40]
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    run_dir = Path(args.run_root or RUNS_ROOT) / f"{platform}_{safe_id}_{stamp}"
+    suffix = 1
+    while run_dir.exists():
+        suffix += 1
+        run_dir = run_dir.with_name(f"{platform}_{safe_id}_{stamp}-{suffix}")
+    run_dir.mkdir(parents=True)
+
+    shutil.copyfile(current_path, run_dir / rs.SNAPSHOT_FILE)
+    shutil.copyfile(proposed_path, run_dir / rs.PROPOSED_FILE)
+    token = secrets.token_urlsafe(18)
+    (run_dir / rs.STATE_FILE).write_text(
+        json.dumps({"token": token, "mode": args.mode, "created_at": datetime.now(timezone.utc).isoformat(),
+                    "current_file": str(current_path), "proposed_file": str(proposed_path)}, indent=2),
+        encoding="utf-8",
+    )
+
+    log_handle = (run_dir / "server.log").open("w", encoding="utf-8")
+    subprocess.Popen(
+        [sys.executable, "-m", "scripts.review_server", str(run_dir)],
+        cwd=str(Path(__file__).resolve().parent.parent),
+        stdin=subprocess.DEVNULL, stdout=log_handle, stderr=log_handle, close_fds=True,
+        **_detach_kwargs(),
+    )
+    log_handle.close()
+
+    server_file = run_dir / rs.SERVER_FILE
+    deadline = time.time() + SERVER_START_TIMEOUT
+    while not server_file.is_file():
+        if time.time() > deadline:
+            fail("REVIEW_START_FAILED", "檢查頁伺服器沒有啟動。", run_dir=str(run_dir),
+                 server_log=(run_dir / "server.log").read_text(encoding="utf-8")[-2000:])
+        time.sleep(0.1)
+    port = json.loads(server_file.read_text(encoding="utf-8"))["port"]
+    url = f"http://127.0.0.1:{port}/?t={token}"
+
+    opened = False
+    if not args.no_browser:
+        try:
+            opened = bool(webbrowser.open(url))
+        except Exception:  # noqa: BLE001 — no browser is a normal outcome, not an error
+            opened = False
+
+    emit(
+        {
+            "status": "started",
+            "mode": args.mode,
+            "platform": platform,
+            "item_count": len(current),
+            "run_dir": str(run_dir),
+            "url": url,
+            "browser_opened": opened,
+            "next": f"review wait {run_dir}",
+            "note": (
+                "已在瀏覽器開啟檢查頁。" if opened else
+                "沒有自動開啟瀏覽器：請使用者手動打開 url；無法使用瀏覽器時，改在聊天室列出前 10 筆移動與總數。"
+            ),
+        }
+    )
+
+
+def _review_summary(run_dir: Path) -> dict[str, Any]:
+    """Turn a saved review into a change set + the one-line cost the Agent reports."""
+    from scripts import review_server as rs
+
+    saved = json.loads((run_dir / rs.SAVED_FILE).read_text(encoding="utf-8"))
+    if saved.get("mode") == "label":
+        return {"status": "saved", "mode": "label", "run_dir": str(run_dir),
+                "labels_file": str(run_dir / rs.LABELS_FILE), **saved}
+
+    snapshot = _load_items(run_dir / rs.SNAPSHOT_FILE, "快照")
+    edited = _load_items(run_dir / rs.EDITED_FILE, "保存的順序")
+    proposed = _load_items(run_dir / rs.PROPOSED_FILE, "建議順序")
+    changes_path = run_dir / "changes.json"
+    edits, relabels = saved.get("edits", 0), saved.get("relabels", 0)
+    touched = f"你在檢查頁改了 {edits} 處" if edits else "你沒有修改建議"
+
+    if snapshot[0].platform == "spotify":
+        _moves, stats, fingerprint = _spotify_plan_and_write(snapshot, edited, changes_path, {"source": "review"})
+        _p, proposed_stats = plan_range_reorder(snapshot, proposed)
+        cost = {"estimated_calls": stats["calls"], "items_moved": stats["items_moved"], "estimated_quota": 0,
+                "proposed_calls": proposed_stats["calls"]}
+        line = (f"{touched}。寫回要搬 {stats['items_moved']} 首、呼叫 Spotify API {stats['calls']} 次"
+                f"（Spotify 沒有每日配額），要寫回嗎？")
+        nothing = stats["calls"] == 0
+    else:
+        try:
+            changes, report = plan_reorder(snapshot, edited)
+            proposed_changes, _r = plan_reorder(snapshot, proposed)
+        except ValueError as exc:
+            fail("TARGET_MISMATCH", str(exc))
+        fingerprint = write_change_set(
+            changes_path, _playlist_id_of(snapshot), snapshot, changes,
+            {"source": "review", "anchors": report.anchors, "need_to_move": report.need_to_move,
+             "pinned_count": report.pinned_count},
+        )
+        quota = 1 + 50 * len(changes) if changes else 0
+        cost = {"need_to_move": len(changes), "estimated_quota": quota, "proposed_moves": len(proposed_changes)}
+        line = f"{touched}。寫回要搬 {len(changes)} 首、約 {quota} units（每日上限 10,000），要寫回嗎？"
+        nothing = not changes
+
+    if nothing:
+        line = f"{touched}。保存的順序和目前清單一樣，不需要寫回。"
+    return {
+        "status": "saved", "mode": "order", "run_dir": str(run_dir), "edits": edits, "relabels": relabels,
+        "repinned": saved.get("repinned", False), **cost, "nothing_to_do": nothing,
+        "changes_file": str(changes_path), "fingerprint": fingerprint, "summary_line": line,
+        "next": "使用者明確回覆同意後：update <playlist_url> " + str(changes_path),
+    }
+
+
+def wait_for_review(run_dir: Path, timeout: float) -> dict[str, Any]:
+    from scripts import review_server as rs
+
+    deadline = time.time() + max(0.0, timeout)
+    while True:
+        if (run_dir / rs.SAVED_FILE).is_file():
+            return _review_summary(run_dir)
+        if (run_dir / rs.CANCELLED_FILE).is_file():
+            return {"status": "cancelled", "run_dir": str(run_dir),
+                    "message": "使用者在檢查頁按了取消，不寫回。"}
+        server_file = run_dir / rs.SERVER_FILE
+        if server_file.is_file():
+            info = json.loads(server_file.read_text(encoding="utf-8"))
+            if info.get("stopped_at"):
+                return {"status": "expired", "run_dir": str(run_dir),
+                        "message": "檢查頁閒置太久已關閉，沒有保存。需要的話重新執行 review start。"}
+        if time.time() >= deadline:
+            return {"status": "waiting", "run_dir": str(run_dir),
+                    "message": "使用者還在檢查頁上，再執行一次 review wait 繼續等。"}
+        time.sleep(0.5)
+
+
+def cmd_review_wait(args: argparse.Namespace) -> None:
+    run_dir = Path(args.run_dir)
+    if not (run_dir / "review_state.json").is_file():
+        fail("RUN_NOT_FOUND", f"找不到檢查頁的執行目錄：{run_dir}")
+    emit(wait_for_review(run_dir, args.timeout))
+
+
+def cmd_review_cancel(args: argparse.Namespace) -> None:
+    """Close a review from the Agent side (the user abandoned it in chat)."""
+    import urllib.request
+
+    run_dir = Path(args.run_dir)
+    try:
+        state = json.loads((run_dir / "review_state.json").read_text(encoding="utf-8"))
+        port = json.loads((run_dir / "server.json").read_text(encoding="utf-8"))["port"]
+    except (OSError, ValueError, KeyError):
+        fail("RUN_NOT_FOUND", f"找不到執行中的檢查頁：{run_dir}")
+    request = urllib.request.Request(
+        f"http://127.0.0.1:{port}/cancel?t={state['token']}", data=b"{}", method="POST",
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        urllib.request.urlopen(request, timeout=5).read()
+    except OSError:
+        pass  # already closed
+    emit({"status": "cancelled", "run_dir": str(run_dir)})
+
+
+def _record_run_result(changes_path: Path, payload: dict[str, Any]) -> None:
+    """When the change set lives in a review run directory, keep the outcome next to it."""
+    run_dir = changes_path.resolve().parent
+    if (run_dir / "snapshot.json").is_file() and (run_dir / "review_state.json").is_file():
+        (run_dir / "update_result.json").write_text(
+            json.dumps({**payload, "finished_at": datetime.now(timezone.utc).isoformat()},
+                       ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+
 # --- Main ---
 
 
@@ -1376,6 +1601,25 @@ def main():
     p_check = subparsers.add_parser("spotify-check", help="Read-only Spotify connection check")
     p_check.add_argument("playlist", nargs="?", default="", help="Spotify playlist URL / URI (optional)")
     p_check.set_defaults(func=cmd_spotify_check)
+
+    p_review = subparsers.add_parser("review", help="Drag-and-drop review page in the browser")
+    review_sub = p_review.add_subparsers(dest="review_command", required=True)
+    p_rstart = review_sub.add_parser("start", help="Create a run directory and open the review page")
+    p_rstart.add_argument("current", help="Current playlist JSON (from fetch)")
+    p_rstart.add_argument("proposed", help="Proposed order JSON (from optimize --target-out, or written by the Agent)")
+    p_rstart.add_argument("--mode", choices=["order", "label"], default="order",
+                          help="order: check/adjust the new order; label: assign groups (ground truth)")
+    p_rstart.add_argument("--no-browser", action="store_true", help="Do not open a browser (print the URL only)")
+    p_rstart.add_argument("--run-root", default=None, help="Where run directories go (default: <repo>/runs)")
+    p_rstart.set_defaults(func=cmd_review_start)
+    p_rwait = review_sub.add_parser("wait", help="Wait for the user to save or cancel")
+    p_rwait.add_argument("run_dir")
+    p_rwait.add_argument("--timeout", type=float, default=REVIEW_WAIT_DEFAULT,
+                         help="Seconds to wait before returning status=waiting (run again to keep waiting)")
+    p_rwait.set_defaults(func=cmd_review_wait)
+    p_rcancel = review_sub.add_parser("cancel", help="Close an open review page without saving")
+    p_rcancel.add_argument("run_dir")
+    p_rcancel.set_defaults(func=cmd_review_cancel)
 
     p_setup = subparsers.add_parser("setup_credentials")
     p_setup.add_argument("path", help="Path to client_secret.json to install")

@@ -37,3 +37,6 @@ dist/
 
 # Temporary data
 data/
+
+# Review page run directories (snapshots, edits, change sets, results)
+runs/
