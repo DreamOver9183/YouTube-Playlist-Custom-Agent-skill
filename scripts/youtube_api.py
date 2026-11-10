@@ -479,11 +479,21 @@ class YouTubeClient:
             like_count=_safe_int(stats.get("likeCount")),
             comment_count=_safe_int(stats.get("commentCount")),
             tags=snippet.get("tags", []),
+            image_url=_thumbnail_url(snippet.get("thumbnails") or {}),
             privacy_status=status.get("privacyStatus", "public"),
         )
 
 
 # ── Module-level Utilities ───────────────────────────────────────────
+
+
+def _thumbnail_url(thumbnails: dict) -> str:
+    """Pick the medium thumbnail (320×180), falling back to default; '' when absent."""
+    for size in ("medium", "default"):
+        url = (thumbnails.get(size) or {}).get("url") or ""
+        if url:
+            return str(url)
+    return ""
 
 
 def classify_http_error(exc: HttpError) -> tuple[str, bool, bool]:

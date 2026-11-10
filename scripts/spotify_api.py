@@ -510,6 +510,7 @@ def entries_to_items(entries: list[dict[str, Any]], playlist_id: str) -> list[En
                 disc_number=int(media.get("disc_number") or 0),
                 isrc=str((media.get("external_ids") or {}).get("isrc") or ""),
                 uri=uri,
+                image_url=_pick_image(raw_album.get("images") or media.get("images") or []),
                 # Local files and greyed-out tracks still sit at an index that
                 # Spotify reorders like any other (docs/BACKLOG.md §6, M1 assumption 7).
                 is_available=True,
@@ -517,6 +518,15 @@ def entries_to_items(entries: list[dict[str, Any]], playlist_id: str) -> list[En
             )
         )
     return items
+
+
+def _pick_image(images: list[dict[str, Any]]) -> str:
+    """The cover closest to 300px wide (Spotify sends 640 / 300 / 64); '' when none."""
+    candidates = [i for i in images if isinstance(i, dict) and i.get("url")]
+    if not candidates:
+        return ""
+    best = min(candidates, key=lambda i: abs(int(i.get("width") or 300) - 300))
+    return str(best["url"])
 
 
 def uri_of_key(key: str) -> str:

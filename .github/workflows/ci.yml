@@ -27,6 +27,8 @@ jobs:
         run: python tests/test_update_flow.py
       - name: Spotify client tests (PKCE, mapping, retry policy)
         run: python tests/test_spotify_api.py
+      - name: Review page server tests (token, validation, save, cancel)
+        run: python tests/test_review_server.py
 
   e2e:
     name: End-to-end (SOP flow, offline)

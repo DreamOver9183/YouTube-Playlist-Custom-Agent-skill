@@ -32,6 +32,9 @@ import subprocess
 import sys
 import tempfile
 import time
+import urllib.error
+import urllib.parse
+import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
@@ -969,7 +972,9 @@ def s15_no_op_playlist(h: Harness) -> list[str]:
     check(report["need_to_move"] == 0, f"an already-sorted playlist needs {report['need_to_move']} moves")
     check(report["estimated_quota"] == 0, "a no-op plan should estimate 0 units")
     check(report["anchors"] == report["total_items"], "every item should be an anchor")
-    check(read_json(h.path("sorted_target.json")) == read_json(h.path("sorted_current.json")),
+    # The target carries an extra "group" label per item for the review page; nothing else differs.
+    target_records = [{k: v for k, v in r.items() if k != "group"} for r in read_json(h.path("sorted_target.json"))]
+    check(target_records == read_json(h.path("sorted_current.json")),
           "the target of a sorted playlist should equal the input")
 
     before_ids = h.remote_ids(PL_SORTED)
@@ -1270,6 +1275,99 @@ def s19_spotify_faults_and_resume(h: "Harness") -> list[str]:
             "remote drift caught by a full-list compare before any write"]
 
 
+# ─── Review page (Phase 3) ────────────────────────────────────────
+
+
+def _review_post(url: str, route: str, body: dict[str, Any]) -> tuple[int, dict[str, Any]]:
+    parsed = urllib.parse.urlparse(url)
+    token = urllib.parse.parse_qs(parsed.query)["t"][0]
+    request = urllib.request.Request(
+        f"{parsed.scheme}://{parsed.netloc}{route}?t={token}", data=json.dumps(body).encode(), method="POST",
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            return response.status, json.loads(response.read() or b"{}")
+    except urllib.error.HTTPError as exc:
+        return exc.code, json.loads(exc.read() or b"{}")
+
+
+def s20_review_page(h: "Harness") -> list[str]:
+    """Phase 3 review page: start → the user's edit arrives over HTTP → wait → update; and cancel."""
+    fetched = h.tool("fetch", PL_STALE, "--out", str(h.path("rv_current.json")), "--refresh")
+    check(fetched.code == 0, f"fetch failed: {fetched.last}")
+    planned = h.tool("optimize", str(h.path("rv_current.json")), "--target-out", str(h.path("rv_new.json")),
+                     "--out", str(h.path("rv_changes.json")))
+    check(planned.code == 0, f"optimize failed: {planned.last}")
+    current = read_json(h.path("rv_current.json"))
+    proposed = read_json(h.path("rv_new.json"))
+    check(all("group" in r for r in proposed), "optimize target lacks the group labels the review page shows")
+
+    runs = h.workspace / "runs"
+    before_quota = h.quota()
+    started = h.tool("review", "start", str(h.path("rv_current.json")), str(h.path("rv_new.json")),
+                     "--no-browser", "--run-root", str(runs))
+    check(started.code == 0 and started.last["status"] == "started", f"review start failed: {started.last}")
+    check(started.last["browser_opened"] is False, "--no-browser must not open a browser")
+    url, run_dir = started.last["url"], Path(started.last["run_dir"])
+    check(run_dir.parent == runs and run_dir.name.startswith(f"youtube_{PL_STALE}_"), f"odd run dir {run_dir}")
+    html = urllib.request.urlopen(url, timeout=10).read().decode("utf-8")
+    check('id="review-data"' in html and "檢查" in html, "review page did not render")
+
+    waiting = h.tool("review", "wait", str(run_dir), "--timeout", "0.5")
+    check(waiting.last["status"] == "waiting", f"nobody saved yet, expected waiting: {waiting.last}")
+
+    # The user drags the last group to the top.
+    groups: list[str] = []
+    for record in proposed:
+        if not groups or groups[-1] != record["group"]:
+            groups.append(record["group"])
+    moved = [r["playlist_item_id"] for r in proposed if r["group"] == groups[-1]]
+    edited = moved + [k for k in ids_of(proposed) if k not in moved]
+    status, body = _review_post(url, "/save", {"order": edited, "log": [{"type": "group", "keys": moved}]})
+    check(status == 200 and body["status"] == "saved", f"save rejected: {status} {body}")
+
+    collected = h.tool("review", "wait", str(run_dir), "--timeout", "10")
+    summary = collected.last
+    # Edits are counted on the state: songs moved relative to the proposal (N − LIS), no regroups here.
+    expected_edits = len(edited) - lis_length(ids_of(proposed), edited)
+    check(summary["status"] == "saved" and summary["edits"] == expected_edits,
+          f"review wait did not collect the save (expected {expected_edits} edits): {summary}")
+    change_set = read_json(Path(summary["changes_file"]))
+    check(replay(ids_of(current), change_set["changes"]) == edited, "review change set does not replay to the saved order")
+    check(summary["need_to_move"] == len(change_set["changes"])
+          and summary["estimated_quota"] == (1 + QUOTA_UPDATE * len(change_set["changes"]) if change_set["changes"] else 0),
+          f"cost line inconsistent with the change set: {summary}")
+    check("要寫回嗎" in summary["summary_line"], f"no one-line confirmation: {summary['summary_line']}")
+    check(h.quota() == before_quota, "the review page must not spend API quota")
+
+    applied = h.tool("update", PL_STALE, summary["changes_file"])
+    check(applied.code == 0, f"update failed: {applied.last}")
+    check(h.remote_ids(PL_STALE) == edited, "remote order is not what the user saved")
+    result = read_json(run_dir / "update_result.json")
+    check(result["status"] == "success", f"update result not recorded in the run dir: {result}")
+    kept = sorted(p.name for p in run_dir.iterdir())
+    for name in ("snapshot.json", "proposed_order.json", "edited_order.json", "review_log.jsonl",
+                 "changes.json", "update_result.json"):
+        check(name in kept, f"{name} missing from the run directory: {kept}")
+
+    again = h.tool("review", "start", str(h.path("rv_current.json")), str(h.path("rv_new.json")),
+                   "--no-browser", "--run-root", str(runs))
+    check(again.code == 0, f"second review start failed: {again.last}")
+    second = Path(again.last["run_dir"])
+    check(second != run_dir, "a second review must get its own run directory")
+    h.tool("review", "cancel", str(second))
+    t0 = time.perf_counter()
+    cancelled = h.tool("review", "wait", str(second), "--timeout", "30")
+    check(cancelled.last["status"] == "cancelled" and time.perf_counter() - t0 < 10,
+          f"cancel should end the wait at once: {cancelled.last}")
+    check(not (second / "changes.json").exists(), "a cancelled review must not produce a change set")
+    return [f"page served on loopback; user moved {len(moved)} songs as a group → {len(change_set['changes'])} moves",
+            "review wait wrote the change set + one-line cost; replay equals the saved order",
+            "update landed it; snapshot/edits/log/changes/result kept in the run directory",
+            "review cancel ended a second review with no change set"]
+
+
 SCENARIOS: list[Scenario] = [
     Scenario("entry_points", "Phase 0", "Agent entry points and CLI surface", s01_entry_points),
     Scenario("credentials", "Phase 0", "Credential setup handshake", s02_credentials_gate),
@@ -1291,6 +1389,7 @@ SCENARIOS: list[Scenario] = [
     Scenario("spotify_setup", "SP 0-1", "Spotify: client id, token refresh, fetch, cache", s17_spotify_setup_and_fetch),
     Scenario("spotify_update", "SP 2-4", "Spotify: grouping → block moves → verified write", s18_spotify_group_and_update),
     Scenario("spotify_faults", "SP 4", "Spotify: 429, abort/resume, ambiguous 5xx, stale", s19_spotify_faults_and_resume),
+    Scenario("review", "Phase 3", "Review page: save over HTTP → wait → update; cancel", s20_review_page),
 ]
 
 

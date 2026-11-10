@@ -81,6 +81,7 @@ class VideoMetadata(BaseModel):
     comment_count: int = 0
     tags: list[str] = Field(default_factory=list)
     privacy_status: str = "public"
+    image_url: str = ""  # snippet.thumbnails（medium → default）
 
 
 class ArtistRef(BaseModel):
@@ -135,6 +136,7 @@ class EnrichedPlaylistItem(BaseModel):
     disc_number: int = 0
     isrc: str = ""
     uri: str = ""
+    image_url: str = ""  # 封面：Spotify 專輯圖或 YouTube 縮圖；只給檢查頁顯示
     is_available: bool = True
     metadata_available: bool = Field(
         default=True,
@@ -175,6 +177,7 @@ class EnrichedPlaylistItem(BaseModel):
                 "tags": metadata.tags,
                 "privacy_status": metadata.privacy_status,
                 "description": metadata.description,
+                "image_url": metadata.image_url,
             })
         else:
             base["channel_title"] = item.channel_title

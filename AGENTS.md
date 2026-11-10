@@ -15,9 +15,9 @@ Claude Code 會另外自動載入 `.claude/skills/yt-playlist-manager/SKILL.md`�
 
 **先讀 `docs/agent/AGENT_SOP.md`**，並嚴格照它的五個 Phase 走。四條不可違反的規則：
 
-1. 呼叫 `update` 前必須在聊天室畫出變更預覽表並取得使用者明確同意。
+1. 呼叫 `update` 前必須取得使用者明確同意：先開檢查頁（`review start` → `review wait`），再在聊天室用一句話報告成本並等回覆。不要貼預覽表。
 2. 變更檔是順序相依的：必須依 `execution_order` 逐筆執行，不可編輯、重排、拆分或跳過。
-3. 預覽表顯示 `final_position`，不要顯示 `new_position`（那是送 API 的中繼位置）。
+3. 不要給使用者看 `new_position`／`range_start`／`insert_before`（送 API 的中繼位置）；提到位置一律用 `final_position`。
 4. 收到 `STALE_SNAPSHOT` 就重新 `fetch --refresh` 後重算，不要用 `--skip-verify` 硬闖。
 
 ## 在此專案中開發時
@@ -29,6 +29,7 @@ python tests/test_optimizer.py          # 演算法與辨識單元測試
 python tests/test_reorder_property.py   # 重排正確性窮舉驗證（必跑）
 python tests/test_update_flow.py        # 寫回安全性
 python tests/test_spotify_api.py       # Spotify 用戶端（PKCE、對應、重試策略）
+python tests/test_review_server.py     # 拖拉檢查頁（token、驗證、保存、取消）
 python tests/e2e/run_e2e.py             # 離線端對端（假 YouTube API，0 配額）
 ```
 

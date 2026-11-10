@@ -8,7 +8,7 @@
 - 「幫我找找看有沒有**重複加入**的歌」
 
 整理時有三個保證：
-- **你點頭才會動手**：AI 會先告訴你要搬哪些歌，你說 OK 才會真的改你的清單。
+- **你點頭才會動手**：AI 會先打開一個網頁讓你檢查，你可以用滑鼠拖拉調整；按「保存」、再跟 AI 說 OK，才會真的改你的清單。
 - **只搬必要的歌**：已經在對的位置的歌不會被動到。
 - **改完會自己檢查**：寫回後重新讀一次清單，確認結果跟預定的一樣；中途斷線也能從斷掉的地方接著做。
 
@@ -83,8 +83,8 @@ AI 會自己下載、安裝需要的套件，並讀懂這個工具的使用說�
 
 1. 讀取你的清單（不會改任何東西）。
 2. 在你的電腦上算出「最少要搬哪幾首」。
-3. 告訴你結果與成本，例如「要搬 12 首，約用掉今天 6% 的 YouTube 額度」。
-4. **等你回覆 OK 才寫回**，寫完再檢查一次結果。
+3. **自動打開一個檢查網頁**：歌曲由上到下排成清單，每組一張卡片，左側色條標出群組；會被搬動的歌有橘色標籤寫著「原 #30 → #5」。直接用滑鼠拖拉調整順序（單首，或按住組名搬整組），要搬幾首、花多少額度會即時更新。點一下歌曲，就能看到藝人、專輯、時長、封面等資料。改錯了可以按「上一步」，想從頭來按「重置」。看完按「保存」（或「取消」）。
+4. AI 在聊天室用**一句話**告訴你結果，例如「要搬 12 首、約 601 units，要寫回嗎？」，**等你回覆 OK 才寫回**，寫完再檢查一次結果。
 
 如果你的需求沒講清楚（例如沒說同一個歌手的歌之間要怎麼排），AI 會先問你，不會自己亂猜。
 
@@ -103,12 +103,16 @@ python -m scripts.yt_tool fetch "https://www.youtube.com/playlist?list=PLxxxxxxx
 
 # 2. 在你的電腦上算出最少的搬法（不花任何額度，清單還沒被動到）
 python -m scripts.yt_tool optimize data/current.json --target-out data/new.json --out data/changes.json
-#    → 回報例如 need_to_move: 12、estimated_quota: 600，AI 會把這些告訴你並問你要不要繼續
 
-# 3. 你說 OK 之後才寫回（會先確認清單沒被別人改過；中斷了再跑一次會接著做）
-python -m scripts.yt_tool update "https://www.youtube.com/playlist?list=PLxxxxxxxx" data/changes.json
+# 3. 打開檢查網頁讓你看、拖拉調整；你按「保存」後，算出最終要搬幾首
+python -m scripts.yt_tool review start data/current.json data/new.json   # → 開瀏覽器，回傳 run_dir
+python -m scripts.yt_tool review wait runs/youtube_PLxxxxxxxx_20261110-120000
+#    → 回報例如「要搬 12 首、約 601 units，要寫回嗎？」，AI 把這句話轉告你
 
-# Spotify 也是同樣三步：網址換成 https://open.spotify.com/playlist/…
+# 4. 你說 OK 之後才寫回（會先確認清單沒被別人改過；中斷了再跑一次會接著做）
+python -m scripts.yt_tool update "https://www.youtube.com/playlist?list=PLxxxxxxxx" runs/youtube_PLxxxxxxxx_20261110-120000/changes.json
+
+# Spotify 也是同樣的步驟：網址換成 https://open.spotify.com/playlist/…
 # 想「同專輯放一起」，就在第 2 步最後加上 --group-by album
 ```
 
@@ -128,8 +132,7 @@ YouTube 有每日免費額度（10,000 units），每搬一首歌用 50 units，
 Spotify 沒有每日額度，而且一次可以搬一整段連在一起的歌。
 
 **想恢復原本的順序？**
-跟 AI 說「把清單恢復成整理前的順序」。整理前讀到的清單存在 `data/current.json`，AI 可以照它排回去。
-注意下一次整理會覆蓋這個檔案，想保留的話請先請 AI 另存一份。
+跟 AI 說「把清單恢復成整理前的順序」。每次檢查都會在 `runs/` 底下留一個資料夾，裡面有整理前的清單、你的修改與寫回結果，AI 可以照整理前的清單排回去。
 
 **可以刪掉重複的歌嗎？**
 工具只會**找出**重複的歌並告訴你，不會幫你刪除。刪除無法復原，所以請你自己在 YouTube／Spotify 上操作。
@@ -155,11 +158,12 @@ AI 助手（Claude Code／Gemini CLI／Codex…）
   │  Phase 0  需求盤點（缺什麼就問）＋ 憑證檢查
   │  Phase 1  fetch     讀取清單
   │  Phase 2  optimize／diff  在本機算出最少搬動（0 額度）
-  │  Phase 3  預覽成本 → 等使用者說 OK
+  │  Phase 3  review 檢查頁：使用者拖拉、保存 → 一句話報告成本 → 等使用者說 OK
   │  Phase 4  update    寫回：寫入前驗證、順序執行、中斷可續傳
   ▼
 scripts/yt_tool.py（單一 CLI，依網址自動判斷平台）
   ├── optimizer.py    分組、LIS 最少移動、Spotify 區段搬移規劃
+  ├── review_server.py → 本機檢查頁（127.0.0.1、隨機埠、token）
   ├── youtube_api.py  → YouTube Data API v3（OAuth 2.0）
   └── spotify_api.py  → Spotify Web API（PKCE）
 ```
@@ -194,6 +198,8 @@ scripts/yt_tool.py（單一 CLI，依網址自動判斷平台）
 │   ├── optimizer.py                  # 分組、LIS 錨點、移動與區段搬移規劃
 │   ├── youtube_api.py                # YouTube Data API v3 封裝與錯誤分類
 │   ├── spotify_api.py                # Spotify Web API：PKCE 登入、讀取、區段搬移
+│   ├── review_server.py              # 拖拉檢查頁的本機伺服器（標準庫）
+│   ├── review/template.html          # 檢查頁模板（原生 JS/CSS，離線可用）
 │   ├── schemas.py                    # Pydantic v2 資料模型與指紋工具
 │   ├── executor.py                   # 群內排序鍵與配額估算
 │   └── cache_manager.py              # 本機 JSON 快取（30 分鐘）
@@ -202,9 +208,11 @@ scripts/yt_tool.py（單一 CLI，依網址自動判斷平台）
 │   ├── test_reorder_property.py      # 重排正確性窮舉驗證（14 項）
 │   ├── test_update_flow.py           # 寫回安全性（7 項）
 │   ├── test_spotify_api.py           # Spotify 用戶端（5 項）
+│   ├── test_review_server.py         # 檢查頁伺服器（4 項）
 │   ├── fixtures/                     # 真實清單樣本
 │   ├── dev/                          # 開發者工具（不屬於 skill）
-│   └── e2e/                          # 端對端測試（20 個情境，離線）
+│   └── e2e/                          # 端對端測試（21 個情境，離線）
+├── runs/                             # 每次檢查的紀錄（不進版控）
 ├── .github/workflows/ci.yml          # CI：單元測試、E2E、SKILL.md 一致性
 └── requirements.txt
 ```
@@ -240,8 +248,13 @@ python -m scripts.yt_tool optimize data/current.json \
 # 路徑 B：Agent 自己寫好目標順序 data/new.json，再算差異（0 額度）
 python -m scripts.yt_tool diff data/current.json data/new.json --out data/changes.json
 
+# 檢查頁：開頁（--mode label 為標註模式）→ 等保存（回 saved/waiting/cancelled/expired）→ 必要時關閉
+python -m scripts.yt_tool review start data/current.json data/new.json [--mode order|label] [--no-browser]
+python -m scripts.yt_tool review wait <run_dir> [--timeout 540]
+python -m scripts.yt_tool review cancel <run_dir>
+
 # 寫回（寫入前驗證遠端；中斷後重跑同一指令即續傳）
-python -m scripts.yt_tool update <playlist_url_or_id> data/changes.json
+python -m scripts.yt_tool update <playlist_url_or_id> <run_dir>/changes.json
 ```
 
 `--within-group-sort` 可用欄位：`viewCount`、`publishedAt`、`duration`、`title`、`channelTitle`、`addedAt`、`trackNumber`。
@@ -319,7 +332,8 @@ python tests/test_optimizer.py          # 分組與辨識
 python tests/test_reorder_property.py   # 重排正確性窮舉驗證（必跑）
 python tests/test_update_flow.py        # 寫回安全性：過期快照、續傳、配額耗盡、重試
 python tests/test_spotify_api.py        # Spotify：PKCE 登入、資料對應、401／429／5xx
-python tests/e2e/run_e2e.py             # 端對端：真實 CLI 子行程 × 離線替身，20 個情境
+python tests/test_review_server.py      # 檢查頁：token、Host 檢查、保存驗證、取消
+python tests/e2e/run_e2e.py             # 端對端：真實 CLI 子行程 × 離線替身，21 個情境
 
 # 送出前演練：用真實快照跑真正的 update，對象換成離線替身（0 額度、清單零異動）
 python tests/e2e/dryrun.py data/current.json data/changes.json --target data/new.json

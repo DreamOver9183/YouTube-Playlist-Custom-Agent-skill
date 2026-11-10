@@ -128,7 +128,15 @@ def test_entry_mapping():
     assert items[1].title == "Song 1", "legacy 'track' key must still be read"
     assert items[3].artists[0].id == "" and items[3].is_available, "local file: name-only, movable"
     assert items[4].artists[0].name == "Some Show" and items[4].published_at.year == 2026
-    print("  ✓ mapping: item/track keys, duplicate '#1', local file, episode, partial dates")
+    assert first.image_url == "" and items[4].image_url == ""
+
+    images = [{"url": "https://i.scdn.co/640", "width": 640}, {"url": "https://i.scdn.co/300", "width": 300},
+              {"url": "https://i.scdn.co/64", "width": 64}]
+    covered = dict(song, item=dict(song["item"], album=dict(song["item"]["album"], images=images)))
+    show = dict(episode, item=dict(episode["item"], images=[{"url": "https://i.scdn.co/ep", "width": 300}]))
+    covers = [i.image_url for i in entries_to_items([covered, show], "PL")]
+    assert covers == ["https://i.scdn.co/300", "https://i.scdn.co/ep"], covers
+    print("  ✓ mapping: item/track keys, duplicate '#1', local file, episode, partial dates, covers (~300px)")
 
 
 # ─── 3. PKCE sign-in ──────────────────────────────
