@@ -146,27 +146,29 @@ Spotify 沒有每日額度，而且一次可以搬一整段連在一起的歌。
 <details>
 <summary><b>系統架構與流程</b></summary>
 
-架構是「**AI 當大腦、Python 當手臂**」：AI 負責理解你的需求、需求不清楚時發問、判斷每首歌屬於哪位藝人、
-必要時自己寫出目標順序；Python 工具負責和 YouTube／Spotify 溝通，以及算出最少的搬動方式。
+架構是「**AI 大腦＋Python 單一引擎＋兩個平台轉接器**」：AI 負責理解你的需求、需求不清楚時發問、
+判斷每首歌屬於哪位藝人、必要時自己寫出目標順序；Python 引擎負責算出最少的搬動方式，
+再透過 YouTube 或 Spotify 的轉接器讀寫清單。兩個平台走同一套流程，差別只在轉接器。
 
 ```
 你（用一句話說想怎麼排）
   │
   ▼
-AI 助手（Claude Code／Gemini CLI／Codex…）
+AI 大腦（Claude Code／Gemini CLI／Codex…）
   讀 SKILL.md → 照 docs/agent/AGENT_SOP.md 的五個 Phase 做：
-  │  Phase 0  需求盤點（缺什麼就問）＋ 憑證檢查
-  │  Phase 1  fetch     讀取清單
-  │  Phase 2  label-request → AI 標註藝人 → optimize／diff 在本機算出最少搬動（0 額度）
-  │  Phase 3  review 檢查頁：使用者拖拉、保存 → 一句話報告成本 → 等使用者說 OK
-  │  Phase 4  update    寫回：寫入前驗證、順序執行、中斷可續傳
+  │  Phase 0  需求與平台：缺什麼就問、依網址判斷平台、檢查憑證、fetch 讀取清單
+  │  Phase 1  標註與計算：label-request → AI 標註藝人 → optimize／diff 在本機算出最少搬動（0 API 呼叫）
+  │  Phase 2  檢查頁：review 開頁，使用者拖拉、保存
+  │  Phase 3  一句確認：一句話報告成本，等使用者說 OK
+  │  Phase 4  寫回：update 寫入前驗證、依序執行、中斷可續傳
   ▼
-scripts/yt_tool.py（單一 CLI，依網址自動判斷平台）
-  ├── resolver.py     藝人辨識公式（平台資料＋AI 標註，沒標註時用標題與頻道）
-  ├── optimizer.py    分組、LIS 最少移動、Spotify 區段搬移規劃
-  ├── review_server.py → 本機檢查頁（127.0.0.1、隨機埠、token）
-  ├── youtube_api.py  → YouTube Data API v3（OAuth 2.0）
-  └── spotify_api.py  → Spotify Web API（PKCE）
+Python 單一引擎：scripts/yt_tool.py（單一 CLI，兩個平台共用）
+  ├── resolver.py       藝人辨識公式（平台資料＋AI 標註，沒標註時用標題與頻道）
+  ├── optimizer.py      分組、LIS 最少移動、Spotify 區段搬移規劃
+  └── review_server.py  本機檢查頁（127.0.0.1、隨機埠、token）
+  │
+  ├──▶ 平台轉接器 youtube_api.py  → YouTube Data API v3（OAuth 2.0；一次搬一首，50 units）
+  └──▶ 平台轉接器 spotify_api.py  → Spotify Web API（PKCE；一次搬一段，沒有配額）
 ```
 
 設計原則：

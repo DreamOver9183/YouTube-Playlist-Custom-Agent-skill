@@ -1,8 +1,8 @@
 # 端對端測試套件 (E2E Suite)
 
 `tests/e2e/` 驗證的不是單一函式，而是 **AI Agent 依照 `docs/agent/AGENT_SOP.md` 實際會跑的整條流程**：
-Phase 0 憑證握手 → Phase 1 fetch → Phase 2 本地計算（optimize / diff / 認知引擎）→
-Phase 3 預覽資料 → Phase 4 寫回、重試、中斷續傳。
+Phase 0 憑證握手與 fetch → Phase 1 本地計算（optimize / diff）→ Phase 2 檢查頁 →
+Phase 3 一句確認 → Phase 4 寫回、重試、中斷續傳。YouTube 與 Spotify 兩個平台都涵蓋。
 
 ```bash
 python tests/e2e/run_e2e.py                      # 全部 21 個情境
@@ -10,7 +10,7 @@ python tests/e2e/run_e2e.py -k update,resume     # 只跑指定情境（逗號�
 python tests/e2e/run_e2e.py --keep               # 保留暫存工作區以便檢查產出檔案
 ```
 
-離線執行，**不需要真實 Google 憑證、不消耗任何 API 配額、不會碰到任何真實播放清單**。
+離線執行，**不需要真實 Google／Spotify 憑證、不消耗任何 API 配額、不會碰到任何真實播放清單**。
 
 > 情境之間是一條流水線（例如第 5 個情境要用第 3 個情境 fetch 下來的檔案），
 > 因此 `-k` 只適合用來重現失敗時的除錯；正式驗收請跑完整套件。
@@ -18,6 +18,8 @@ python tests/e2e/run_e2e.py --keep               # 保留暫存工作區以便�
 ---
 
 ## 送出前的離線演練：`dryrun.py`
+
+（只支援 YouTube。Spotify 寫回前後都會比對整份清單，不需要演練。）
 
 `update` 一旦送出就是每筆 50 units 的不可逆操作。`dryrun.py` 把你**真實抓下來的快照**
 灌進同一套離線替身，再執行真正的 `yt_tool update`，於是快照驗證、順序相依的位置漂移、
@@ -90,7 +92,7 @@ python tests/e2e/dryrun.py data/current.json data/changes.json \
 
 14. 所有錯誤都是結構化 JSON（`code` 欄位），不是 traceback。
 15. `.claude` / `.gemini` / `AGENTS.md` 三個 Agent 進入點與 SOP 文件都存在。
-16. 預覽表所需欄位（`old_position` / `final_position` / `title`）與實際索引相符；
+16. 無法開瀏覽器時在聊天室列出的移動所需欄位（`old_position` / `final_position` / `title`）與實際索引相符；
     且 `new_position != final_position` 的列確實存在（證明位置漂移模型有在運作）。
 
 ---
@@ -101,25 +103,25 @@ python tests/e2e/dryrun.py data/current.json data/changes.json \
 |:--|:--|:--|
 | 1 | Phase 0 | Agent 進入點與 CLI 介面 |
 | 2 | Phase 0 | 憑證握手：`CREDENTIALS_MISSING` → `FILE_NOT_FOUND` → `INVALID_JSON` → 成功 |
-| 3 | Phase 1 | fetch：120 筆／3 頁分頁、3 批 metadata、私人影片保留 |
-| 4 | Phase 1 | 快取命中 vs `--refresh`、token 重用不再要求授權 |
-| 5 | Phase 2A | optimize：分群、群內排序、最小變更集、0 配額 |
-| 5b | Phase 1 | 重複項目報告：本地計算、只認 `video_id`、唯讀 |
-| 6 | Phase 2A | optimize 在無 Google 套件、無憑證環境下仍可執行且結果一致 |
-| 7 | Phase 3 | 預覽表資料與真實索引相符 |
+| 3 | Phase 0 | fetch：120 筆／3 頁分頁、3 批 metadata、私人影片保留 |
+| 4 | Phase 0 | 快取命中 vs `--refresh`、token 重用不再要求授權 |
+| 5 | Phase 1A | optimize：分群、群內排序、最小變更集、0 配額 |
+| 5b | Phase 0 | 重複項目報告：本地計算、只認 `video_id`、唯讀 |
+| 6 | Phase 1A | optimize 在無 Google 套件、無憑證環境下仍可執行且結果一致 |
+| 7 | Phase 3 | 無法開瀏覽器時在聊天室列出的移動（`old_position` → `final_position`）與真實索引相符 |
 | 8 | Phase 4 | 寫回抵達目標順序、快取失效、續傳檔清除 |
 | 9 | Phase 4 | 已用完的變更集不可重複套用 |
 | 10 | Phase 4 | 遠端漂移在寫入前被擋下 |
 | 11 | Phase 4 | 503 重試、配額耗盡中止、續傳補完 |
-| 12 | Phase 2B | Agent 自行寫出目標順序 → diff → update 全鏈路 |
-| 13 | Phase 2B | 非排列的目標順序被拒絕 |
+| 12 | Phase 1B | Agent 自行寫出目標順序 → diff → update 全鏈路 |
+| 13 | Phase 1B | 非排列的目標順序被拒絕 |
 | 14 | Phase 4 | 變更集完整性防護 |
-| 15 | Phase 2A | 已排序清單為真正的 no-op |
+| 15 | Phase 1A | 已排序清單為真正的 no-op |
 | 16 | 全域 | 參數錯誤回傳結構化錯誤碼、接受播放清單網址 |
-| 17 | Spotify 0–1 | Client ID 驗證、過期 token 自動更新、以網址抓取、重複曲目與本機檔案、快取 |
-| 18 | Spotify 2–4 | 依藝人分組 → 區段搬移（呼叫數 = S − LIS(段)）→ 寫回並全量驗證；依專輯分組＋曲序；YouTube 拒絕 `--group-by album` |
+| 17 | Spotify 0 | Client ID 驗證、過期 token 自動更新、以網址抓取、重複曲目與本機檔案、快取 |
+| 18 | Spotify 1–4 | 依藝人分組 → 區段搬移（呼叫數 = S − LIS(段)）→ 寫回並全量驗證；依專輯分組＋曲序；YouTube 拒絕 `--group-by album` |
 | 19 | Spotify 4 | 429 依 Retry-After 重試、403 中止後從遠端實際狀態續傳、502 已落地不重送、遠端漂移在寫入前被擋下 |
-| 20 | Phase 3 | 檢查頁：`review start --no-browser` → 以 HTTP 送出使用者的修改 → `review wait` 產生變更檔與一句確認 → `update` 落地；執行目錄留下全部紀錄；`review cancel` 結束另一次檢查 |
+| 20 | Phase 2 | 檢查頁：`review start --no-browser` → 以 HTTP 送出使用者的修改 → `review wait` 產生變更檔與一句確認 → `update` 落地；執行目錄留下全部紀錄；`review cancel` 結束另一次檢查 |
 
 Spotify 情境改用 `fake_spotify.py`：它是一個真的 HTTP 伺服器（127.0.0.1 隨機埠），
 所以 `requests` 呼叫、分頁、標頭與狀態碼處理都是真的走一遍；工具透過
