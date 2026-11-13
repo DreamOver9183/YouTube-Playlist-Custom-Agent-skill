@@ -15,7 +15,8 @@ M3 用「先交給 Agent、平台結構化欄位優先」的加權公式取代 v
 - 近似真值：``tests/dev/ytm_samples/`` 的 ytmusicapi 標註，取第一位藝人、去掉冒號後的
   掛名（``SawanoHiroyuki[nZk]:mizuki`` → ``SawanoHiroyuki[nZk]``），以 video_id 對到項目。
   ytmusicapi 看不到的項目不計分。
-- 人工真值：``tests/fixtures/gold/<清單>.json``（Agent 先標、使用者用檢查頁的標註模式校正）。
+- 人工真值：``tests/fixtures/gold/<清單>.json``（``{"labels": {playlist_item_id: 藝人}}``），
+  由使用者在 Claude Doc 校正預填藝人後讀回；值是 ``unknown`` 或空字串的項目不計分。
 - 指標：B³（B-cubed）精確率、召回率、F1，每一份清單各自分群、全部項目一起平均。
   預測為 unknown 的項目各自算成單獨一群，所以「辨識失敗全丟同一桶」拿不到分數。另外回報 unknown 率。
 
