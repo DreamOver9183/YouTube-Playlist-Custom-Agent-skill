@@ -588,7 +588,8 @@ def s05_optimize_is_local(h: Harness) -> list[str]:
     check(report["unknown_ratio"] == 0.0, f"unknown_ratio should be 0, got {report['unknown_ratio']}")
     check(report["effective_grouping_ratio"] == 1.0,
           f"every item is in a group of >1, expected 1.0, got {report['effective_grouping_ratio']}")
-    check(sorted(report["groups_found"]) == sorted(a.lower() for a, _ in MAIN_ARTISTS),
+    # Groups carry display names (the most common spelling), so compare case-insensitively.
+    check(sorted(g.casefold() for g in report["groups_found"]) == sorted(a.casefold() for a, _ in MAIN_ARTISTS),
           f"unexpected group keys: {report['groups_found']}")
 
     change_set = read_json(h.path("changes.json"))

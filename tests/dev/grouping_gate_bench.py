@@ -9,38 +9,38 @@ grouping_gate_bench.py — 分群效益閘門的校準台
 ----------
 
 ``scripts/optimizer.evaluate_grouping_benefit`` 的兩道門檻是用真實清單校出來的，
-不是拍腦袋定的。這支工具把 ``scripts/cache/`` 裡收錄的清單全部跑一遍，印出每一份
+不是拍腦袋定的。這支工具把 ``tests/fixtures/playlists/`` 的 11 份樣本清單全部跑一遍
+（預設帶入 ``tests/fixtures/agent_labels/`` 錄製的 Agent 標註，與正式流程相同），印出每一份
 的 unknown 佔比與有效聚集率，並驗證閘門**恰好**攔到該攔的那幾份。
 
-門檻改動之後一定要重跑這支：單元測試（``tests/test_optimizer.py``）用的是合成
+門檻或辨識公式改動之後一定要重跑這支：單元測試（``tests/test_optimizer.py``）用的是合成
 fixture，只能證明計算邏輯對，證明不了門檻定在正確的位置。**只有真實清單能。**
-
-為什麼不放進 CI
-----------------
-
-它依賴 ``scripts/cache/playlist_*.json`` 這些收錄下來的真實快取。CI 的測試一律是
-無網路、無外部檔案依賴的合成資料；把校準資料混進去會讓 CI 的失敗訊息變得難以判讀
-（到底是程式壞了，還是樣本換了）。
+樣本與 Agent 標註都在 repo 裡，所以 ``--check`` 也在 CI 上跑。
 
 用法
 ----
 
 .. code-block:: bash
 
-    python tests/dev/grouping_gate_bench.py           # 印出全部樣本
-    python tests/dev/grouping_gate_bench.py --check   # 驗證攔截集合，不符就非零離開
+    python tests/dev/grouping_gate_bench.py              # 印出全部樣本
+    python tests/dev/grouping_gate_bench.py --no-agent   # 不帶 Agent 標註（只用備援公式）
+    python tests/dev/grouping_gate_bench.py --check      # 驗證攔截集合，不符就非零離開
 
 預期結果
 --------
 
-11 份樣本中恰好 4 份被攔下。最接近的未攔件是 #2 中文歌1（45.5%），距 30% 界線有
-15pp 餘裕，沒有邊界爭議——這是這組門檻可信的主要理由。
+v3.10.0 校準時 11 份裡攔下 4 份：#6、#9、#10 當時以為是結構上不值得分群（孤兒群多），
+#8 K-pop 則是因為廠牌頻道有 39% 辨識不出來。
+
+v4 M3 換上新公式與 Agent 標註後只攔 #9、#10。用近似真值（ytmusicapi）直接算「真正同藝人的
+比例」，#9 是 13%、#10 是 16%，確實不值得分群；#6 卻是 39%（高於 30% 門檻），當年的 23%
+是 v3 認不出配樂作曲家、把同一人拆成很多孤兒群造成的，所以 #6 不再被攔是辨識改善，不是門檻
+失準。#8 的 unknown 從 39% 降到 0%，同樣是預期的改善；先前通過的清單沒有變成被攔。
 """
 
 from __future__ import annotations
 
 import argparse
-import json
 import logging
 import sys
 from pathlib import Path
@@ -54,48 +54,30 @@ if hasattr(sys.stderr, "reconfigure"):
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from resolver_bench import FIXTURES_DIR, LABELS, agent_labels, load_items  # noqa: E402
 from scripts.optimizer import (  # noqa: E402
     _EFFECTIVE_GROUPING_GATE,
     _UNKNOWN_RATIO_GATE,
     evaluate_grouping_benefit,
     group_by_artist,
 )
-from scripts.schemas import EnrichedPlaylistItem  # noqa: E402
 
-CACHE_DIR = ROOT / "scripts" / "cache"
-
-#: 樣本代號，與 BACKLOG.md 的表格對齊。
-LABELS = {
-    "PLtskdo8cFkvn4yfJLBqg68ClUGVSDPfsA": "#0 舊日文",
-    "PLLpKeZeMXlNY": "#1 Task3",
-    "PLtskdo8cFkvmhJyaxje75uAgiUPCuPqSc": "#2 中文歌1",
-    "PLtskdo8cFkvkNWh5d47epcdDs_W4SbRtg": "#3 中文歌2",
-    "PLtskdo8cFkvnghsg3czSpDRLsjsfRU9nh": "#4 OST/BGM",
-    "PLtskdo8cFkvmC5d2h0fv86tC8Pu9ftFFd": "#5 主題清單",
-    "PL7lowGKubpuuKB2xLNf1d1Ck9koNcaRXp": "#6 電影音樂1",
-    "PLHx-DNmuIJZjNh76_85SPjlOq7jsFi5ek": "#7 電影音樂2",
-    "PLOHoVaTp8R7ccrQM3EpCTVDdwHhXrJhXS": "#8 K-pop",
-    "PL8tHEOLOTRa7eimfOm7ZAJoHyVfQDHb2w": "#9 中文歌3",
-    "PLjC0R0W6CT-zkuojEktE1m8bXHTibU6vr": "#10 日文歌單",
-}
-
-#: 校準當下應該被攔下的樣本。門檻調動而這組跟著變，代表校準基準也變了，
+#: 應該被攔下的樣本。門檻或辨識改動而這組跟著變，代表校準基準也變了，
 #: 要連同 BACKLOG.md 的表一起更新，不要只改這裡讓 --check 變綠。
-EXPECTED_FLAGGED = {"#6 電影音樂1", "#8 K-pop", "#9 中文歌3", "#10 日文歌單"}
+#: v4 M3：#6、#8 不再被攔，原因見模組說明（真值的同藝人比例 39%、unknown 39% → 0%）。
+EXPECTED_FLAGGED = {"#9 中文歌3", "#10 日文歌單"}
 
 
-def measure() -> list[tuple[str, int, object]]:
-    """對每一份收錄的快取跑一次分群，回傳 (代號, 項目數, GroupingBenefit)。"""
+def measure(use_agent: bool = True) -> list[tuple[str, int, object]]:
+    """對每一份樣本清單跑一次分群，回傳 (代號, 項目數, GroupingBenefit)。"""
     logging.disable(logging.CRITICAL)
     rows = []
-    for path in sorted(CACHE_DIR.glob("playlist_*.json")):
-        playlist_id = path.stem.removeprefix("playlist_")
-        label = LABELS.get(playlist_id)
-        if label is None:
-            continue  # 未納入校準集的快取
-        raw = json.loads(path.read_text(encoding="utf-8"))["items"]
-        items = [EnrichedPlaylistItem.model_validate(r) for r in raw]
-        _, groups, resolutions, _ = group_by_artist(items)
+    for playlist_id, label in LABELS.items():
+        if not (FIXTURES_DIR / f"{playlist_id}.json").is_file():
+            continue
+        items = load_items(playlist_id)
+        labels, aliases = agent_labels(playlist_id) if use_agent else ({}, {})
+        _, groups, resolutions = group_by_artist(items, labels, aliases)
         rows.append((label, len(items), evaluate_grouping_benefit(groups, resolutions)))
     return sorted(rows, key=lambda r: r[2].effective_grouping_ratio)
 
@@ -107,11 +89,12 @@ def main() -> int:
         action="store_true",
         help="驗證攔截集合是否與校準基準一致，不一致就以非零離開碼失敗",
     )
+    parser.add_argument("--no-agent", action="store_true", help="不帶錄製的 Agent 標註（只用備援公式）")
     args = parser.parse_args()
 
-    rows = measure()
+    rows = measure(use_agent=not args.no_agent)
     if not rows:
-        print(f"找不到任何校準樣本。預期在 {CACHE_DIR} 下有 playlist_*.json。")
+        print(f"找不到任何校準樣本。預期在 {FIXTURES_DIR} 下有樣本清單。")
         return 1
 
     print(

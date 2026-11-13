@@ -6,7 +6,8 @@ reordering operations by computing the smallest set of position
 updates required.
 
 Core components:
-1. Three-layer artist identification engine (regex → channel → fuzzy)
+1. Grouping on the artist the weighted formula in ``scripts/resolver.py`` picks
+   (platform field, Agent label, title pattern, channel; see that module)
 2. LIS (Longest Increasing Subsequence) anchor algorithm, constrained by
    pinned (unavailable) items that must keep their original position
 3. Move planning against a simulated live list — the position sent to the
@@ -19,19 +20,15 @@ All computation is local (0 API units).
 
 from __future__ import annotations
 
-import json
 import logging
-import re
-import unicodedata
 from bisect import bisect_left
 from collections import Counter, defaultdict
-from pathlib import Path
 from typing import NamedTuple, Optional
 
+from scripts import resolver
 from scripts.executor import apply_sort
+from scripts.resolver import PINNED, UNKNOWN, Resolution
 from scripts.schemas import (
-    ArtistResolution,
-    ChannelMajorityOverride,
     EnrichedPlaylistItem,
     OptimizationReport,
     PositionChange,
@@ -45,89 +42,6 @@ logger = logging.getLogger(__name__)
 # ─────────────────────────────────────────────
 # Constants
 # ─────────────────────────────────────────────
-
-# Layer 1: Title regex patterns (priority order, highest confidence first)
-_TITLE_PATTERNS: list[tuple[str, str, float]] = [
-    # Pattern 1: Full-width bracket prefix  【Artist】Song
-    (r"^[【\[]([^\]】]+)[】\]]\s*(.+)", "bracket_prefix", 0.95),
-    # Pattern 2: Standard ARTIST - SONG (strip trailing metadata)
-    (r"^(.+?)\s*[-–—]\s*(.+?)(?:\s*[\(\[].+?[\)\]])*$", "dash_separator", 0.80),
-    # Pattern 3: Bracket suffix with metadata  Song (Artist Ver./Official)
-    (
-        r"^(.+?)\s*\(([^)]+?)\s*(?:ver|version|official|mv|video)\.?\)",
-        "bracket_suffix_meta",
-        0.70,
-    ),
-]
-
-# Noise patterns to strip from titles before regex parsing
-_NOISE_PATTERNS: list[re.Pattern] = [
-    re.compile(
-        r"\b(?:official\s+)?(?:music\s+video|m/?v|lyric(?:s)?\s+video|"
-        r"performance\s+ver(?:sion)?\.?|live|remix|edit|cover|instrumental|"
-        r"karaoke|teaser|trailer|short(?:s)?)\b",
-        re.IGNORECASE,
-    ),
-    re.compile(r"\b(?:hd|4k|1080p|720p|remastered?)\b", re.IGNORECASE),
-    re.compile(r"\(feat\.?\s+[^)]+\)", re.IGNORECASE),
-    re.compile(r"\[feat\.?\s+[^\]]+\]", re.IGNORECASE),
-]
-
-# Layer 2: Distributor/label channel blacklist (these cannot be used as artist keys)
-_DISTRIBUTOR_CHANNELS: set[str] = {
-    "1thek", "big hit labels", "smtown", "jyp entertainment",
-    "yg entertainment", "hybe labels", "stone music entertainment",
-    "ultra music", "warner music taiwan", "warner music japan",
-    "sony music", "universal music", "avex", "various artists",
-    "vevo", "topic",
-}
-
-# Channel name suffix noise to strip during normalization
-_CHANNEL_SUFFIX_PATTERN = re.compile(
-    r"\s*(?:official|channel|music|records?|entertainment|ent\.?|"
-    r"label|vevo|topic)\s*$",
-    re.IGNORECASE,
-)
-
-#: Separator debris left behind after a suffix is removed.  Without this,
-#: "Alan Walker - Topic" normalises to "alan walker -", which never matches the
-#: artist's own channel "alan walker" and silently splits the group in two.
-_TRAILING_SEPARATORS = re.compile(r"[\s\-–—:_·/|,]+$")
-
-#: Empty brackets left behind by noise removal, e.g. "Numb (Official Video)"
-#: → "Numb ()".
-_EMPTY_BRACKETS = re.compile(r"[\(\[【]\s*[\)\]】]")
-
-#: Words that make up a version/edition annotation rather than a song title.
-#: If everything on the other side of the dash is one of these, the dash is not
-#: an "artist - song" separator ("Valhalla Calling - Duet Version").
-_VERSION_MARKER_WORDS: frozenset[str] = frozenset({
-    "official", "ver", "version", "remix", "edit", "live", "acoustic",
-    "instrumental", "karaoke", "cover", "remaster", "remastered", "extended",
-    "radio", "duet", "mix", "audio", "video", "mv", "lyric", "lyrics",
-    "performance", "visualizer", "hd", "4k", "8k", "1080p", "720p", "full",
-})
-
-#: Confidence band where a title-layer win over a disagreeing channel gets a
-#: second look from the channel's own majority (see
-#: _apply_channel_majority_override). Bounded below by 0.80 — the minimum
-#: confidence that ever beats a channel result at all, currently produced only
-#: by dash_separator — and above by bracket_prefix's 0.95 explicit 【Artist】
-#: marker, which is never reconsidered regardless of channel evidence: it is a
-#: deliberate, human-authored signal, not a syntactic guess that happened to
-#: clear a threshold.
-_GRAY_ZONE_CONFIDENCE: tuple[float, float] = (0.80, 0.90)
-
-#: Minimum number of *other* same-channel items independently resolved to one
-#: artist (via the channel layer) before a gray-zone title guess is overridden.
-#: Calibrated against two real playlists (248 items total): false-positive-prone
-#: label/compilation channels (RHINO, VEVO handles, Atlantic Records, Kontor.TV,
-#: ...) never accumulate >=2 items under one artist_key there — each of their
-#: videos is a different real artist — while a genuine single-artist channel
-#: with a title-hijacked outlier (e.g. Hiroyuki SAWANO's "Mio Mare (2V-Alk
-#: Version)") does. No case in that data needed a threshold of 1 to be rescued,
-#: so 2 is the smallest threshold the evidence supports.
-_MAJORITY_MIN_CORROBORATION: int = 2
 
 #: Share of unresolved items above which grouping is reported as low-benefit.
 #: Calibrated on the 11 collected playlist samples (tests/dev/ytm_samples/):
@@ -149,456 +63,6 @@ _UNKNOWN_RATIO_GATE: float = 0.20
 #: the unit tests use synthetic fixtures and can only prove the arithmetic, not
 #: that the threshold sits in the right place.
 _EFFECTIVE_GROUPING_GATE: float = 0.30
-
-
-# ─────────────────────────────────────────────
-# Layer 1: Title Regex Parsing
-# ─────────────────────────────────────────────
-
-
-def _clean_title(title: str) -> str:
-    """Remove noise suffixes/tags from a video title."""
-    cleaned = title
-    for pattern in _NOISE_PATTERNS:
-        cleaned = pattern.sub("", cleaned)
-    # Stripping the noise words out of "(Official Music Video)" leaves "()",
-    # which used to survive all the way into the group name ("numb ()").
-    cleaned = _EMPTY_BRACKETS.sub(" ", cleaned)
-    # Collapse whitespace and strip
-    cleaned = re.sub(r"\s{2,}", " ", cleaned).strip()
-    # Remove trailing punctuation noise
-    cleaned = re.sub(r"[\s\-–—:,;]+$", "", cleaned).strip()
-    return cleaned
-
-
-def _parse_title_for_artist(title: str) -> ArtistResolution | None:
-    """Attempt to extract artist name from video title using regex patterns.
-
-    Returns an ArtistResolution if a pattern matches, otherwise None.
-    """
-    cleaned = _clean_title(title)
-
-    for pattern_str, method, confidence in _TITLE_PATTERNS:
-        match = re.match(pattern_str, cleaned, re.IGNORECASE)
-        if match:
-            if method == "bracket_prefix":
-                # Group 1 is artist, Group 2 is song
-                artist_raw = match.group(1).strip()
-                counterpart = match.group(2).strip()
-            elif method == "dash_separator":
-                # Group 1 is artist, Group 2 is song
-                artist_raw = match.group(1).strip()
-                counterpart = match.group(2).strip()
-            elif method == "bracket_suffix_meta":
-                # Group 1 is song, Group 2 is artist (reversed)
-                artist_raw = match.group(2).strip()
-                counterpart = match.group(1).strip()
-            else:
-                continue
-
-            if not artist_raw or len(artist_raw) > 80:
-                continue
-
-            # Remove parenthetical sub-annotations from artist
-            # e.g. "BTS (방탄소년단)" -> "BTS"
-            artist_clean = re.sub(r"\s*[\(\[][^)\]]*[\)\]]$", "", artist_raw).strip()
-            if not artist_clean:
-                artist_clean = artist_raw
-
-            return ArtistResolution(
-                artist_key=_normalize_name(artist_clean),
-                confidence=confidence,
-                method=method,
-                raw_candidate=artist_raw,
-                counterpart=counterpart,
-            )
-
-    return None
-
-
-#: Latin/digits plus kana, CJK ideographs and Hangul — artist names in this
-#: domain are routinely Korean or Japanese, and dropping those characters would
-#: silently disable every token comparison below for them.
-_TOKEN_PATTERN = re.compile(r"[0-9a-z぀-ヿ㐀-鿿가-힣]+")
-
-
-def _tokens(name: str) -> list[str]:
-    """Split a name into comparable word tokens (CJK / Hangul kept whole)."""
-    return _TOKEN_PATTERN.findall(name.lower())
-
-
-def _loose(name: str) -> str:
-    """Collapse a name to letters/digits only, so 'ImagineDragons' == 'Imagine Dragons'."""
-    return "".join(_tokens(name))
-
-
-def _matched_token_run(haystack: str, needle: str) -> str:
-    """Return *haystack*'s word run that spells *needle*, or "" if there is none.
-
-    Token-level (not substring) on purpose: "Sia" must not match "Siamese Dream".
-    A run of *haystack* words may also be glued together to match, because VEVO
-    channels drop the spaces ("LadyGagaVEVO" vs "Lady Gaga, Bruno Mars") — and
-    the run is returned in the readable, spaced spelling.
-    """
-    outer, inner = _tokens(haystack), _tokens(needle)
-    if not inner or not outer:
-        return ""
-    if len(inner) <= len(outer):
-        for start in range(len(outer) - len(inner) + 1):
-            if outer[start : start + len(inner)] == inner:
-                return " ".join(inner)
-
-    glued = "".join(inner)
-    if len(glued) < 5:  # too short to be distinctive; avoids "sia" ⊂ "siamese"
-        return ""
-    for start in range(len(outer)):
-        run: list[str] = []
-        for word in outer[start:]:
-            run.append(word)
-            joined = "".join(run)
-            if joined == glued:
-                return " ".join(run)
-            if len(joined) >= len(glued):
-                break
-    return ""
-
-
-def _contains_token_run(haystack: str, needle: str) -> bool:
-    """True if *needle*'s words appear consecutively inside *haystack*'s words."""
-    return bool(_matched_token_run(haystack, needle))
-
-
-def _is_version_annotation(text: str) -> bool:
-    """True if *text* is purely a version/edition marker, not a song name."""
-    words = re.findall(r"[a-z0-9]+", text.lower())
-    return bool(words) and all(word in _VERSION_MARKER_WORDS for word in words)
-
-
-# ─────────────────────────────────────────────
-# Layer 2: Channel Title Normalization
-# ─────────────────────────────────────────────
-
-
-def _normalize_name(name: str) -> str:
-    """Normalize an artist/channel name for comparison.
-
-    Steps:
-    1. Unicode NFKC normalization (full/half-width, compatibility chars)
-    2. Remove official/label suffixes
-    3. Lowercase + strip
-    """
-    name = unicodedata.normalize("NFKC", name)
-    # Loop so "Artist Official Channel" collapses fully, and drop the separator
-    # each suffix leaves behind ("Alan Walker - Topic" → "alan walker", not
-    # "alan walker -", which would never match the artist's own channel).
-    for _ in range(3):
-        shortened = _TRAILING_SEPARATORS.sub("", _CHANNEL_SUFFIX_PATTERN.sub("", name))
-        if shortened == name:
-            break
-        name = shortened
-    return name.strip().lower()
-
-
-def _is_distributor_channel(channel_title: str) -> bool:
-    """Check if a channel is a known distributor/label (not a direct artist).
-
-    **"<Artist> - Topic" channels are deliberately NOT treated as distributors.**
-    This function used to carry a second branch checking
-    ``normalized.endswith(" - topic")``, which could never fire: _normalize_name
-    strips the ``topic`` suffix and the trailing separator before this runs, so
-    the string it inspects is already ``"alan walker"``.  Removing the dead
-    branch is not the point — the point is that "fixing" it to test the raw
-    title instead would be a serious regression.  Topic channels are generated
-    by YouTube Music per *artist*, so the channel name is the artist name, and
-    they are the single richest signal available: 67% of the items across the
-    collected samples sit on one, and 96.6% of those (602/623) resolve correctly
-    through the channel layer today.  Blacklisting them would send every one of
-    those items to title parsing, which produces song titles as artist names
-    ("晩餐歌 - Bansanka" on tuki.'s channel → artist ``晩餐歌``).
-
-    A regression test in tests/test_optimizer.py locks the current behaviour in.
-    """
-    normalized = _normalize_name(channel_title)
-    # Exact match or ends with a blacklisted term
-    return normalized in _DISTRIBUTOR_CHANNELS
-
-
-def _resolve_channel(channel_title: str) -> ArtistResolution | None:
-    """Attempt to use channel_title as artist identifier.
-
-    Returns None if the channel is a known distributor/label.
-    """
-    if not channel_title or _is_distributor_channel(channel_title):
-        return None
-
-    return ArtistResolution(
-        artist_key=_normalize_name(channel_title),
-        confidence=0.75,
-        method="channel",
-        raw_candidate=channel_title,
-    )
-
-
-# ─────────────────────────────────────────────
-# Layer 3: Fuzzy Matching
-# ─────────────────────────────────────────────
-
-
-def _load_aliases(aliases_path: Path | None) -> dict[str, list[str]]:
-    """Load artist alias mapping from JSON file.
-
-    Expected format:
-    {
-        "BTS": ["Bangtan Boys", "방탄소년단"],
-        "BLACKPINK": ["블랙핑크", "BP"]
-    }
-    """
-    if aliases_path is None or not aliases_path.is_file():
-        return {}
-
-    try:
-        raw = json.loads(aliases_path.read_text(encoding="utf-8"))
-        if not isinstance(raw, dict):
-            logger.warning("Aliases file is not a dict: %s", aliases_path)
-            return {}
-        return raw
-    except Exception as exc:
-        logger.warning("Failed to load aliases from %s: %s", aliases_path, exc)
-        return {}
-
-
-def _build_alias_lookup(aliases: dict[str, list[str]]) -> dict[str, str]:
-    """Build a normalized alias → canonical name lookup table.
-
-    Returns a dict where each normalized alias maps to the canonical artist name.
-    """
-    lookup: dict[str, str] = {}
-    for canonical, alias_list in aliases.items():
-        canonical_norm = _normalize_name(canonical)
-        lookup[canonical_norm] = canonical
-        for alias in alias_list:
-            lookup[_normalize_name(alias)] = canonical
-    return lookup
-
-
-def _fuzzy_match_artist(
-    candidate: str,
-    alias_lookup: dict[str, str],
-    threshold: float = 85.0,
-) -> ArtistResolution | None:
-    """Use rapidfuzz WRatio to match a candidate against known artist aliases.
-
-    Returns None if no match exceeds the threshold.
-    """
-    try:
-        from rapidfuzz import fuzz, process
-    except ImportError:
-        logger.warning("rapidfuzz not installed; skipping fuzzy matching.")
-        return None
-
-    if not alias_lookup:
-        return None
-
-    normalized = _normalize_name(candidate)
-    known_names = list(alias_lookup.keys())
-
-    result = process.extractOne(
-        normalized,
-        known_names,
-        scorer=fuzz.WRatio,
-        score_cutoff=threshold,
-    )
-
-    if result:
-        matched_name, score, _idx = result
-        canonical = alias_lookup[matched_name]
-        return ArtistResolution(
-            artist_key=_normalize_name(canonical),
-            confidence=score / 100.0,
-            method="fuzzy",
-            raw_candidate=candidate,
-        )
-
-    return None
-
-
-# ─────────────────────────────────────────────
-# Three-Layer Resolution Engine
-# ─────────────────────────────────────────────
-
-
-def resolve_artist(
-    item: EnrichedPlaylistItem,
-    alias_lookup: dict[str, str],
-) -> ArtistResolution:
-    """Resolve the artist for a single playlist item using the three-layer pipeline.
-
-    Priority:
-    1. Title regex parsing (highest confidence)
-    2. Channel title normalization (cross-validation)
-    3. Fuzzy matching against known aliases (fallback)
-
-    If all layers fail, returns an 'unknown' resolution.
-    """
-    title_result = _parse_title_for_artist(item.title)
-    channel_result = _resolve_channel(item.channel_title)
-
-    # Layer 1 + Layer 2 cross-validation
-    if title_result and channel_result:
-        title_key = title_result.artist_key
-        channel_key = channel_result.artist_key
-
-        if _loose(title_key) == _loose(channel_key):
-            # Cross-confirmed.  Keep whichever spelling is more readable so
-            # "ImagineDragonsVEVO" and "Imagine Dragons - Topic" land on one key.
-            best = max((title_key, channel_key), key=lambda k: (k.count(" "), len(k)))
-            return ArtistResolution(
-                artist_key=best,
-                confidence=min(1.0, title_result.confidence + 0.15),
-                method=f"{title_result.method}+channel",
-                raw_candidate=title_result.raw_candidate,
-                counterpart=title_result.counterpart,
-            )
-
-        # The channel is the artist's own upload identity, so it outranks a
-        # title guess whenever the title tells us the guess is not an artist:
-        #
-        #   "One More Light [...] - Linkin Park"  → reversed "song - artist"
-        #   "Valhalla Calling - Duet Version"     → the other side is a version
-        #   "Alan Walker & Torine - Hello World"  → collaboration, main act owns it
-        reversed_title = _loose(title_result.counterpart) == _loose(channel_key)
-        version_tail = _is_version_annotation(title_result.counterpart)
-        collaboration = _matched_token_run(title_key, channel_key)
-        if reversed_title or version_tail or collaboration:
-            reason = (
-                "reversed_title" if reversed_title
-                else "version_tail" if version_tail
-                else "collaboration"
-            )
-            # The title spells the artist with spaces even when the channel does
-            # not ("LadyGagaVEVO" → "lady gaga"), so prefer that spelling.
-            return ArtistResolution(
-                artist_key=collaboration if collaboration and not reversed_title else channel_key,
-                confidence=min(1.0, channel_result.confidence + 0.15),
-                method=f"channel+{reason}",
-                raw_candidate=channel_result.raw_candidate,
-                counterpart=title_result.raw_candidate,
-            )
-
-        # Otherwise the title still wins when it is confident — a label channel
-        # ("RHINO") must not swallow the real artist named in the title.
-        if title_result.confidence >= 0.80:
-            gray_lo, gray_hi = _GRAY_ZONE_CONFIDENCE
-            if gray_lo <= title_result.confidence < gray_hi:
-                # Borderline confidence (today: dash_separator only). This
-                # function only sees one item at a time, so it cannot tell a
-                # spurious hyphen-in-a-version-code guess ("VV-Alk" on
-                # Hiroyuki SAWANO's channel) apart from a genuine "Artist -
-                # Song" title. Flag the channel's reading as a fallback
-                # candidate; group_by_artist() has visibility across the
-                # whole playlist and decides via channel majority (see
-                # _apply_channel_majority_override). A high-confidence
-                # explicit marker like bracket_prefix (0.95) never reaches
-                # this branch's gray zone and is never second-guessed.
-                return title_result.model_copy(
-                    update={"channel_override_candidate": channel_result.artist_key}
-                )
-            return title_result
-        return channel_result
-
-    # Layer 1 only (sufficient if high confidence)
-    if title_result and title_result.confidence >= 0.80:
-        return title_result
-
-    # Layer 2 only
-    if channel_result:
-        return channel_result
-
-    # Layer 1 with lower confidence (still try it)
-    if title_result:
-        # Attempt fuzzy validation of the title-extracted artist
-        fuzzy_result = _fuzzy_match_artist(
-            title_result.raw_candidate, alias_lookup
-        )
-        if fuzzy_result:
-            return fuzzy_result
-        return title_result
-
-    # There is deliberately no channel-side fuzzy fallback here.  It would need
-    # `channel_title and not _is_distributor_channel(channel_title)` — which is
-    # exactly the condition under which _resolve_channel() returns a result, so
-    # control already returned above.  The only channels that reach this point
-    # are empty ones and distributor/label channels, and an alias table cannot
-    # rescue either: there is no artist name in "HYBE LABELS" to match against.
-    #
-    # All layers failed
-    return ArtistResolution(
-        artist_key="unknown",
-        confidence=0.0,
-        method="unknown",
-        raw_candidate=item.channel_title or item.title,
-    )
-
-
-def _apply_channel_majority_override(
-    items: list[EnrichedPlaylistItem],
-    resolutions: list[ArtistResolution],
-) -> list[ChannelMajorityOverride]:
-    """Second-guess gray-zone title wins against the channel's own majority.
-
-    ``resolve_artist`` flags a gray-zone title win (see _GRAY_ZONE_CONFIDENCE)
-    with ``channel_override_candidate`` but cannot decide alone — it only sees
-    one item at a time. Here, with every item's resolution in hand, that
-    flagged guess is overridden back to the channel's reading only if
-    ``_MAJORITY_MIN_CORROBORATION`` or more *other* items from the exact same
-    channel independently resolved to that same artist via the channel layer.
-    Label/compilation channels never accumulate that majority under one key
-    (each of their videos is a different real artist), so they are left
-    untouched; a single artist's own channel does, which is exactly the gap
-    this closes.
-
-    Mutates ``resolutions`` in place (by index) and returns the overrides
-    applied, so callers can surface them in the Phase 3 preview instead of
-    letting the correction happen silently.
-    """
-    channel_majority: dict[str, Counter[str]] = defaultdict(Counter)
-    for item, resolution in zip(items, resolutions):
-        if resolution.method == "channel" or resolution.method.endswith("+channel"):
-            channel_majority[item.channel_title][resolution.artist_key] += 1
-
-    overrides: list[ChannelMajorityOverride] = []
-    for idx, (item, resolution) in enumerate(zip(items, resolutions)):
-        candidate = resolution.channel_override_candidate
-        if not candidate:
-            continue
-        corroborating = channel_majority.get(item.channel_title, {}).get(candidate, 0)
-        if corroborating < _MAJORITY_MIN_CORROBORATION:
-            continue
-        overrides.append(
-            ChannelMajorityOverride(
-                video_id=item.video_id,
-                title=item.title,
-                channel_title=item.channel_title,
-                from_artist_key=resolution.artist_key,
-                to_artist_key=candidate,
-                corroborating_count=corroborating,
-            )
-        )
-        resolutions[idx] = resolution.model_copy(
-            update={
-                "artist_key": candidate,
-                "method": f"{resolution.method}+channel_majority_override",
-            }
-        )
-
-    if overrides:
-        logger.info(
-            "Channel-majority override reclassified %d item(s): %s",
-            len(overrides),
-            ", ".join(f"{o.title!r} -> {o.to_artist_key!r}" for o in overrides),
-        )
-
-    return overrides
 
 
 # ─────────────────────────────────────────────
@@ -657,170 +121,63 @@ def weave_pinned(
     return [item for item in result if item is not None]
 
 
-def group_by_artist(
+def order_groups(
     items: list[EnrichedPlaylistItem],
-    aliases_path: Path | None = None,
+    groups: dict[str, list[int]],
     group_order: str = "first_appearance",
     within_group_sort: SortConfig | None = None,
-) -> tuple[list[EnrichedPlaylistItem], dict[str, list[int]], list[ArtistResolution], list[ChannelMajorityOverride]]:
-    """Group playlist items by resolved artist and build target ordering.
+) -> list[EnrichedPlaylistItem]:
+    """``stable_sort(i ↦ (rank_g(g(i)), rank_w(i)))``, with pinned items woven back in.
 
-    Unavailable (private / deleted) items never take part in the grouping —
-    they are pinned back to their original index by :func:`weave_pinned`.
-
-    Args:
-        items: Current playlist items in their original order.
-        aliases_path: Optional path to artist_aliases.json.
-        group_order: How to order groups. One of:
-            - "first_appearance": Groups ordered by their earliest item position.
-            - "alphabetical": Groups ordered alphabetically by artist key.
-            - "count_desc": Groups ordered by item count (largest first).
-        within_group_sort: Optional sort applied *inside* each group (e.g.
-            view count descending).  Reuses ``executor.apply_sort`` so the
-            sort semantics are identical to the ``diff`` path.
-
-    Returns:
-        A tuple of:
-        - target: The reordered list (grouped by artist).
-        - groups: Dict mapping artist_key → list of original indices.
-        - resolutions: ArtistResolution for each item (same order as input).
-        - channel_majority_overrides: Gray-zone title guesses that were
-          overridden back to the channel's majority reading (see
-          _apply_channel_majority_override); empty when none applied.
+    ``rank_g`` defaults to each group's first appearance and ``rank_w`` to the
+    original position — the order that moves the fewest items.  ``alphabetical``
+    / ``count_desc`` and ``within_group_sort`` only apply when the user asked.
     """
-    aliases = _load_aliases(aliases_path)
-    alias_lookup = _build_alias_lookup(aliases)
-
-    resolutions: list[ArtistResolution] = []
-
-    for idx, item in enumerate(items):
-        if not item.is_available:
-            resolutions.append(
-                ArtistResolution(
-                    artist_key="__pinned__",
-                    confidence=0.0,
-                    method="unavailable",
-                    raw_candidate=item.video_id,
-                )
-            )
-            continue
-
-        resolutions.append(resolve_artist(item, alias_lookup))
-
-    channel_majority_overrides = _apply_channel_majority_override(items, resolutions)
-
-    # Fold recognised-but-differently-spelled keys onto their canonical name.
-    #
-    # This is where an alias table has to be applied to be worth anything.  Its
-    # only other consumer is _fuzzy_match_artist, which resolve_artist reaches
-    # in one narrow case (a low-confidence title match on an item whose channel
-    # is empty or a distributor) — i.e. only on recognition *failure*.  The
-    # splits that actually show up on real playlists are recognition
-    # *successes* that disagree on spelling: "kenshi yonezu" vs "米津玄師",
-    # "優里 official youtube" vs "yuuri", every tuki. song whose title got
-    # parsed as the artist.  Nothing downstream could merge those — _loose()
-    # only folds punctuation and spacing, and alias_of only folds a non-ASCII
-    # prefix onto its ASCII tail.  Applying the lookup here, before the
-    # display_of buckets are chosen, is what makes them one group.
-    #
-    # Exact normalised match only, never fuzzy: this runs on every item rather
-    # than on a single failing one, so a near-miss that merges two real artists
-    # would be silent and playlist-wide.  Keys are re-normalised before lookup
-    # because a title-derived key has not been through _normalize_name.
-    #
-    # No alias file, no change — `--aliases` stays opt-in and defaults to None,
-    # so the default grouping behaviour is untouched.
-    if alias_lookup:
-        for idx, resolution in enumerate(resolutions):
-            if resolution.method in ("unavailable", "unknown"):
-                continue
-            canonical = alias_lookup.get(_normalize_name(resolution.artist_key))
-            if canonical is None:
-                continue
-            # Normalise the canonical name too, rather than adopting the alias
-            # file's own capitalisation.  Every other artist_key in the system
-            # is _normalize_name output, and mixing the two makes the group's
-            # display name depend on item order: an alias-matched "Aurora" and
-            # a channel-derived "aurora" land in the same _loose bucket, where
-            # display_of breaks the tie by (spaces, length) — equal for both,
-            # so whichever appeared first would win.  Merging is the point
-            # here; the spelling is display_of's job.
-            canonical_key = _normalize_name(canonical)
-            if canonical_key and canonical_key != resolution.artist_key:
-                resolutions[idx] = resolution.model_copy(
-                    update={"artist_key": canonical_key}
-                )
-
-    # Keys that differ only in spacing or punctuation are the same artist
-    # ("imaginedragons" from a VEVO channel vs "imagine dragons" from a title).
-    # Pick the most readable spelling as the display key for the whole bucket.
-    display_of: dict[str, str] = {}
-    for resolution in resolutions:
-        if resolution.method == "unavailable":
-            continue
-        key = resolution.artist_key
-        bucket = _loose(key) or key
-        current = display_of.get(bucket)
-        if current is None or (key.count(" "), len(key)) > (current.count(" "), len(current)):
-            display_of[bucket] = key
-
-    # A localised name often prefixes the original one ("紅髮艾德 Ed Sheeran",
-    # "酷玩樂團 Coldplay").  Fold it into the plain-name bucket when that bucket
-    # already exists.  Deliberately limited to a non-ASCII prefix: applying it to
-    # any suffix match would merge "Steve Aoki & Alan Walker" into whichever
-    # collaborator happened to have a bucket, which is not a decision to make on
-    # a coin flip.
-    alias_of: dict[str, str] = {}
-    buckets = sorted(display_of, key=len)
-    for longer in reversed(buckets):
-        if longer.isascii():
-            continue
-        for shorter in buckets:
-            if len(shorter) < 6 or not shorter.isascii() or len(shorter) >= len(longer):
-                continue
-            if longer.endswith(shorter) and _contains_token_run(
-                display_of[longer], display_of[shorter]
-            ):
-                alias_of[longer] = shorter
-                break
-
-    groups: dict[str, list[int]] = defaultdict(list)
-    for idx, resolution in enumerate(resolutions):
-        if resolution.method == "unavailable":
-            continue
-        bucket = _loose(resolution.artist_key) or resolution.artist_key
-        display = display_of[alias_of.get(bucket, bucket)]
-        if display != resolution.artist_key:
-            resolutions[idx] = resolution.model_copy(update={"artist_key": display})
-        groups[display].append(idx)
-
-    # Determine group ordering
     if group_order == "alphabetical":
-        ordered_keys = sorted(groups.keys())
+        ordered_keys = sorted(groups)
     elif group_order == "count_desc":
-        ordered_keys = sorted(groups.keys(), key=lambda k: len(groups[k]), reverse=True)
-    else:  # first_appearance (default)
-        ordered_keys = sorted(groups.keys(), key=lambda k: min(groups[k]))
+        ordered_keys = sorted(groups, key=lambda k: len(groups[k]), reverse=True)
+    else:
+        ordered_keys = sorted(groups, key=lambda k: min(groups[k]))
 
-    # Build target ordering for the movable items
     movable_order: list[EnrichedPlaylistItem] = []
     for key in ordered_keys:
         group_items = [items[idx] for idx in groups[key]]
         if within_group_sort is not None:
             group_items = apply_sort(group_items, within_group_sort)
         movable_order.extend(group_items)
+    return weave_pinned(movable_order, items)
 
-    target = weave_pinned(movable_order, items)
 
+def group_by_artist(
+    items: list[EnrichedPlaylistItem],
+    labels: dict[str, dict] | None = None,
+    aliases: dict[str, list[str]] | None = None,
+    user: dict[str, str] | None = None,
+    group_order: str = "first_appearance",
+    within_group_sort: SortConfig | None = None,
+) -> tuple[list[EnrichedPlaylistItem], dict[str, list[int]], list[Resolution]]:
+    """Group by the artist :func:`scripts.resolver.resolve` picks for each item.
+
+    ``labels`` are the Agent's answers, ``user`` the corrections made on the
+    review page (both keyed by ``playlist_item_id``); ``aliases`` is
+    ``{canonical: [variants]}``.  Groups are keyed by display name; items the
+    formula cannot place share the ``unknown`` group.  Pinned (unavailable)
+    items never take part and keep their original index.
+
+    Returns ``(target, groups, resolutions)`` with ``resolutions`` in input order.
+    """
+    resolutions = resolver.resolve(items, labels=labels, aliases=aliases, user=user)
+    groups: dict[str, list[int]] = defaultdict(list)
+    for idx, res in enumerate(resolutions):
+        if res.key != PINNED:
+            groups[UNKNOWN if res.key == UNKNOWN else res.name].append(idx)
+    target = order_groups(items, groups, group_order, within_group_sort)
     logger.info(
-        "Grouped %d items into %d artist groups (order=%s, within_group_sort=%s, pinned=%d).",
-        len(items),
-        len(groups),
-        group_order,
-        within_group_sort.field.value if within_group_sort else "none",
-        len(items) - len(movable_order),
+        "Grouped %d items into %d artist groups (order=%s, pinned=%d).",
+        len(items), len(groups), group_order, sum(1 for r in resolutions if r.key == PINNED),
     )
-    return target, dict(groups), resolutions, channel_majority_overrides
+    return target, dict(groups), resolutions
 
 
 # ─────────────────────────────────────────────
@@ -1217,7 +574,7 @@ class GroupingBenefit(NamedTuple):
 
 def evaluate_grouping_benefit(
     groups: dict[str, list[int]],
-    resolutions: list[ArtistResolution],
+    resolutions: list[Resolution],
 ) -> GroupingBenefit:
     """Judge whether grouping this playlist is worth the quota.
 
@@ -1253,14 +610,8 @@ def evaluate_grouping_benefit(
     if not movable:
         return GroupingBenefit(0.0, 0.0, 0, "ok", [])
 
-    # Count unresolved items by resolution method rather than by group key, so
-    # a channel that happens to be called "Unknown" cannot be mistaken for the
-    # failure bucket.
-    unknown_indices = {
-        idx
-        for idx, resolution in enumerate(resolutions)
-        if resolution.method == "unknown"
-    }
+    # Count unresolved items by resolution rather than by group name.
+    unknown_indices = {idx for idx, res in enumerate(resolutions) if res.key == UNKNOWN}
     unknown_count = sum(
         1 for indices in groups.values() for idx in indices if idx in unknown_indices
     )
@@ -1303,36 +654,26 @@ def evaluate_grouping_benefit(
 
 def run_full_optimization(
     items: list[EnrichedPlaylistItem],
-    aliases_path: Path | None = None,
+    labels: dict[str, dict] | None = None,
+    aliases: dict[str, list[str]] | None = None,
+    user: dict[str, str] | None = None,
     group_order: str = "first_appearance",
     within_group_sort: SortConfig | None = None,
-) -> tuple[list[EnrichedPlaylistItem], list[PositionChange], OptimizationReport, list[ArtistResolution]]:
-    """Complete pipeline: group → target → LIS → ordered moves.
+) -> tuple[list[EnrichedPlaylistItem], list[PositionChange], OptimizationReport, list[Resolution]]:
+    """Complete pipeline: resolve → group → target → LIS → ordered moves.
 
-    Args:
-        items: Current playlist items.
-        aliases_path: Optional path to artist_aliases.json.
-        group_order: Group ordering strategy.
-        within_group_sort: Optional sort applied inside each artist group.
-
-    Returns:
-        A tuple of (target_order, ordered_changes, report, resolutions).
+    Returns ``(target_order, ordered_changes, report, resolutions)``.
     """
-    target, groups, resolutions, channel_majority_overrides = group_by_artist(
-        items, aliases_path, group_order, within_group_sort
+    target, groups, resolutions = group_by_artist(
+        items, labels, aliases, user, group_order, within_group_sort
     )
     changes, report = plan_reorder(items, target)
 
-    # Enrich report with group info
     report.groups_found = list(groups.keys())
     report.group_details = {k: len(v) for k, v in groups.items()}
-    report.unresolved_count = sum(
-        1 for r in resolutions if r.method == "unknown"
-    )
-    report.metadata_missing_count = sum(
-        1 for item in items if not item.metadata_available
-    )
-    report.channel_majority_overrides = channel_majority_overrides
+    report.unresolved_count = sum(1 for r in resolutions if r.key == UNKNOWN)
+    report.uncertain_count = sum(1 for r in resolutions if r.uncertain)
+    report.metadata_missing_count = sum(1 for item in items if not item.metadata_available)
 
     benefit = evaluate_grouping_benefit(groups, resolutions)
     report.unknown_ratio = benefit.unknown_ratio
@@ -1356,45 +697,24 @@ GROUP_BY_CHOICES: dict[str, tuple[str, ...]] = {
 }
 
 
-def _structured_group_key(item: EnrichedPlaylistItem, group_by: str) -> tuple[str, str] | None:
-    """Return ``(stable_key, display_name)`` from the platform's own fields."""
-    if group_by == "album":
-        if item.album and (item.album.id or item.album.name):
-            return item.album.id or f"name:{item.album.name}", item.album.name or item.album.id
-        return None
-    if item.artists:
-        primary = item.artists[0]
-        if primary.id or primary.name:
-            return primary.id or f"name:{primary.name}", primary.name or primary.id
-    return None
-
-
-def group_by_structured_field(
+def group_by_album(
     items: list[EnrichedPlaylistItem],
-    group_by: str = "artist",
     group_order: str = "first_appearance",
     within_group_sort: SortConfig | None = None,
-) -> tuple[list[EnrichedPlaylistItem], dict[str, list[int]], list[ArtistResolution]]:
-    """Group on the primary artist id (or album id) the platform already gives us.
+) -> tuple[list[EnrichedPlaylistItem], dict[str, list[int]], list[Resolution]]:
+    """Spotify ``--group-by album``: group on the album id the platform gives us.
 
-    No title parsing, no guessing: Spotify returns ``artists[]`` and ``album``
-    as entities with ids, so two spellings of one artist are one group and two
-    artists who share a name stay apart.  Items without the field (local files,
-    podcast episodes) land in ``unknown``.
-
-    Returns the same shape the artist pipeline produces so the grouping-benefit
-    gate (:func:`evaluate_grouping_benefit`) applies unchanged.
+    Two albums that share a name stay apart (the label gets a short id suffix on
+    a real collision).  Items without an album (local files, episodes) land in
+    ``unknown``.  Same return shape as :func:`group_by_artist`.
     """
-    keyed: list[tuple[str, str] | None] = [
-        None if not item.is_available else _structured_group_key(item, group_by)
-        for item in items
-    ]
+    def album_key(item: EnrichedPlaylistItem) -> tuple[str, str] | None:
+        if item.is_available and item.album and (item.album.id or item.album.name):
+            return item.album.id or f"name:{item.album.name}", item.album.name or item.album.id
+        return None
 
-    # Display labels: the entity name, disambiguated only on a real collision.
-    names_by_key: dict[str, str] = {}
-    for entry in keyed:
-        if entry:
-            names_by_key.setdefault(entry[0], entry[1])
+    keyed = [album_key(item) for item in items]
+    names_by_key = dict(entry for entry in reversed(keyed) if entry)
     name_counts = Counter(names_by_key.values())
     label_of = {
         key: name if name_counts[name] == 1 else f"{name} ({key.rsplit(':', 1)[-1][:6]})"
@@ -1402,38 +722,17 @@ def group_by_structured_field(
     }
 
     groups: dict[str, list[int]] = defaultdict(list)
-    resolutions: list[ArtistResolution] = []
+    resolutions: list[Resolution] = []
     for idx, (item, entry) in enumerate(zip(items, keyed)):
         if not item.is_available:
-            resolutions.append(
-                ArtistResolution(artist_key="__pinned__", confidence=1.0, method="unavailable")
-            )
-            continue
-        if entry is None:
-            resolutions.append(ArtistResolution(artist_key="unknown", confidence=0.0, method="unknown"))
-            groups["unknown"].append(idx)
-            continue
-        label = label_of[entry[0]]
-        resolutions.append(
-            ArtistResolution(artist_key=label, confidence=1.0, method=f"platform_{group_by}")
-        )
-        groups[label].append(idx)
-
-    if group_order == "alphabetical":
-        ordered_keys = sorted(groups.keys())
-    elif group_order == "count_desc":
-        ordered_keys = sorted(groups.keys(), key=lambda k: len(groups[k]), reverse=True)
-    else:
-        ordered_keys = sorted(groups.keys(), key=lambda k: min(groups[k]))
-
-    movable_order: list[EnrichedPlaylistItem] = []
-    for key in ordered_keys:
-        group_items = [items[idx] for idx in groups[key]]
-        if within_group_sort is not None:
-            group_items = apply_sort(group_items, within_group_sort)
-        movable_order.extend(group_items)
-
-    return weave_pinned(movable_order, items), dict(groups), resolutions
+            resolutions.append(Resolution(PINNED, PINNED, 0.0, ""))
+        elif entry is None:
+            resolutions.append(Resolution(UNKNOWN, UNKNOWN, 0.0, ""))
+            groups[UNKNOWN].append(idx)
+        else:
+            resolutions.append(Resolution(entry[0], label_of[entry[0]], 1.0, "P"))
+            groups[label_of[entry[0]]].append(idx)
+    return order_groups(items, groups, group_order, within_group_sort), dict(groups), resolutions
 
 
 def apply_range_move(

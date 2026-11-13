@@ -45,12 +45,14 @@ from typing import TYPE_CHECKING, Any
 
 from scripts.cache_manager import PlaylistCache
 from scripts.executor import estimate_quota
+from scripts.resolver import PINNED
 from scripts.optimizer import (
     GROUP_BY_CHOICES,
     apply_range_move,
     evaluate_grouping_benefit,
     find_duplicate_videos,
-    group_by_structured_field,
+    group_by_album,
+    group_by_artist,
     normalize_target,
     plan_range_reorder,
     plan_reorder,
@@ -437,6 +439,60 @@ def _playlist_id_of(items: list[EnrichedPlaylistItem], fallback: str = "") -> st
     return fallback
 
 
+def cmd_label_request(args: argparse.Namespace) -> None:
+    """Write label_request.jsonl: the songs the Agent should label (cached answers are skipped)."""
+    from scripts import labels
+
+    current = Path(args.current)
+    items = _load_items(current, "目前清單")
+    out_dir = Path(args.out_dir) if args.out_dir else current.parent
+    cache = labels.load_cache(SKILL_HOME / labels.CACHE_FILE)
+    emit({"status": "success", **labels.write_request(items, out_dir, cache, args.max_items)})
+
+
+def _label_inputs(
+    args: argparse.Namespace, items: list[EnrichedPlaylistItem]
+) -> tuple[dict, dict, dict, dict[str, int]]:
+    """Agent labels, user corrections and aliases for ``optimize``.
+
+    ``--labels`` (the Agent's ``labels.json``) is validated against the
+    ``label_request.jsonl`` next to it and merged into the label cache; the
+    cache then supplies every answer for this playlist, so earlier runs and the
+    user's corrections on the review page (which the Agent cannot overwrite)
+    count too.  ``--aliases`` is an extra ``{canonical: [variants]}`` file.
+    """
+    from scripts import labels as protocol
+
+    cache_path = SKILL_HOME / protocol.CACHE_FILE
+    if args.labels:
+        labels_path = Path(args.labels)
+        try:
+            doc = json.loads(labels_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            fail("LABELS_INVALID", f"讀不到 labels.json：{exc}")
+        try:
+            answers, aliases = protocol.validate(doc, items, labels_path.parent / protocol.REQUEST_FILE)
+        except protocol.LabelError as exc:
+            fail(exc.code, str(exc), **exc.extra)
+        protocol.save_cache(cache_path, items, answers, "A", aliases)
+    cache = protocol.load_cache(cache_path)
+    labels, user = protocol.from_cache(items, cache)
+    extra = {}
+    if args.aliases:
+        try:
+            extra = json.loads(Path(args.aliases).read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            fail("PARSE_ERROR", f"讀不到別名檔：{exc}")
+    aliases = protocol.merge_aliases(cache["aliases"], extra)
+    return labels, user, aliases, {"agent_labels": len(labels), "user_labels": len(user), "aliases": len(aliases)}
+
+
+def _groups_of(resolutions: list, items: list[EnrichedPlaylistItem]) -> tuple[dict[str, str], set[str]]:
+    group_of = {item.playlist_item_id: ("" if r.key == PINNED else r.name) for item, r in zip(items, resolutions)}
+    uncertain = {item.playlist_item_id for item, r in zip(items, resolutions) if r.uncertain}
+    return group_of, uncertain
+
+
 def cmd_diff(args: argparse.Namespace) -> None:
     emit({"status": "started", "command": "diff", "message": "開始計算差異與配額..."})
 
@@ -497,15 +553,18 @@ def cmd_diff(args: argparse.Namespace) -> None:
     )
 
 
-def _write_target(path: Path, target: list[EnrichedPlaylistItem], group_of: dict[str, str]) -> None:
-    """Write the target order; each item also carries its ``group`` for the review page.
+def _write_target(
+    path: Path, target: list[EnrichedPlaylistItem], group_of: dict[str, str], uncertain: set[str] = frozenset(),
+) -> None:
+    """Write the target order; each item also carries its ``group`` (and ``uncertain``) for the review page.
 
-    The extra key is ignored when the file is loaded back as items (diff, update).
+    The extra keys are ignored when the file is loaded back as items (diff, update).
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(
-            [dict(item.model_dump(mode="json"), group=group_of.get(item.playlist_item_id, ""))
+            [dict(item.model_dump(mode="json"), group=group_of.get(item.playlist_item_id, ""),
+                  **({"uncertain": True} if item.playlist_item_id in uncertain else {}))
              for item in target],
             ensure_ascii=False,
             indent=2,
@@ -558,31 +617,25 @@ def cmd_optimize(args: argparse.Namespace) -> None:
         cmd_optimize_spotify(args, current_items)
         return
 
-    aliases_path = Path(args.aliases) if args.aliases else None
     group_order = args.group_order or "first_appearance"
     within_group_sort = _parse_within_group_sort(args.within_group_sort)
+    labels, user, aliases, label_info = _label_inputs(args, current_items)
 
     logger.info(
-        "Running optimization: %d items, group_order=%s, within_group_sort=%s, aliases=%s",
-        len(current_items), group_order, args.within_group_sort, aliases_path,
+        "Running optimization: %d items, group_order=%s, within_group_sort=%s, labels=%s",
+        len(current_items), group_order, args.within_group_sort, label_info,
     )
 
     try:
         target, changes, report, resolutions = run_full_optimization(
-            current_items,
-            aliases_path=aliases_path,
-            group_order=group_order,
-            within_group_sort=within_group_sort,
+            current_items, labels, aliases, user, group_order, within_group_sort
         )
     except ValueError as exc:
         fail("TARGET_MISMATCH", str(exc))
 
-    group_of = {
-        item.playlist_item_id: ("" if res.method == "unavailable" else res.artist_key)
-        for item, res in zip(current_items, resolutions)
-    }
+    group_of, uncertain = _groups_of(resolutions, current_items)
     target_path = Path(args.target_out)
-    _write_target(target_path, target, group_of)
+    _write_target(target_path, target, group_of, uncertain)
 
     playlist_id = _playlist_id_of(current_items)
     out_path = Path(args.out)
@@ -597,9 +650,6 @@ def cmd_optimize(args: argparse.Namespace) -> None:
             "pinned_count": report.pinned_count,
             "quota_saved_vs_naive": report.quota_saved_vs_naive,
             "groups_found": report.groups_found,
-            "channel_majority_overrides": [
-                o.model_dump(mode="json") for o in report.channel_majority_overrides
-            ],
         },
     )
 
@@ -623,9 +673,8 @@ def cmd_optimize(args: argparse.Namespace) -> None:
             "orphan_group_count": report.orphan_group_count,
             "grouping_benefit": report.grouping_benefit,
             "grouping_warnings": report.grouping_warnings,
-            "channel_majority_overrides": [
-                o.model_dump(mode="json") for o in report.channel_majority_overrides
-            ],
+            "uncertain_count": report.uncertain_count,
+            **label_info,
             "fingerprint": fingerprint,
             "target_file": str(target_path),
             "changes_file": str(out_path),
@@ -1115,18 +1164,19 @@ def _spotify_plan_and_write(
 
 def cmd_optimize_spotify(args: argparse.Namespace, items: list[EnrichedPlaylistItem]) -> None:
     group_by = args.group_by or "artist"
+    group_order = args.group_order or "first_appearance"
     within_group_sort = _parse_within_group_sort(args.within_group_sort)
-    target, groups, resolutions = group_by_structured_field(
-        items, group_by, args.group_order or "first_appearance", within_group_sort
-    )
+    label_info: dict[str, int] = {}
+    if group_by == "album":
+        target, groups, resolutions = group_by_album(items, group_order, within_group_sort)
+    else:
+        labels, user, aliases, label_info = _label_inputs(args, items)
+        target, groups, resolutions = group_by_artist(items, labels, aliases, user, group_order, within_group_sort)
     benefit = evaluate_grouping_benefit(groups, resolutions)
 
-    group_of = {
-        item.playlist_item_id: ("" if res.method == "unavailable" else res.artist_key)
-        for item, res in zip(items, resolutions)
-    }
+    group_of, uncertain = _groups_of(resolutions, items)
     target_path = Path(args.target_out)
-    _write_target(target_path, target, group_of)
+    _write_target(target_path, target, group_of, uncertain)
     out_path = Path(args.out)
     _moves, stats, fingerprint = _spotify_plan_and_write(
         items, target, out_path, {"group_by": group_by, "groups_found": list(groups)}
@@ -1144,13 +1194,14 @@ def cmd_optimize_spotify(args: argparse.Namespace, items: list[EnrichedPlaylistI
             "pinned_count": stats["pinned_count"],
             "groups_found": list(groups),
             "group_details": {k: len(v) for k, v in groups.items()},
-            "unresolved_count": sum(1 for r in resolutions if r.method == "unknown"),
+            "unresolved_count": len(groups.get("unknown", [])),
+            "uncertain_count": len(uncertain),
             "unknown_ratio": benefit.unknown_ratio,
             "effective_grouping_ratio": benefit.effective_grouping_ratio,
             "orphan_group_count": benefit.orphan_group_count,
             "grouping_benefit": benefit.verdict,
             "grouping_warnings": benefit.warnings,
-            "aliases_ignored": bool(args.aliases),
+            **label_info,
             "fingerprint": fingerprint,
             "target_file": str(target_path),
             "changes_file": str(out_path),
@@ -1480,6 +1531,13 @@ def _review_summary(run_dir: Path) -> dict[str, Any]:
     snapshot = _load_items(run_dir / rs.SNAPSHOT_FILE, "快照")
     edited = _load_items(run_dir / rs.EDITED_FILE, "保存的順序")
     proposed = _load_items(run_dir / rs.PROPOSED_FILE, "建議順序")
+    if (run_dir / rs.USER_LABELS_FILE).is_file():
+        # Moving a song into another group is a correction: the next optimize uses it as-is (source U).
+        from scripts import labels as protocol
+
+        moved = json.loads((run_dir / rs.USER_LABELS_FILE).read_text(encoding="utf-8"))["labels"]
+        protocol.save_cache(SKILL_HOME / protocol.CACHE_FILE, snapshot,
+                            {key: {"artist": change.get("to", "")} for key, change in moved.items()}, "U")
     changes_path = run_dir / "changes.json"
     edits, relabels = saved.get("edits", 0), saved.get("relabels", 0)
     touched = f"你在檢查頁改了 {edits} 處" if edits else "你沒有修改建議"
@@ -1651,11 +1709,20 @@ def main():
     add_common(p_update)
     p_update.set_defaults(func=cmd_update)
 
+    p_label = subparsers.add_parser("label-request", help="Write the artist-labelling request for the Agent")
+    p_label.add_argument("current", help="Current playlist JSON file (from fetch)")
+    p_label.add_argument("--out-dir", default=None, help="Where to write label_request.jsonl (default: next to current)")
+    p_label.add_argument("--max-items", type=int, default=400,
+                         help="Token budget in songs; the most certain of the rest are left to the fallback formula")
+    p_label.set_defaults(func=cmd_label_request)
+
     p_optimize = subparsers.add_parser("optimize", help="Compute optimized reorder changes (local, 0 API units)")
     p_optimize.add_argument("current", help="Current playlist JSON file (from fetch)")
     p_optimize.add_argument("--target-out", required=True, help="Output path for target ordering JSON")
     p_optimize.add_argument("--out", required=True, help="Output path for optimized changes JSON")
-    p_optimize.add_argument("--aliases", default=None, help="Path to artist_aliases.json (optional)")
+    p_optimize.add_argument("--labels", default=None,
+                            help="The Agent's labels.json (answers to label-request; merged into the label cache)")
+    p_optimize.add_argument("--aliases", default=None, help="Extra {canonical: [variants]} alias file (optional)")
     p_optimize.add_argument("--group-order", default="first_appearance",
                             choices=["first_appearance", "alphabetical", "count_desc"],
                             help="Group ordering strategy")

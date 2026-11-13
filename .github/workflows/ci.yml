@@ -29,6 +29,10 @@ jobs:
         run: python tests/test_spotify_api.py
       - name: Review page server tests (token, validation, save, cancel)
         run: python tests/test_review_server.py
+      - name: Artist resolver formula (hand-checked scores, budget mode, fixture regression)
+        run: python tests/test_resolver_formula.py
+      - name: Grouping-benefit gate on the 11 sample playlists
+        run: python tests/dev/grouping_gate_bench.py --check
 
   e2e:
     name: End-to-end (SOP flow, offline)

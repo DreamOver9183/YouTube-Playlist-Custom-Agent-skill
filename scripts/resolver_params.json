@@ -1,0 +1,63 @@
+{
+ "unfitted": [],
+ "weights": {
+  "fused": {
+   "w_P": 1.0,
+   "w_A": 1.0,
+   "w_T": 0.0,
+   "w_C": 0.0,
+   "beta": 0.0,
+   "theta": 0.0,
+   "tau": 0.05
+  },
+  "fallback": {
+   "w_P": 1.0,
+   "w_A": 0.0,
+   "w_T": 0.25,
+   "w_C": 0.5,
+   "beta": 0.0,
+   "theta": 0.0,
+   "tau": 0.2
+  }
+ },
+ "scores": {
+  "fallback": {
+   "train": {
+    "items": 586,
+    "precision": 0.9738,
+    "recall": 0.9332,
+    "f1": 0.953,
+    "unknown_rate": 0.0256
+   },
+   "holdout": {
+    "items": 325,
+    "precision": 0.9265,
+    "recall": 0.8846,
+    "f1": 0.9051,
+    "unknown_rate": 0.1292
+   }
+  },
+  "fused": {
+   "train": {
+    "items": 586,
+    "precision": 0.9163,
+    "recall": 0.9876,
+    "f1": 0.9506,
+    "unknown_rate": 0.0
+   },
+   "holdout": {
+    "items": 325,
+    "precision": 0.7822,
+    "recall": 0.9928,
+    "f1": 0.875,
+    "unknown_rate": 0.0
+   }
+  }
+ },
+ "ablated": {
+  "fused": [
+   "w_T",
+   "w_C"
+  ]
+ }
+}

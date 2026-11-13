@@ -8,7 +8,8 @@ that matter are checked here:
    ``</script>`` cannot break out of the embedded data.
 2. A saved order that is not a permutation is refused (``TARGET_MISMATCH``) and
    the server keeps running; a valid one is stored with unavailable items
-   pinned back, the drag log and relabels are kept, and the server stops.
+   pinned back, the drag log and relabels are kept (a regroup goes into the
+   label cache as a user correction), and the server stops.
 3. ``review wait`` turns a save into a change set whose replay is the saved
    order, plus the one-line cost; a cancel makes it return at once; with
    nobody saving it returns ``waiting``.
@@ -37,6 +38,9 @@ from scripts import review_server as rs  # noqa: E402
 from scripts import yt_tool  # noqa: E402
 from scripts.schemas import EnrichedPlaylistItem, PlaylistItemData  # noqa: E402
 from scripts.youtube_api import YouTubeClient  # noqa: E402
+
+# review wait writes regroups into the label cache under SKILL_HOME: never the real one.
+yt_tool.SKILL_HOME = Path(tempfile.mkdtemp(prefix="review_test_home_"))
 
 EVIL_TITLE = "Song </script><script>window.pwned=1</script>"
 
@@ -167,6 +171,9 @@ def test_save_order():
 
         summary = yt_tool.wait_for_review(run_dir, 1)
         assert summary["status"] == "saved" and summary["mode"] == "order"
+        cache = json.loads((yt_tool.SKILL_HOME / "label_cache.json").read_text(encoding="utf-8"))["items"]
+        assert cache == {"youtube:v7": {"artist": "A", "conf": "high", "source": "U"}}, \
+            f"a regroup is a user correction the next optimize must use: {cache}"
         change_set = json.loads(Path(summary["changes_file"]).read_text(encoding="utf-8"))
         assert replay([r["playlist_item_id"] for r in snapshot], change_set) == stored_ids
         assert summary["need_to_move"] == len(change_set["changes"])

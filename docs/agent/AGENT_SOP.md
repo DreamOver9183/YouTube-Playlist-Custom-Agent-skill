@@ -123,24 +123,31 @@ python -m scripts.yt_tool duplicates data/current.json
 
 #### 路徑 A：分組聚集排序（推薦）
 
-適用於「把相同歌手/團體的影片放在一起」等分組任務，可同時指定群內排序。使用內建的 `optimize` 指令，**零 Token 消耗、零 API 配額**：
+適用於「把相同歌手/團體的影片放在一起」等分組任務，可同時指定群內排序。這首歌屬於誰由你判斷（第 1 步，花 token，`label-request` 會先估算，標過的歌會快取），分組與最少移動由 `optimize` 計算（**零 API 配額**）：
 
-1. **（可選，但真實清單上通常需要）建立藝人別名對照表** `data/artist_aliases.json`。
-   JSON 的 key 是要合併成的正式名稱，value 是所有會出現的變體——包含**頻道名原文**
-   與**被誤判成藝人的歌名**：
-   ```json
-   {
-     "米津玄師": ["Kenshi Yonezu", "kenshi yonezu", "Kenshi Yonezu  米津玄師"],
-     "優里": ["Yuuri", "優里 Official YouTube Channel", "優里ちゃんねる【公式】"],
-     "tuki.": ["tuki.(17)", "晩餐歌", "一輪花", "月面着陸計画"]
-   }
+1. **藝人標註：由你判斷每首歌屬於誰**（分組依據是 artist 時才做；`--group-by album` 跳過）
+
    ```
-   它會在分群之前把辨識結果正規化，因此能合併「**已經辨識成功但拼法不同**」的群組——
-   跨語言別名（`kenshi yonezu` / `米津玄師`）、頻道贅字（`優里 official youtube`）、
-   以及標題被當成藝人的情況。比對是正規化後的完全相符，不做模糊比對：這一趟跑在
-   每一個項目上，模糊比對一旦誤中就會整份清單默默合併錯兩位藝人。
-   > 沒有傳 `--aliases` 就完全不生效，預設分群行為不變。實測在一份 192 首的清單上，
-   > 群組數 126 → 108、孤兒群 101 → 81。
+   python -m scripts.yt_tool label-request data/current.json
+   ```
+
+   回傳 `pending`（要你標的首數）、`est_tokens`（粗估的 token 數）、`cached`（之前標過、這次不用再標）、
+   `by_formula`（超過預算、交給公式的首數）與 `instructions`（標註規則）。
+   - `pending` 是 0：跳到第 2 步，不用傳 `--labels`。
+   - 否則讀 `data/label_request.jsonl`（每行一首：`pos`、`title`、`channel`，有平台資料時多一個 `p`），
+     照 `instructions` 寫出 `data/labels.json`：
+     ```json
+     {"labels": {"0": {"artist": "米津玄師", "conf": "high"}, "7": {"artist": "unknown", "conf": "medium"}},
+      "aliases": {"米津玄師": ["Kenshi Yonezu"]}}
+     ```
+     每個 `pos` 都要有答案；判斷不了就填 `unknown`（棄權，交給公式），不要亂猜。
+     同一位藝人整份清單只用一種寫法，其他寫法放進 `aliases`。
+   - 預設最多送 400 首（`--max-items` 可改）。超過時只送最沒把握的 400 首，其餘由公式決定，結果一樣會在檢查頁給使用者看。
+   - **Spotify**：每首歌本來就有藝人，`label_request.jsonl` 每行是一個藝人名稱，你只要找出同一位藝人的不同寫法
+     （例如 `SawanoHiroyuki[nZk]` 與 `澤野弘之`），`labels` 留空、只填 `aliases`。
+   - 標註是內部步驟，**不要把標註表貼給使用者看**；使用者在檢查頁看分組結果就好。
+   - 你的答案會存進標籤快取（`$YT_SKILL_HOME/label_cache.json`），同一首歌下次不用再標。
+     使用者在檢查頁改過組的歌也記在這裡，而且你的答案蓋不掉使用者的更正。
 
 2. **執行最佳化計算**：
 
@@ -153,8 +160,14 @@ python -m scripts.yt_tool duplicates data/current.json
        --target-out data/new.json \
        --out data/changes_optimized.json \
        --group-order first_appearance \
-       --aliases data/artist_aliases.json
+       --labels data/labels.json
    ```
+   - `--labels`：第 1 步寫的 `data/labels.json`。工具會對照同一個資料夾的 `label_request.jsonl` 檢查：
+     格式不對或 `pos` 不在清單裡回 `LABELS_INVALID`，請求裡有歌沒答到回 `LABELS_INCOMPLETE`（附 `missing`）。
+     照錯誤補好 `labels.json` 再跑一次。
+   - 分組公式：平台資料（Art Track 描述、`- Topic` 頻道、Spotify 的藝人欄位）與你的標註同權重；
+     兩者不一致時採平台資料，並把那首標成「待確認」讓使用者在檢查頁看。沒被標註的歌改用標題與頻道名推測。
+   - `--aliases <檔案>`（可選）：額外的 `{正式名稱: [其他寫法]}` 別名表，和你在 `labels.json` 給的別名合併使用。
    - `--group-order`：`first_appearance`（預設）、`alphabetical`、`count_desc`
      > 重排既有清單時請優先使用 `first_appearance`：字典序會把所有群組重新洗牌，需要移動的影片數（也就是配額）會高出好幾倍。
    - `--within-group-sort`：`<欄位>:<asc|desc>`，欄位可用 `viewCount`、`publishedAt`、`duration`、`title`、`channelTitle`、`addedAt`、`trackNumber`。省略則群內維持原順序。
@@ -162,7 +175,7 @@ python -m scripts.yt_tool duplicates data/current.json
    - `--group-by`：`artist`（預設）或 `album`。**`album` 只限 Spotify**——Spotify 直接提供專輯 ID，
      不需要猜；YouTube 沒有結構化專輯，會回 `UNSUPPORTED_GROUP_BY`。分組依據一樣要來自使用者原話（Phase 0）。
 
-   **Spotify 的差異**：分組直接用 Spotify 的藝人／專輯 ID，不跑標題辨識，所以 `--aliases` 不生效（回傳 `aliases_ignored`）。
+   **Spotify 的差異**：依藝人分組用每首歌的第一位藝人，再套用你給的 `aliases`；依專輯分組直接用 Spotify 的專輯 ID。
    回傳值沒有配額，改看 `estimated_calls`（API 呼叫次數）、`items_moved`（實際被搬動的歌曲數）與
    `item_level_moves`（若一首一首搬要幾次）。Spotify 一次呼叫可以搬一整段連續的歌，所以呼叫數通常遠少於歌曲數。
 
@@ -185,7 +198,10 @@ python -m scripts.yt_tool duplicates data/current.json
      "orphan_group_count": 18,
      "grouping_benefit": "ok",
      "grouping_warnings": [],
-     "channel_majority_overrides": [],
+     "uncertain_count": 4,
+     "agent_labels": 180,
+     "user_labels": 2,
+     "aliases": 5,
      "fingerprint": "07580a1cecc69364"
    }
    ```
@@ -201,18 +217,14 @@ python -m scripts.yt_tool duplicates data/current.json
      **`unknown` 群不算聚集**（那是垃圾桶不是群組）。門檻是 unknown ≥ 20% 或
      有效聚集率 < 30%，在 11 份真實樣本上乾淨分開、無邊界案例。
    - `unresolved_count`：完全辨識不出藝人的影片數。**這個數字是 0 不代表分群一定正確**，
-     它只計算「兩層都失敗」的情況——所以才要看 `grouping_benefit`，那份 40 組裝 44 首的
-     日文清單 `unresolved_count` 正好是 0。若同一位藝人出現多個相近的 key，
-     用 `--aliases data/artist_aliases.json` 把它們併起來。
+     所以才要看 `grouping_benefit`：一份 40 組裝 44 首的日文清單 `unresolved_count` 正好是 0。
+   - `uncertain_count`：公式沒把握的歌（平台資料和你的標註不一致，或只靠頻道名推測）。
+     檢查頁會標「？待確認」；不是 0 時，開檢查頁那句話順便說「有 N 首我不太確定，標了待確認」。
+   - `agent_labels` / `user_labels` / `aliases`：這次用了幾筆你的標註、幾筆使用者在檢查頁的更正、幾組別名。
    - `metadata_missing_count`：`unresolved_count` 當中，有多少是因為根本沒有資料可辨識
-     （`videos.list` 沒回傳，通常是地區限制），而不是辨識演算法失敗。這些影片無法靠
-     `artist_aliases.json` 救回來——沒有標題或頻道名可以比對。若這個數字偏高，如實告知
-     使用者「這幾支影片因地區限制缺少資料，只能歸入 unknown」，不要嘗試用別名表修正。
-   - `channel_majority_overrides`：非空時，代表有影片的分群結果被「頻道多數決」機制
-     修正過——標題辨識出的藝人跟頻道衝突、信心度落在灰色地帶，且同頻道已有其他影片
-     一致辨識出另一個藝人時，會改採頻道多數的判斷。每一筆都附 `title`／`from_artist_key`
-     （原本的猜測）／`to_artist_key`（改採用的結果）／`corroborating_count`（佐證數）。
-     這是自動修正，不是失敗，但**請在 Phase 3 開檢查頁時用一句話告訴使用者有幾首被這樣修正過**（檢查頁上可以看到它們歸在哪一組、拖回去即可），不要靜默略過。
+     （`videos.list` 沒回傳，通常是地區限制），而不是辨識失敗。這些影片沒有標題或頻道名，
+     `label_request.jsonl` 裡你也只會看到空白，填 `unknown` 即可。若這個數字偏高，如實告知
+     使用者「這幾支影片因地區限制缺少資料，只能歸入 unknown」。
    - `estimated_quota`：確認是否在單日限額（10,000 units）內
 
 4. 直接跳至 **Phase 3** 使用 `data/changes_optimized.json`。
@@ -275,7 +287,7 @@ python -m scripts.yt_tool duplicates data/current.json
    - `saved` 時的變更檔是 `<run_dir>/changes.json`，**已依使用者保存的順序重算**；之後一律寫回這個檔，
      不是 Phase 2 產生的 `data/changes*.json`。
    - `relabels > 0` 代表使用者明確把某些歌改到別的群組（拖到標題列上或用資訊卡選單，代表辨識錯了）。
-     簡短告知「已記下你修正的 N 首」，內容在 `<run_dir>/user_labels.json`。
+     簡短告知「已記下你修正的 N 首，下次整理會直接採用」：`review wait` 已把它們存進標籤快取（`<run_dir>/user_labels.json` 是這次的紀錄）。
    - `edits` 是使用者改了幾處，**以狀態計算**：相對你的建議版搬了幾首（N − LIS）加上改了組的首數；
      搬一首又搬回原位是 0。`proposed_moves` / `proposed_calls` 是你原本建議的成本，可以一併提，
      例如「你調整後要搬 12 首（原建議 10 首）」。
@@ -289,9 +301,9 @@ python -m scripts.yt_tool duplicates data/current.json
    python -m scripts.yt_tool optimize data/current.json \
        --target-out data/new_grouponly.json \
        --out data/changes_grouponly.json \
-       --group-order first_appearance \
-       --aliases data/artist_aliases.json
+       --group-order first_appearance
    ```
+   （標註已經存在標籤快取，這次不用再傳 `--labels`。）
 
    兩次的 `need_to_move` 相減，就是群內排序的**額外**代價。確認句要明確說出第二桶可以單獨取消，例如：
 

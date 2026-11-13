@@ -91,6 +91,7 @@
   .b-move { background: var(--move-bg); color: var(--move-text); font-variant-numeric: tabular-nums; }
   .b-warn { background: var(--warn-bg); color: var(--warn-text); }
   .b-pin { background: var(--panel); color: var(--pin-text); border: 1px solid var(--line); }
+  .b-unsure { color: var(--muted); border: 1px dashed var(--line); }
   .tail select { font-size: 13px; padding: 2px 6px; max-width: 190px; }
   .boxset { padding: 9px 14px; color: var(--muted); font-size: 13px; cursor: pointer; }
   .boxset:hover { background: var(--hover); }
@@ -398,6 +399,8 @@
   };
   const isUnknown = (group) => !group || group === "unknown";
   const groupName = (group) => (isUnknown(group) ? "待確認" : group);
+  // The formula was not sure (margin < τ); the mark goes away once the user puts the song in another group.
+  const unsure = (key) => ITEM.get(key).uncertain && groupOf[key] === ITEM.get(key).group;
 
   function el(tag, cls, text) {
     const node = document.createElement(tag);
@@ -462,6 +465,7 @@
     if (item.pinned) tail.append(badge("b-pin", "釘選：私人／已刪除，無法移動"));
     else {
       if (stray) tail.append(badge("b-warn", `⚠ 屬於「${groupName(groupOf[key])}」`));
+      if (unsure(key)) tail.append(badge("b-unsure", "？待確認"));
       if (LABEL_MODE) tail.append(groupSelect(key));
       else if (moved) tail.append(badge("b-move", `原 #${item.orig + 1} → #${pos}`));
     }
@@ -537,6 +541,7 @@
     $("legend").replaceChildren(
       ...(LABEL_MODE ? ["左側色條＝群組", "⚠ 不在自己的組", "🔒 釘選"]
                      : ["左側色條＝群組", "橘色＝會被搬動", "⚠ 不在自己的組", "🔒 釘選"])
+        .concat(DATA.items.some((item) => item.uncertain) ? ["？待確認＝藝人辨識沒把握"] : [])
         .map((text) => el("span", "", text)));
     const cost = $("cost");
     cost.replaceChildren();
@@ -602,7 +607,7 @@
     row("加入清單", fmtDate(item.added_at));
     if (!SPOTIFY) { row("觀看", fmtCount(item.view_count)); row("按讚", fmtCount(item.like_count)); }
     if (item.isrc) row("ISRC", item.isrc);
-    row("群組", item.pinned ? "（釘選，無法移動）" : groupName(groupOf[selected]));
+    row("群組", item.pinned ? "（釘選，無法移動）" : groupName(groupOf[selected]) + (unsure(selected) ? "（辨識沒把握，請確認）" : ""));
     if (!LABEL_MODE) row("位置", `原 #${item.orig + 1} → 現 #${now + 1}${item.pinned ? "（釘選）" : willMove ? "（會被搬動）" : "（不用搬）"}`);
     card.append(dl);
     if (item.media_url) {

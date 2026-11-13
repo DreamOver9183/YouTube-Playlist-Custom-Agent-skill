@@ -108,19 +108,17 @@ def load_api_cache(playlist_id: str) -> list[dict] | None:
 
 
 def resolve_with_current_pipeline(api_items: list[dict]) -> list[str]:
-    """跑現行的三層藝人辨識，回傳與輸入同序的 artist_key 清單。"""
+    """跑現行的藝人辨識（沒有 Agent 標註時的備援公式），回傳與輸入同序的分組鍵。"""
     import logging
 
     logging.disable(logging.CRITICAL)
-    from scripts.optimizer import group_by_artist
+    from scripts.resolver import resolve
     from scripts.schemas import EnrichedPlaylistItem
 
     items = [EnrichedPlaylistItem(**raw) for raw in api_items]
     aliases = ROOT / "data" / "artist_aliases.json"
-    _, _, resolutions, _ = group_by_artist(
-        items, aliases if aliases.exists() else None, "first_appearance", None
-    )
-    return [r.artist_key for r in resolutions]
+    table = json.loads(aliases.read_text(encoding="utf-8")) if aliases.exists() else None
+    return [r.key for r in resolve(items, aliases=table)]
 
 
 def build_sample(playlist_id: str) -> dict:
