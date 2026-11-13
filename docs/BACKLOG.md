@@ -224,7 +224,7 @@ request headers。目前卡在抓不到 cookie 資訊。
 
 ## 4. 聚集效益閘門
 
-**狀態**：「無意義搬動」的部分**已於 v3.7.0 修復**；聚集效益閘門本身尚未實作。
+**狀態**：**已結案**。「無意義搬動」於 v3.7.0 修復；聚集效益閘門於 v3.10.0 實作，v4 M3 換掉辨識層後重新校正（`grouping_gate_bench.py --check` 已進 CI）。
 
 ### 已實作（v3.10.0）：聚集效益閘門
 
@@ -256,7 +256,7 @@ AGENT_SOP.md 的 `unresolved_count` 說明裡**已經寫了正確的知識**（�
 這與作廢 `group_count_ratio` 的是同一個偏誤。
 
 `optimize` 會吐出 `grouping_benefit`（`"ok"` / `"low"`）與帶好數字的
-`grouping_warnings`，AGENT_SOP Phase 2 路徑 A 要求 Agent 讀它而不是目測
+`grouping_warnings`，AGENT_SOP Phase 1 路徑 A（v4 M4 之前是 Phase 2）要求 Agent 讀它而不是目測
 `groups_found`。**攔到時不是拒絕執行**，而是先告知再確認。
 判定跑在 `optimize`，本來就 0 API units，所以警告一定在花配額之前。
 
@@ -312,7 +312,7 @@ AGENT_SOP.md 的 `unresolved_count` 說明裡**已經寫了正確的知識**（�
 ## 6. v4.0 重構（2026-11-07 起）
 
 **狀態**：計畫已核可，**M0、M1、M2 已完成**（M1、M2 都已用使用者自己的 Spotify 清單通過真實驗收），
-**M3 已完成**（人工真值驗收通過，見下方 M3 一節），**M4 已完成**（文件收尾，v4 的決定與否決項目總結在本節最後）。
+**M3 已完成**（人工真值驗收通過，見下方 M3 一節），**M4 已完成**（文件收尾）。v4 的決定、否決項目與對照計畫仍未完成的三項，總結在本節最後。
 
 使用者提出五件事：專案偏離「最輕量達成目的」、藝人辨識全靠 regex 而放棄了 LLM 的
 優勢、要支援 Spotify、要一套可驗證的辨識公式、聊天室的預覽表「完全不想看」。
@@ -546,3 +546,16 @@ K-pop 這份是使用者口述規則、由 Agent 代改；#3 有 6 格漏改的�
 
 M0 查到、留給後續里程碑的兩件事都已處理：`videos.list` 的 `description` 在 M1 補回 schema、M3 當成 P 的特徵；
 `_DISTRIBUTOR_CHANNELS` 比不中「JYP Entertainment」的問題在 M3 修掉。
+
+#### 對照計畫仍未完成的項目（2026-11-14 盤點）
+
+上面兩張表是刻意的取捨；下面三項是計畫寫了、但還沒做到的：
+
+| 項目 | 計畫的要求 | 現況 | 動工前要先確認 |
+|---|---|---|---|
+| 人工真值分數沒進 CI 迴歸 | `resolver_params.json` 記錄 `fused`、`fallback` 在保留集與人工真值上的分數，`tests/test_resolver_formula.py` 斷言不低於記錄值 | 只記了訓練集與保留集（近似真值）；人工真值的 0.975 下降時 CI 不會發現 | 只是把現值寫進 `scores.*.gold`，測試會自動涵蓋 |
+| `fallback` 沒達到 M3 的驗收標準 | 公式在保留集與人工真值上 F1 ≥ v3、unknown ≤ v3 | `fused` 全部達標；`fallback` 人工真值 F1 0.803（v3 0.859）、保留集 unknown 12.9%（v3 10.8%） | 只影響 Agent 沒標到的歌；要改善得加新特徵，與「複雜度 ÷ 受益範圍」有衝突，人工真值也不能拿來重擬 |
+| Spotify「往後搬」沒在真實 API 上驗證 | M1 真實驗收：寫回後再搬回原位，前後抓下來 `diff` 為 0 | 只實測過往前搬（第 20 首 → 第 2 首）；`insert_before > range_start` 的方向只有 fake 與官方文件範例 | 需要使用者同意在自己的清單上寫回；寫回後的全量驗證會擋下方向錯誤 |
+
+另外，`resolver.py` 283 行超過計畫的 250 行上限（M3 的 PR 已說明）；人工真值改用 Claude Doc 標註，
+M2 的標註模式（`review start --mode label`）有實作但這次沒用上。
