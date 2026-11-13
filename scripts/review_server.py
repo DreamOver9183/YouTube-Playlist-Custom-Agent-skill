@@ -140,12 +140,14 @@ def build_page_data(run_dir: Path) -> dict[str, Any]:
     snapshot = _read_json(run_dir / SNAPSHOT_FILE)
     proposed = _read_json(run_dir / PROPOSED_FILE)
     group_of = {r["playlist_item_id"]: r.get("group", "") for r in proposed}
+    unsure = {r["playlist_item_id"] for r in proposed if r.get("uncertain")}
     platform = (snapshot[0].get("platform") if snapshot else None) or "youtube"
     return {
         "mode": state.get("mode", "order"),
         "platform": platform,
         "playlist_id": next((r.get("playlist_id") for r in snapshot if r.get("playlist_id")), ""),
-        "items": [_page_item(r, i, group_of.get(r["playlist_item_id"], "")) for i, r in enumerate(snapshot)],
+        "items": [dict(_page_item(r, i, group_of.get(r["playlist_item_id"], "")), uncertain=r["playlist_item_id"] in unsure)
+                  for i, r in enumerate(snapshot)],
         "proposed": [r["playlist_item_id"] for r in proposed],
     }
 
