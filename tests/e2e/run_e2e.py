@@ -494,7 +494,7 @@ def s02_credentials_gate(h: Harness) -> list[str]:
 
 
 def s03_fetch_pagination(h: Harness) -> list[str]:
-    """Phase 1: 120 items over 3 pages, 3 metadata batches, private videos kept."""
+    """Phase 0 fetch: 120 items over 3 pages, 3 metadata batches, private videos kept."""
     before = h.quota()
     run = h.fetch(PL_MAIN, "current.json")
     check(run.code == 0, f"fetch failed: {run.last}")
@@ -529,7 +529,7 @@ def s03_fetch_pagination(h: Harness) -> list[str]:
 
 
 def s04_cache_behaviour(h: Harness) -> list[str]:
-    """Phase 1: the second read is free; --refresh goes back to the API."""
+    """Phase 0 fetch: the second read is free; --refresh goes back to the API."""
     before_calls = h.call_count()
     cached = h.fetch(PL_MAIN, "cached.json", refresh=False)
     check(cached.last["source"] == "cache", f"second fetch should hit the cache, got {cached.last['source']}")
@@ -548,7 +548,7 @@ def s04_cache_behaviour(h: Harness) -> list[str]:
 
 
 def s05_optimize_is_local(h: Harness) -> list[str]:
-    """Phase 2 path A: grouping + within-group sort, provably without the API."""
+    """Phase 1 path A: grouping + within-group sort, provably without the API."""
     before = h.quota()
     aliases = h.path("artist_aliases.json")
     aliases.write_text(json.dumps({"Aurora": ["Aurora Borealis Project"]},
@@ -626,7 +626,7 @@ def s05_optimize_is_local(h: Harness) -> list[str]:
 
 
 def s05b_duplicates_report(h: Harness) -> list[str]:
-    """Phase 1 optional: duplicate detection is local, exact, and read-only."""
+    """Phase 0 optional: duplicate detection is local, exact, and read-only."""
     before = h.quota()
     current = read_json(h.path("current.json"))
 
@@ -660,7 +660,7 @@ def s05b_duplicates_report(h: Harness) -> list[str]:
 
 
 def s06_optimize_without_google_stack(h: Harness) -> list[str]:
-    """Phase 2 path A: the '0 API units' claim holds even with no Google libs importable."""
+    """Phase 1 path A: the '0 API units' claim holds even with no Google libs importable."""
     shim = h.workspace / "nogoogle"
     for package in ("googleapiclient", "google_auth_oauthlib"):
         pkg = shim / package
@@ -685,7 +685,7 @@ def s06_optimize_without_google_stack(h: Harness) -> list[str]:
 
 
 def s07_preview_payload(h: Harness) -> list[str]:
-    """Phase 3: the preview table the Agent must draw is backed by real data."""
+    """Phase 3 fallback: the move list the Agent shows when no browser is available is backed by real data."""
     current = read_json(h.path("current.json"))
     target = read_json(h.path("target.json"))
     changes = read_json(h.path("changes.json"))["changes"]
@@ -845,7 +845,7 @@ def s11_retry_abort_resume(h: Harness) -> list[str]:
 
 
 def s12_custom_target(h: Harness) -> list[str]:
-    """Phase 2 path B: the Agent writes the target order, `diff` costs it out, `update` lands it."""
+    """Phase 1 path B: the Agent writes the target order, `diff` costs it out, `update` lands it."""
     fetched = h.fetch(PL_CLEAN, "clean_current.json")
     check(fetched.code == 0, f"fetch failed: {fetched.last}")
     current = read_json(h.path("clean_current.json"))
@@ -1126,7 +1126,7 @@ def sp_fetch_and_plan(h: "Harness", playlist: str, stem: str, *extra: str) -> tu
 
 
 def s17_spotify_setup_and_fetch(h: "Harness") -> list[str]:
-    """Spotify Phase 0–1: client id handshake, token refresh, fetch by URL, cache."""
+    """Spotify Phase 0: client id handshake, token refresh, fetch by URL, cache."""
     fake = h.ensure_spotify()
     fake.add_playlist(SP_MAIN, spotify_fixture(22, seed=7))
 
@@ -1179,7 +1179,7 @@ def s17_spotify_setup_and_fetch(h: "Harness") -> list[str]:
 
 
 def s18_spotify_group_and_update(h: "Harness") -> list[str]:
-    """Spotify Phase 2–4: artist grouping → block moves → write-back → full verify."""
+    """Spotify Phase 1–4: artist grouping → block moves → write-back → full verify."""
     fake = h.ensure_spotify()
     current, change_set = sp_fetch_and_plan(h, SP_MAIN, "sp")
     keys = ids_of(current)
@@ -1276,7 +1276,7 @@ def s19_spotify_faults_and_resume(h: "Harness") -> list[str]:
             "remote drift caught by a full-list compare before any write"]
 
 
-# ─── Review page (Phase 3) ────────────────────────────────────────
+# ─── Review page (Phase 2–3) ────────────────────────────────────────
 
 
 def _review_post(url: str, route: str, body: dict[str, Any]) -> tuple[int, dict[str, Any]]:
@@ -1294,7 +1294,7 @@ def _review_post(url: str, route: str, body: dict[str, Any]) -> tuple[int, dict[
 
 
 def s20_review_page(h: "Harness") -> list[str]:
-    """Phase 3 review page: start → the user's edit arrives over HTTP → wait → update; and cancel."""
+    """Phase 2–3 review page: start → the user's edit arrives over HTTP → wait → update; and cancel."""
     fetched = h.tool("fetch", PL_STALE, "--out", str(h.path("rv_current.json")), "--refresh")
     check(fetched.code == 0, f"fetch failed: {fetched.last}")
     planned = h.tool("optimize", str(h.path("rv_current.json")), "--target-out", str(h.path("rv_new.json")),
@@ -1372,25 +1372,25 @@ def s20_review_page(h: "Harness") -> list[str]:
 SCENARIOS: list[Scenario] = [
     Scenario("entry_points", "Phase 0", "Agent entry points and CLI surface", s01_entry_points),
     Scenario("credentials", "Phase 0", "Credential setup handshake", s02_credentials_gate),
-    Scenario("fetch", "Phase 1", "Fetch: pagination, batching, private videos", s03_fetch_pagination),
-    Scenario("cache", "Phase 1", "Cache hit vs --refresh, token reuse", s04_cache_behaviour),
-    Scenario("optimize", "Phase 2A", "Optimize: grouping, sorting, minimal plan", s05_optimize_is_local),
-    Scenario("duplicates", "Phase 1", "Duplicate report is local, exact, read-only", s05b_duplicates_report),
-    Scenario("offline", "Phase 2A", "Optimize really is offline and deterministic", s06_optimize_without_google_stack),
-    Scenario("preview", "Phase 3", "Preview payload matches reality", s07_preview_payload),
+    Scenario("fetch", "Phase 0", "Fetch: pagination, batching, private videos", s03_fetch_pagination),
+    Scenario("cache", "Phase 0", "Cache hit vs --refresh, token reuse", s04_cache_behaviour),
+    Scenario("optimize", "Phase 1A", "Optimize: grouping, sorting, minimal plan", s05_optimize_is_local),
+    Scenario("duplicates", "Phase 0", "Duplicate report is local, exact, read-only", s05b_duplicates_report),
+    Scenario("offline", "Phase 1A", "Optimize really is offline and deterministic", s06_optimize_without_google_stack),
+    Scenario("preview", "Phase 3", "No-browser move list matches reality", s07_preview_payload),
     Scenario("update", "Phase 4", "Write-back reaches the target order", s08_update_write_back),
     Scenario("double_apply", "Phase 4", "A spent change set cannot be replayed", s09_double_apply_is_refused),
     Scenario("stale", "Phase 4", "Remote drift is caught before any write", s10_stale_remote),
     Scenario("resume", "Phase 4", "Retry, fatal abort, and exact resume", s11_retry_abort_resume),
-    Scenario("custom", "Phase 2B", "Agent-written target → diff → update", s12_custom_target),
-    Scenario("mismatch", "Phase 2B", "Invalid target orderings are refused", s13_target_mismatch),
+    Scenario("custom", "Phase 1B", "Agent-written target → diff → update", s12_custom_target),
+    Scenario("mismatch", "Phase 1B", "Invalid target orderings are refused", s13_target_mismatch),
     Scenario("guards", "Phase 4", "Change-set integrity guards", s14_change_set_guards),
-    Scenario("noop", "Phase 2A", "Already-sorted playlist is a true no-op", s15_no_op_playlist),
+    Scenario("noop", "Phase 1A", "Already-sorted playlist is a true no-op", s15_no_op_playlist),
     Scenario("arguments", "All", "Operator errors are structured, URLs accepted", s16_bad_arguments),
-    Scenario("spotify_setup", "SP 0-1", "Spotify: client id, token refresh, fetch, cache", s17_spotify_setup_and_fetch),
-    Scenario("spotify_update", "SP 2-4", "Spotify: grouping → block moves → verified write", s18_spotify_group_and_update),
+    Scenario("spotify_setup", "SP 0", "Spotify: client id, token refresh, fetch, cache", s17_spotify_setup_and_fetch),
+    Scenario("spotify_update", "SP 1-4", "Spotify: grouping → block moves → verified write", s18_spotify_group_and_update),
     Scenario("spotify_faults", "SP 4", "Spotify: 429, abort/resume, ambiguous 5xx, stale", s19_spotify_faults_and_resume),
-    Scenario("review", "Phase 3", "Review page: save over HTTP → wait → update; cancel", s20_review_page),
+    Scenario("review", "Phase 2", "Review page: save over HTTP → wait → update; cancel", s20_review_page),
 ]
 
 
